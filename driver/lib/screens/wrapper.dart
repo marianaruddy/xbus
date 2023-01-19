@@ -9,7 +9,7 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
 
     // TODO: firebase auth
-    final user = null;
+    final user = 'null';
 
     if (user == null) {
       return Authenticate();
