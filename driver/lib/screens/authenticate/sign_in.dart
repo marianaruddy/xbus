@@ -26,15 +26,13 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return loading ? Loading() : Scaffold(
-      backgroundColor: Colors.green[100],
       appBar: AppBar(
-        backgroundColor: Colors.green[200],
         elevation: 0.0,
         title: Text('xbus'),
         actions: [
           TextButton.icon(
-            icon: Icon(Icons.person, color: Colors.green),
-            style: TextButton.styleFrom(primary: Colors.green),
+            icon: Icon(Icons.person, color: Colors.white),
+            style: TextButton.styleFrom(primary: Colors.white),
             label: Text('Cadastro'),
             onPressed: () {
               widget.toggleView();
@@ -84,9 +82,6 @@ class _SignInState extends State<SignIn> {
                       }
                     }
                   }, 
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green
-                  ),
                   child: Text(
                     'Entrar',
                     style: TextStyle(color: Colors.white),
