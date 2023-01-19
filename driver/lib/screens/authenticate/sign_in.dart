@@ -31,7 +31,7 @@ class _SignInState extends State<SignIn> {
         backgroundColor: Colors.green[200],
         elevation: 0.0,
         title: Text('xbus'),
-        actions: <Widget>[
+        actions: [
           TextButton.icon(
             icon: Icon(Icons.person, color: Colors.green),
             style: TextButton.styleFrom(primary: Colors.green),
@@ -47,7 +47,7 @@ class _SignInState extends State<SignIn> {
         child: Form(
           key: _formKey,
           child: Column(
-            children: <Widget>[
+            children: [
                 SizedBox(height: 20.0),
                 TextFormField(
                   decoration: textInputDecoration.copyWith(hintText: 'E-mail'),

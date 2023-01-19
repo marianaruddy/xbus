@@ -33,7 +33,7 @@ class _RegisterState extends State<Register> {
         backgroundColor: Colors.green[200],
         elevation: 0.0,
         title: Text('xbus'),
-        actions: <Widget>[
+        actions: [
           TextButton.icon(
             icon: Icon(Icons.person, color: Colors.green),
             style: TextButton.styleFrom(primary: Colors.green),
@@ -49,7 +49,7 @@ class _RegisterState extends State<Register> {
         child: Form(
           key: _formKey,
           child: Column(
-            children: <Widget>[
+            children: [
               SizedBox(height: 20.0),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'E-mail'),
