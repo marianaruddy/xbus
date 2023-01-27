@@ -85,7 +85,7 @@ class _RegisterState extends State<Register> {
                   }
                 }, 
                 child: Text(
-                  'Cadastro',
+                  'Cadastrar',
                   style: TextStyle(color: Colors.white),
                 )
               ),
