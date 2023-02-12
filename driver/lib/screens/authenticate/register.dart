@@ -1,3 +1,4 @@
+import 'package:driver/services/auth.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
 
-  // final AuthService _auth = AuthService();
+  final AuthService _auth = AuthService();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -60,7 +61,7 @@ class _RegisterState extends State<Register> {
               ),
               SizedBox(height: 20.0),
               TextFormField(
-                decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                decoration: textInputDecoration.copyWith(hintText: 'Senha'),
                 obscureText: true,
                 validator: (value) => (
                   value!.length < 6 ? 'Sua senha deve ter pelo menos 6 caracteres' : null
@@ -74,8 +75,7 @@ class _RegisterState extends State<Register> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     setState(() => loading = true);
-                    // TODO: add firebase
-                    dynamic result = await null;
+                    dynamic result = await _auth.registerWithEmailAndPassword(email, password);
                     if (result == null) {
                       setState(() {
                         error = 'Digite um e-mail válido';

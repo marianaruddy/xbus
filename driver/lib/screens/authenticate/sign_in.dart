@@ -61,7 +61,7 @@ class _SignInState extends State<SignIn> {
                 ),
                 SizedBox(height: 20.0),
                 TextFormField(
-                  decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                  decoration: textInputDecoration.copyWith(hintText: 'Senha'),
                   obscureText: true,
                   validator: (value) => (
                     value!.length < 6 ? 'Sua senha deve ter pelo menos 6 caracteres' : null
@@ -75,7 +75,7 @@ class _SignInState extends State<SignIn> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       setState(() => loading = true);
-                      dynamic result = await _auth.signInAnon();
+                      dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                       if (result == null) {
                         setState(() {
                           error = 'Credenciais inválidas';
