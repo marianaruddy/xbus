@@ -1,4 +1,5 @@
 import 'package:driver/screens/home/navigation_drawer_widget.dart';
+import 'package:driver/services/auth.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  final AuthService _auth = AuthService();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -38,7 +41,20 @@ class _HomeState extends State<Home> {
           elevation: 0.0,
           title: Text('xbus'),
         ),
-        drawer: NavigationDrawerWidget(),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              ListTile(
+                title: Text('sair'),
+                leading: Icon(Icons.logout, color: Colors.green),
+                onTap: () async {
+                  await _auth.signOut();
+                },
+              )
+            ],
+          ),
+        ),
         body: Container(
           padding: EdgeInsets.all(20.0),
           child: Form(

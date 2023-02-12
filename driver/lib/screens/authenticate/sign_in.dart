@@ -1,3 +1,4 @@
+import 'package:driver/services/auth.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,8 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
 
+  final AuthService _auth = AuthService();
+  
   final _formKey = GlobalKey<FormState>();
 
   bool loading = false;
@@ -72,8 +75,7 @@ class _SignInState extends State<SignIn> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       setState(() => loading = true);
-                      // TODO: add firebase
-                      dynamic result = await null;
+                      dynamic result = await _auth.signInAnon();
                       if (result == null) {
                         setState(() {
                           error = 'Credenciais inválidas';
