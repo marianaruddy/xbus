@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "226777627112",
+    "project_id": "xbus-f2b3b",
+    "storage_bucket": "xbus-f2b3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226777627112:android:bb63bd75f8759930890c5d",
+        "android_client_info": {
+          "package_name": "com.xbus.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "226777627112-2cial4uj13un2g3snb8ni7rhoj7urj1s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqHLOHLAa2VpXz5L_tCgTydzpkVDczBeY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "226777627112-2cial4uj13un2g3snb8ni7rhoj7urj1s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
