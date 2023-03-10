@@ -1,3 +1,4 @@
+import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/services/auth.dart';
 import 'package:driver/services/database.dart';
@@ -23,20 +24,23 @@ class _HomeState extends State<Home> {
   bool loading = false;
 
   // TODO: get data from firebase
-  final List<String> licensePlates = ['abc1234', 'xyz1234'];
-
-  String? currentLicensePlate;
-
-  // TODO: get data from firebase
   final List<String> hours = ['9:00', '10:00', '11:00', '12:00'];
 
   String? currentHour;
 
   @override
   Widget build(BuildContext context) {
-    return loading ? Loading() : StreamProvider<List<RouteModel>?>.value(
-      value: DatabaseService().routes,
-      initialData: null,
+    return 
+      MultiProvider(providers: [
+        StreamProvider<List<RouteModel>?>.value(
+          value: DatabaseService().routes,
+          initialData: null,
+        ),
+        StreamProvider<List<Vehicle>?>.value(
+          value: DatabaseService().vehicles,
+          initialData: null,
+        ),
+      ],
       child: Scaffold(
           appBar: AppBar(
             elevation: 0.0,
@@ -60,22 +64,9 @@ class _HomeState extends State<Home> {
             padding: EdgeInsets.all(20.0),
             child: Form(
               key: _formKey,
-              child: Column(
+              child: loading ? Loading() : Column(
                 children: [
                   RouteForm(),
-                  SizedBox(height: 20.0),
-                  licensePlates.length > 0 ? DropdownButtonFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
-                    value: currentLicensePlate,
-                    items: licensePlates.map((license) {
-                      return DropdownMenuItem(
-                        value: license,
-                        child: Text(license),
-                      );
-                    }).toList(), 
-                    onChanged: (value) { setState(() => currentLicensePlate = value); },
-                  ) : 
-                  Text('Nenhum veículo cadastrado'),
                   SizedBox(height: 20.0),
                   hours.length > 0 ? DropdownButtonFormField(
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
@@ -102,8 +93,6 @@ class _HomeState extends State<Home> {
                   SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
-                      print('currentLicensePlate');
-                      print(currentLicensePlate);
                       print('currentHour');
                       print(currentHour);
                     },
