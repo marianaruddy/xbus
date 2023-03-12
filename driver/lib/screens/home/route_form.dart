@@ -1,4 +1,5 @@
 import 'package:driver/models/route.dart';
+import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,12 +19,16 @@ class _RouteFormState extends State<RouteForm> {
     final routes = Provider.of<List<RouteModel>?>(context);
 
     final licensePlates = Provider.of<List<Vehicle>?>(context);
+
+    final trips = Provider.of<List<Trip>?>(context);
   
     final _formKey = GlobalKey<FormState>();
   
     String? currentRoute;
 
     String? currentLicensePlate;
+
+    String? currentHour;
 
     return Container(
             child: Form(
@@ -56,6 +61,19 @@ class _RouteFormState extends State<RouteForm> {
                     onChanged: (value) { setState(() => currentLicensePlate = value as String?); },
                   ) : 
                   Text('Nenhum veículo cadastrado'),
+                  SizedBox(height: 20.0),
+                  trips!.length > 0 ? DropdownButtonFormField(
+                    decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
+                    value: currentHour,
+                    items: trips.map((hour) {
+                      return DropdownMenuItem(
+                        value: hour,
+                        child: Text(hour.intendedDepartureTime.toString()),
+                      );
+                    }).toList(), 
+                    onChanged: (value) { setState(() => currentHour = value as String?); },
+                  ) : 
+                  Text('Nenhum horário cadastrado'),
                   SizedBox(height: 20.0),
     
                   // TODO: add google maps integration

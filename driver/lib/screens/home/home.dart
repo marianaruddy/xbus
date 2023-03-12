@@ -1,3 +1,4 @@
+import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/services/auth.dart';
@@ -23,11 +24,6 @@ class _HomeState extends State<Home> {
 
   bool loading = false;
 
-  // TODO: get data from firebase
-  final List<String> hours = ['9:00', '10:00', '11:00', '12:00'];
-
-  String? currentHour;
-
   @override
   Widget build(BuildContext context) {
     return 
@@ -38,6 +34,10 @@ class _HomeState extends State<Home> {
         ),
         StreamProvider<List<Vehicle>?>.value(
           value: DatabaseService().vehicles,
+          initialData: null,
+        ),
+        StreamProvider<List<Trip>?>.value(
+          value: DatabaseService().trips,
           initialData: null,
         ),
       ],
@@ -67,20 +67,6 @@ class _HomeState extends State<Home> {
               child: loading ? Loading() : Column(
                 children: [
                   RouteForm(),
-                  SizedBox(height: 20.0),
-                  hours.length > 0 ? DropdownButtonFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
-                    value: currentHour,
-                    items: hours.map((hour) {
-                      return DropdownMenuItem(
-                        value: hour,
-                        child: Text(hour),
-                      );
-                    }).toList(), 
-                    onChanged: (value) { setState(() => currentHour = value); },
-                  ) : 
-                  Text('Nenhum horário cadastrado'),
-                  SizedBox(height: 20.0),
     
                   // TODO: add google maps integration
     
@@ -89,15 +75,6 @@ class _HomeState extends State<Home> {
                   //   'assets/map.png',
                   //   fit: BoxFit.contain,
                   // ),
-    
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      print('currentHour');
-                      print(currentHour);
-                    },
-                    child: Text('Iniciar Viagem'),
-                  )
                 ],
               ),
             ),
