@@ -52,9 +52,9 @@ class _RouteFormState extends State<RouteForm> {
                   licensePlates!.length > 0 ? DropdownButtonFormField(
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
                     value: currentLicensePlate,
-                    items: licensePlates?.map((license) {
+                    items: licensePlates.map((license) {
                       return DropdownMenuItem(
-                        value: license.licensePlate,
+                        value: license,
                         child: Text(license.licensePlate.toString()),
                       );
                     }).toList(), 
