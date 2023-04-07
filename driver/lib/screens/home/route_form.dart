@@ -16,11 +16,11 @@ class _RouteFormState extends State<RouteForm> {
   @override
   Widget build(BuildContext context) {
 
-    final routes = Provider.of<List<RouteModel>?>(context);
+    final routes = Provider.of<List<RouteModel>?>(context) ?? [];
 
-    final licensePlates = Provider.of<List<Vehicle>?>(context);
+    final licensePlates = Provider.of<List<Vehicle>?>(context) ?? [];
 
-    final trips = Provider.of<List<Trip>?>(context);
+    final trips = Provider.of<List<Trip>?>(context) ?? [];
   
     final _formKey = GlobalKey<FormState>();
   
