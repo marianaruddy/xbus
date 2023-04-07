@@ -13,6 +13,12 @@ class RouteForm extends StatefulWidget {
 }
 
 class _RouteFormState extends State<RouteForm> {
+  RouteModel? _currentRoute;
+
+  Vehicle? _currentLicensePlate;
+
+  Trip? _currentHour;
+    
   @override
   Widget build(BuildContext context) {
 
@@ -24,54 +30,54 @@ class _RouteFormState extends State<RouteForm> {
   
     final _formKey = GlobalKey<FormState>();
   
-    String? currentRoute;
-
-    String? currentLicensePlate;
-
-    String? currentHour;
-
     return Container(
             child: Form(
               key: _formKey,
               child: Column(
                 children: [
                   SizedBox(height: 20.0),
-                  routes!.length > 0 ? DropdownButtonFormField(
+                  routes.length > 0 ? DropdownButtonFormField<RouteModel>(
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione uma rota'),
-                    value: currentRoute,
+                    value: _currentRoute,
                     items: routes.map((route) {
                       return DropdownMenuItem(
                         value: route,
                         child: Text('Linha ${route.number.toString()}: ${route.origin} - ${route.destiny}'),
                       );
                     }).toList(), 
-                    onChanged: (value) { setState(() => currentRoute = value as String? ); },
+                    onChanged: (value) {
+                      setState(() { _currentRoute = value; });
+                    },
                   ) : 
                   Text('Nenhuma rota cadastrada'),
                   SizedBox(height: 20.0),
-                  licensePlates!.length > 0 ? DropdownButtonFormField(
+                  licensePlates.length > 0 ? DropdownButtonFormField<Vehicle>(
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
-                    value: currentLicensePlate,
+                    value: _currentLicensePlate,
                     items: licensePlates.map((license) {
                       return DropdownMenuItem(
                         value: license,
                         child: Text(license.licensePlate.toString()),
                       );
                     }).toList(), 
-                    onChanged: (value) { setState(() => currentLicensePlate = value as String?); },
+                    onChanged: (value) {
+                      setState(() { _currentLicensePlate = value; });
+                    },
                   ) : 
                   Text('Nenhum veículo cadastrado'),
                   SizedBox(height: 20.0),
-                  trips!.length > 0 ? DropdownButtonFormField(
+                  trips.length > 0 ? DropdownButtonFormField<Trip>(
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
-                    value: currentHour,
+                    value: _currentHour,
                     items: trips.map((hour) {
                       return DropdownMenuItem(
                         value: hour,
                         child: Text(hour.intendedDepartureTime.toString()),
                       );
                     }).toList(), 
-                    onChanged: (value) { setState(() => currentHour = value as String?); },
+                    onChanged: (value) { 
+                      setState(() { _currentHour = value; });
+                    },
                   ) : 
                   Text('Nenhum horário cadastrado'),
                   SizedBox(height: 20.0),
