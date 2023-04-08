@@ -40,10 +40,36 @@ class DatabaseService {
 
   final CollectionReference tripCollection = FirebaseFirestore.instance.collection('Trip');
 
+  Future createTrip({
+    required DateTime actualArrivalTime,
+    required DateTime actualDepartureTime,
+    required String driverId,
+    required DateTime intendedArrivalTime,
+    required DateTime intendedDepartureTime,
+    required String routeId,
+    required String vehicleId,
+  }) async {
+    await tripCollection.doc().set({
+      'actualArrivalTime': actualArrivalTime,
+      'actualDepartureTime': actualDepartureTime,
+      'driverId': driverId,
+      'intendedArrivalTime': intendedArrivalTime,
+      'intendedDepartureTime': intendedDepartureTime,
+      'routeId': routeId,
+      'vehicleId': vehicleId,
+    });
+  }
+
   List<Trip> _tripsListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return Trip(
-        intendedDepartureTime: doc['IntendedDepartureTime'].toDate(),
+        actualArrivalTime: doc['ActualArrivalTime'].toDate() ??  DateTime.now(),
+        actualDepartureTime: doc['ActualDepartureTime'].toDate() ??  DateTime.now(),
+        driverId: doc['DriverId'] ?? '',
+        intendedArrivalTime: doc['IntendedArrivalTime'].toDate() ??  DateTime.now(),
+        intendedDepartureTime: doc['IntendedDepartureTime'].toDate() ??  DateTime.now(),
+        routeId: doc['RouteId'] ?? '',
+        vehicleId: doc['VehicleId'] ?? '',
       );
     }).toList();
   }

@@ -4,6 +4,7 @@ import 'package:driver/models/vehicle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
+import 'package:driver/services/database.dart';
 
 class RouteForm extends StatefulWidget {
   const RouteForm({super.key});
@@ -93,6 +94,15 @@ class _RouteFormState extends State<RouteForm> {
                   SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
+                      DatabaseService().createTrip(
+                        actualArrivalTime: DateTime.now(),
+                        actualDepartureTime: DateTime.now(),
+                        driverId: 'driverId',
+                        intendedArrivalTime: DateTime.now(),
+                        intendedDepartureTime: DateTime.now(),
+                        routeId: 'routeId',
+                        vehicleId: 'vehicleId',
+                      );
                     },
                     child: Text('Iniciar Viagem'),
                   )
