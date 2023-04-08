@@ -13,6 +13,24 @@ class RouteForm extends StatefulWidget {
   State<RouteForm> createState() => _RouteFormState();
 }
 
+String formatNumberTo2digits(int number) {
+  return (number < 10 ? '0${number}' : number).toString();
+}
+
+String formatDateTime2DateAndTimeString(DateTime original) {
+  String hr = formatNumberTo2digits(original.hour);
+  String min = formatNumberTo2digits(original.minute);
+  
+  String day = formatNumberTo2digits(original.day);
+  String month = formatNumberTo2digits(original.month);
+  String year = '${original.year}';
+
+  String time = '$hr:$min';
+  String date = '$day/$month/$year';
+  
+  return '$time - $date';
+}
+
 class _RouteFormState extends State<RouteForm> {
   RouteModel? _currentRoute;
 
@@ -73,7 +91,7 @@ class _RouteFormState extends State<RouteForm> {
                     items: trips.map((hour) {
                       return DropdownMenuItem(
                         value: hour,
-                        child: Text(hour.intendedDepartureTime.toString()),
+                        child: Text(formatDateTime2DateAndTimeString(hour.intendedDepartureTime)),
                       );
                     }).toList(), 
                     onChanged: (value) { 
