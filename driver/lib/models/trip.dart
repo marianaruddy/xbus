@@ -1,26 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Trip {
-  final DateTime actualArrivalTime;
-  final DateTime actualDepartureTime;
+  final DateTime? actualArrivalTime;
+  final DateTime? actualDepartureTime;
   final String driverId;
-  // final DateTime driverRef;
+  final DocumentReference? driverRef;
   final DateTime intendedArrivalTime;
   final DateTime intendedDepartureTime;
   final String routeId;
-  // final DateTime routeRef;
+  final DocumentReference? routeRef;
   final String vehicleId;
-  // final DateTime vehicleRef;
+  final DocumentReference? vehicleRef;
 
   Trip ({
-    required this.actualArrivalTime,
-    required this.actualDepartureTime,
+    this.actualArrivalTime,
+    this.actualDepartureTime,
     required this.driverId,
-    // required this.driverRef,
+    this.driverRef,
     required this.intendedArrivalTime,
     required this.intendedDepartureTime,
     required this.routeId,
-    // required this.routeRef,
+    this.routeRef,
     required this.vehicleId,
-    // required this.vehicleRef,
+    this.vehicleRef,
   });
 
 }
