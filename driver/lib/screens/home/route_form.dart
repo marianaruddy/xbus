@@ -1,6 +1,7 @@
 import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
+import 'package:driver/screens/Page2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
@@ -112,15 +113,16 @@ class _RouteFormState extends State<RouteForm> {
                   SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
-                      DatabaseService().createTrip(
-                        actualArrivalTime: DateTime.now(),
-                        actualDepartureTime: DateTime.now(),
-                        driverId: 'driverId',
-                        intendedArrivalTime: DateTime.now(),
-                        intendedDepartureTime: DateTime.now(),
-                        routeId: 'routeId',
-                        vehicleId: 'vehicleId',
+                      DatabaseService().updateTrip(
+                        'uNmERZYMO878TnTCJcXB', //TODO: MUDAR AQUI
+                        {
+                          'ActualDepartureTime': DateTime.now(),
+                        }
                       );
+                      Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(builder: (context) => Page2())
+                        );
                     },
                     child: Text('Iniciar Viagem'),
                   )

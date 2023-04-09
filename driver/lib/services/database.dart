@@ -59,6 +59,9 @@ class DatabaseService {
       'vehicleId': vehicleId,
     });
   }
+  Future updateTrip(docId, data) async {
+    tripCollection.doc(docId).update(data);
+  }
 
   List<Trip> _tripsListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
