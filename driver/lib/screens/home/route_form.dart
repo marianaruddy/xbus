@@ -1,7 +1,7 @@
 import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
-import 'package:driver/screens/Page2.dart';
+import 'package:driver/screens/page2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
@@ -114,7 +114,7 @@ class _RouteFormState extends State<RouteForm> {
                   ElevatedButton(
                     onPressed: () {
                       DatabaseService().updateTrip(
-                        'uNmERZYMO878TnTCJcXB', //TODO: MUDAR AQUI
+                        _currentHour?.id,
                         {
                           'ActualDepartureTime': DateTime.now(),
                         }

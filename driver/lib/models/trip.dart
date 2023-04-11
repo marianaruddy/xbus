@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Trip {
+  final String id;
   final DateTime? actualArrivalTime;
   final DateTime? actualDepartureTime;
   final String driverId;
@@ -13,6 +14,7 @@ class Trip {
   final DocumentReference? vehicleRef;
 
   Trip ({
+    required this.id,
     this.actualArrivalTime,
     this.actualDepartureTime,
     required this.driverId,

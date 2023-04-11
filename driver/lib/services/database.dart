@@ -72,6 +72,7 @@ class DatabaseService {
   List<Trip> _tripsListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return Trip(
+        id: doc.id,
         actualArrivalTime: doc['ActualArrivalTime'] != null ? (doc['ActualArrivalTime'] as Timestamp).toDate() : null,
         actualDepartureTime: doc['ActualDepartureTime'] != null ? (doc['ActualDepartureTime'] as Timestamp).toDate() : null,
         driverId: doc['DriverId'] ?? '',
