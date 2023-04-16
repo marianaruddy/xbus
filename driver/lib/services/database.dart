@@ -10,6 +10,7 @@ class DatabaseService {
   List<RouteModel> _routeListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return RouteModel(
+        id: doc.id,
         destiny: doc['destiny'] ?? '',
         number: doc['number'] ?? '',
         origin: doc['origin'] ?? '',

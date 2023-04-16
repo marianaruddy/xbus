@@ -51,6 +51,12 @@ class _RouteFormState extends State<RouteForm> {
     final trips = Provider.of<List<Trip>?>(context) ?? [];
   
     final _formKey = GlobalKey<FormState>();
+
+    List<Trip> selectedRoutesTrips =  [];
+  
+    if (_currentRoute != null) {
+      selectedRoutesTrips = trips.where((trip) => trip.routeId == _currentRoute?.id).toList();
+    }
   
     return Container(
             child: Form(
@@ -88,10 +94,10 @@ class _RouteFormState extends State<RouteForm> {
                   ) : 
                   Text('Nenhum veículo cadastrado'),
                   SizedBox(height: 20.0),
-                  trips.length > 0 ? DropdownButtonFormField<Trip>(
+                  selectedRoutesTrips.length > 0 ? DropdownButtonFormField<Trip>(
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
                     value: _currentHour,
-                    items: trips.map((hour) {
+                    items: selectedRoutesTrips.map((hour) {
                       return DropdownMenuItem(
                         value: hour,
                         child: Text(formatDateTime2DateAndTimeString(hour.intendedDepartureTime)),
@@ -100,8 +106,11 @@ class _RouteFormState extends State<RouteForm> {
                     onChanged: (value) { 
                       setState(() { _currentHour = value; });
                     },
-                  ) : 
-                  Text('Nenhum horário cadastrado'),
+                  ) : (
+                    _currentRoute == null
+                    ? Text('Selecione uma rota') 
+                    : Text('Nenhum horário cadastrado')
+                  ),
                   SizedBox(height: 20.0),
     
                   // TODO: add google maps integration
