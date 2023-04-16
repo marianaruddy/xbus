@@ -39,6 +39,8 @@ class _RouteFormState extends State<RouteForm> {
 
   Trip? _currentHour;
     
+  Trip? _selectedHour;
+
   @override
   Widget build(BuildContext context) {
 
@@ -113,8 +115,10 @@ class _RouteFormState extends State<RouteForm> {
                   SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
+                      _selectedHour = _currentHour;
+                      _currentHour = null;
                       DatabaseService().updateTrip(
-                        _currentHour?.id,
+                        _selectedHour?.id,
                         {
                           'ActualDepartureTime': DateTime.now(),
                         }
