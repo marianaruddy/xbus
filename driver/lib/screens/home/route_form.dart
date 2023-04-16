@@ -1,15 +1,35 @@
 import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
+import 'package:driver/screens/page2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
+import 'package:driver/services/database.dart';
 
 class RouteForm extends StatefulWidget {
   const RouteForm({super.key});
 
   @override
   State<RouteForm> createState() => _RouteFormState();
+}
+
+String formatNumberTo2digits(int number) {
+  return (number < 10 ? '0${number}' : number).toString();
+}
+
+String formatDateTime2DateAndTimeString(DateTime original) {
+  String hr = formatNumberTo2digits(original.hour);
+  String min = formatNumberTo2digits(original.minute);
+  
+  String day = formatNumberTo2digits(original.day);
+  String month = formatNumberTo2digits(original.month);
+  String year = '${original.year}';
+
+  String time = '$hr:$min';
+  String date = '$day/$month/$year';
+  
+  return '$time - $date';
 }
 
 class _RouteFormState extends State<RouteForm> {
@@ -19,6 +39,8 @@ class _RouteFormState extends State<RouteForm> {
 
   Trip? _currentHour;
     
+  Trip? _selectedHour;
+
   @override
   Widget build(BuildContext context) {
 
@@ -29,6 +51,12 @@ class _RouteFormState extends State<RouteForm> {
     final trips = Provider.of<List<Trip>?>(context) ?? [];
   
     final _formKey = GlobalKey<FormState>();
+
+    List<Trip> selectedRoutesTrips =  [];
+  
+    if (_currentRoute != null) {
+      selectedRoutesTrips = trips.where((trip) => trip.routeId == _currentRoute?.id).toList();
+    }
   
     return Container(
             child: Form(
@@ -66,20 +94,23 @@ class _RouteFormState extends State<RouteForm> {
                   ) : 
                   Text('Nenhum veículo cadastrado'),
                   SizedBox(height: 20.0),
-                  trips.length > 0 ? DropdownButtonFormField<Trip>(
+                  selectedRoutesTrips.length > 0 ? DropdownButtonFormField<Trip>(
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
                     value: _currentHour,
-                    items: trips.map((hour) {
+                    items: selectedRoutesTrips.map((hour) {
                       return DropdownMenuItem(
                         value: hour,
-                        child: Text(hour.intendedDepartureTime.toString()),
+                        child: Text(formatDateTime2DateAndTimeString(hour.intendedDepartureTime)),
                       );
                     }).toList(), 
                     onChanged: (value) { 
                       setState(() { _currentHour = value; });
                     },
-                  ) : 
-                  Text('Nenhum horário cadastrado'),
+                  ) : (
+                    _currentRoute == null
+                    ? Text('Selecione uma rota') 
+                    : Text('Nenhum horário cadastrado')
+                  ),
                   SizedBox(height: 20.0),
     
                   // TODO: add google maps integration
@@ -93,6 +124,18 @@ class _RouteFormState extends State<RouteForm> {
                   SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {
+                      _selectedHour = _currentHour;
+                      _currentHour = null;
+                      DatabaseService().updateTrip(
+                        _selectedHour?.id,
+                        {
+                          'ActualDepartureTime': DateTime.now(),
+                        }
+                      );
+                      Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(builder: (context) => Page2())
+                        );
                     },
                     child: Text('Iniciar Viagem'),
                   )

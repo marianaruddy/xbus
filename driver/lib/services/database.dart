@@ -10,6 +10,7 @@ class DatabaseService {
   List<RouteModel> _routeListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return RouteModel(
+        id: doc.id,
         destiny: doc['destiny'] ?? '',
         number: doc['number'] ?? '',
         origin: doc['origin'] ?? '',
@@ -40,10 +41,49 @@ class DatabaseService {
 
   final CollectionReference tripCollection = FirebaseFirestore.instance.collection('Trip');
 
+  Future createTrip({
+    DateTime? actualArrivalTime,
+    DateTime? actualDepartureTime,
+    required String driverId,
+    DocumentReference? driverRef,
+    required DateTime intendedArrivalTime,
+    required DateTime intendedDepartureTime,
+    DocumentReference? routeRef,
+    required String routeId,
+    required String vehicleId,
+    DocumentReference? vehicleRef,
+  }) async {
+    await tripCollection.doc().set({
+      'ActualArrivalTime': actualArrivalTime,
+      'ActualDepartureTime': actualDepartureTime,
+      'DriverId': driverId,
+      'DriverRef': driverRef,
+      'IntendedArrivalTime': intendedArrivalTime,
+      'IntendedDepartureTime': intendedDepartureTime,
+      'RouteId': routeId,
+      'RouteRef': routeRef,
+      'VehicleId': vehicleId,
+      'VehicleRef': vehicleRef,
+    });
+  }
+  Future updateTrip(docId, data) async {
+    tripCollection.doc(docId).update(data);
+  }
+
   List<Trip> _tripsListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return Trip(
-        intendedDepartureTime: doc['IntendedDepartureTime'].toDate(),
+        id: doc.id,
+        actualArrivalTime: doc['ActualArrivalTime'] != null ? (doc['ActualArrivalTime'] as Timestamp).toDate() : null,
+        actualDepartureTime: doc['ActualDepartureTime'] != null ? (doc['ActualDepartureTime'] as Timestamp).toDate() : null,
+        driverId: doc['DriverId'] ?? '',
+        driverRef: doc['DriverRef'],
+        intendedArrivalTime: (doc['IntendedArrivalTime'] as Timestamp).toDate(),
+        intendedDepartureTime: (doc['IntendedDepartureTime'] as Timestamp).toDate(),
+        routeId: doc['RouteId'] ?? '',
+        routeRef: doc['RouteRef'],
+        vehicleId: doc['VehicleId'] ?? '',
+        vehicleRef: doc['VehicleRef'],
       );
     }).toList();
   }
