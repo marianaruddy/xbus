@@ -52,11 +52,8 @@ class _RouteFormState extends State<RouteForm> {
   
     final _formKey = GlobalKey<FormState>();
 
-    List<Trip> selectedRoutesTrips =  [];
+    List<Trip> selectedRoutesTrips = _currentRoute != null ? trips.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
   
-    if (_currentRoute != null) {
-      selectedRoutesTrips = trips.where((trip) => trip.routeId == _currentRoute?.id).toList();
-    }
   
     return Container(
             child: Form(
@@ -130,6 +127,8 @@ class _RouteFormState extends State<RouteForm> {
                         _selectedHour?.id,
                         {
                           'ActualDepartureTime': DateTime.now(),
+                          'RouteId': _currentRoute?.id,
+                          'VehicleId': _currentLicensePlate?.id,
                         }
                       );
                       Navigator.of(context)

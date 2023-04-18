@@ -28,6 +28,7 @@ class DatabaseService {
   List<Vehicle> _vehicleListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return Vehicle(
+        id: doc.id,
         licensePlate: doc['LicensePlate'] ?? '',
         capacity: doc['Capacity'] ?? 0,
       );
