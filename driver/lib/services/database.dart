@@ -23,11 +23,19 @@ class DatabaseService {
       .map(_routeListFromSnapshot);
   }
 
+  DocumentReference? getRouteRefById(String? id) {
+    if (id != null) {
+      return routeCollection.doc(id);
+    }
+    return null;
+  }
+
   final CollectionReference vehicleCollection = FirebaseFirestore.instance.collection('Vehicle');
 
   List<Vehicle> _vehicleListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return Vehicle(
+        id: doc.id,
         licensePlate: doc['LicensePlate'] ?? '',
         capacity: doc['Capacity'] ?? 0,
       );
@@ -37,6 +45,13 @@ class DatabaseService {
   Stream<List<Vehicle>> get vehicles {
     return vehicleCollection.snapshots()
       .map(_vehicleListFromSnapshot);
+  }
+
+  DocumentReference? getVehicleRefById(String? id) {
+    if (id != null) {
+      return vehicleCollection.doc(id);
+    }
+    return null;
   }
 
   final CollectionReference tripCollection = FirebaseFirestore.instance.collection('Trip');
