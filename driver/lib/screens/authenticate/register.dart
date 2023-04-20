@@ -1,4 +1,5 @@
 import 'package:driver/services/auth.dart';
+import 'package:driver/services/database.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,9 @@ class _RegisterState extends State<Register> {
   
   String email = '';
   String password = '';
+  String name = '';
+  String company = '';
+  String document = '';
   
   String error = '';
 
@@ -61,6 +65,36 @@ class _RegisterState extends State<Register> {
               ),
               SizedBox(height: 20.0),
               TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Nome'),
+                validator: (value) => (
+                  value!.isEmpty ? 'Digite seu nome' : null
+                ),
+                onChanged: (value) {
+                  setState(() => name = value);
+                },
+              ),
+              SizedBox(height: 20.0),
+              TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Empresa'),
+                validator: (value) => (
+                  value!.isEmpty ? 'Digite sua empresa' : null
+                ),
+                onChanged: (value) {
+                  setState(() => company = value);
+                },
+              ),
+              SizedBox(height: 20.0),
+              TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Documento'),
+                validator: (value) => (
+                  value!.isEmpty ? 'Digite um documento' : null
+                ),
+                onChanged: (value) {
+                  setState(() => document = value);
+                },
+              ),
+              SizedBox(height: 20.0),
+              TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'Senha'),
                 obscureText: true,
                 validator: (value) => (
@@ -81,6 +115,15 @@ class _RegisterState extends State<Register> {
                         error = 'Digite um e-mail válido';
                         loading = false;
                       });
+                    } else {
+                      DatabaseService().updateDriver(
+                        result.uid, 
+                        email,
+                        company,
+                        document,
+                        name,
+                        'photo',
+                      );
                     }
                   }
                 }, 
