@@ -2,6 +2,7 @@ import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/page2.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
@@ -51,6 +52,8 @@ class _RouteFormState extends State<RouteForm> {
     final trips = Provider.of<List<Trip>?>(context) ?? [];
   
     final _formKey = GlobalKey<FormState>();
+
+    final uid = FirebaseAuth.instance.currentUser?.uid;
 
     List<Trip> selectedRoutesTrips = _currentRoute != null ? trips.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
   
@@ -127,6 +130,8 @@ class _RouteFormState extends State<RouteForm> {
                         _selectedHour?.id,
                         {
                           'ActualDepartureTime': DateTime.now(),
+                          'DriverId': uid,
+                          'DriverRef': DatabaseService().getDriverRefById(uid),
                           'RouteId': _currentRoute?.id,
                           'RouteRef': DatabaseService().getRouteRefById(_currentRoute?.id),
                           'VehicleId': _currentLicensePlate?.id,

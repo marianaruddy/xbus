@@ -120,4 +120,11 @@ class DatabaseService {
     });
   }
 
+  DocumentReference? getDriverRefById(String? id) {
+    if (id != null) {
+      return driverCollection.doc(id);
+    }
+    return null;
+  }
+
 }
