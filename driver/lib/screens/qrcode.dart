@@ -1,4 +1,5 @@
 import 'package:driver/screens/comfirm_scan.dart';
+import 'package:driver/services/database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -48,7 +49,27 @@ class QrCodePage extends StatelessWidget {
             ),
           ],
         ),
-        body: MobileScanner(
+        body: QRCodePageBody(cameraController),
+      
+    );
+  }
+}
+
+class QRCodePageBody extends StatefulWidget {
+  MobileScannerController cameraController;
+  QRCodePageBody(this.cameraController);
+
+  @override
+  State<QRCodePageBody> createState() => _QRCodePageBodyState(cameraController);
+}
+
+class _QRCodePageBodyState extends State<QRCodePageBody> {
+  
+  MobileScannerController cameraController;
+  _QRCodePageBodyState(this.cameraController);
+  @override
+  Widget build(BuildContext context) {
+    return MobileScanner(
           // fit: BoxFit.contain,
           controller: cameraController,
           onDetect: (capture) {
@@ -58,6 +79,13 @@ class QrCodePage extends StatelessWidget {
               debugPrint('Barcode found! ${barcode.rawValue}');
             }
             cameraController.stop();
+            try {
+              DatabaseService().updateTicket(barcodes[0].rawValue, {
+                'Checked': true,
+              });
+            } catch (e) {
+              
+            }
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
@@ -65,7 +93,6 @@ class QrCodePage extends StatelessWidget {
               }),
             ).then((value) => cameraController.start());
           },
-        ),
-    );
+        );
   }
 }
