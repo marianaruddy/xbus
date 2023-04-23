@@ -12,11 +12,12 @@ class ConfirmScan extends StatelessWidget {
 
     Timer(const Duration(milliseconds: 3000), () => Navigator.pop(context));
 
-    return  Scaffold(
-      appBar: AppBar(
-        elevation: 0.0,
-      ),
-      body: Text('ticket scaneado com sucesso: \n$code'),
-    );
+    // return  Scaffold(
+    //   appBar: AppBar(
+    //     elevation: 0.0,
+    //   ),
+    //   body: Text('ticket scaneado com sucesso: \n$code'),
+    // );
+    return Text('ticket scaneado com sucesso: \n$code');
   }
 }

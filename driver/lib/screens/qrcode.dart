@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:driver/models/ticket.dart';
 import 'package:driver/screens/comfirm_scan.dart';
 import 'package:driver/services/database.dart';
@@ -72,6 +73,19 @@ class QRCodePageBody extends StatefulWidget {
   State<QRCodePageBody> createState() => _QRCodePageBodyState(cameraController);
 }
 
+showTemporaryDialog (String status, String? code, context) {
+  Timer timer = Timer(const Duration(milliseconds: 3000), () => Navigator.pop(context));
+  return SimpleDialog(
+    title: Text('$status: $code'),
+    children: <Widget>[
+      SimpleDialogOption(
+        onPressed: () { timer.cancel(); Navigator.pop(context); },
+        child: const Text('fechar'),
+      ),
+    ],
+  );
+} 
+
 class _QRCodePageBodyState extends State<QRCodePageBody> {
   
   MobileScannerController cameraController;
@@ -106,19 +120,21 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
             if(scannedTicket.checked == false) {
               await DatabaseService().updateTicket(code, {
                 'Checked': true,
+              }).then((value) => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return showTemporaryDialog('sucesso', code, context);
+                  }),
+                ).then((value) => cameraController.start())
               });
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return ConfirmScan(barcodes[0].rawValue);
-                }),
-              ).then((value) => cameraController.start());
+              
             }
             else {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return ConfirmScan('ERROR: Ticket já usado');
+                  return showTemporaryDialog('erro', code, context);
                 }),
               ).then((value) => cameraController.start());
             }
