@@ -2,6 +2,7 @@ import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/page2.dart';
+import 'package:driver/screens/qrcode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -144,7 +145,16 @@ class _RouteFormState extends State<RouteForm> {
                         );
                     },
                     child: Text('Iniciar Viagem'),
-                  )
+                  ),
+                  SizedBox(height: 20.0),
+                  ElevatedButton( // TODO: tirar daqui
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => QrCodePage(),
+                      ));
+                    },
+                    child: Text('Scan code'),
+                  ),
                 ],
               ),
             ),);
