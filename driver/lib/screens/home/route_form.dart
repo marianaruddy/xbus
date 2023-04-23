@@ -2,6 +2,7 @@ import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/page2.dart';
+import 'package:driver/screens/qrcode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -138,13 +139,22 @@ class _RouteFormState extends State<RouteForm> {
                           'VehicleRef': DatabaseService().getVehicleRefById(_currentLicensePlate?.id),
                         }
                       );
-                      Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(builder: (context) => Page2())
-                        );
+                      // Navigator.of(context)
+                      //   .push(
+                      //     MaterialPageRoute(builder: (context) => Page2(null))
+                      //   );
                     },
                     child: Text('Iniciar Viagem'),
-                  )
+                  ),
+                  SizedBox(height: 20.0),
+                  ElevatedButton( // TODO: tirar daqui
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const QRViewExample(),
+                      ));
+                    },
+                    child: Text('Scan code'),
+                  ),
                 ],
               ),
             ),);
