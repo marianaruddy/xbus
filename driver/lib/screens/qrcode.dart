@@ -90,6 +90,7 @@ class _QRViewExampleState extends State<QRViewExample> {
       if(gotValidQR) {
       return;
     }
+    controller.pauseCamera();
     gotValidQR = true;
     dynamic pop = await Navigator.push(
       context,
