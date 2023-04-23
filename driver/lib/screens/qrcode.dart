@@ -1,8 +1,10 @@
+import 'package:driver/models/ticket.dart';
 import 'package:driver/screens/comfirm_scan.dart';
 import 'package:driver/services/database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
 
 class QrCodePage extends StatelessWidget {
   QrCodePage({Key? key});
@@ -11,7 +13,14 @@ class QrCodePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MultiProvider(
+      providers: [
+        StreamProvider<List<Ticket>?>.value(
+          value: DatabaseService().tickets,
+          initialData: null,
+        ),
+      ],
+      child: Scaffold(
         appBar: AppBar(
           title: const Text('Mobile Scanner'),
           actions: [
@@ -50,7 +59,7 @@ class QrCodePage extends StatelessWidget {
           ],
         ),
         body: QRCodePageBody(cameraController),
-      
+      )
     );
   }
 }
@@ -67,8 +76,14 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
   
   MobileScannerController cameraController;
   _QRCodePageBodyState(this.cameraController);
+
   @override
   Widget build(BuildContext context) {
+  
+    final tickets = Provider.of<List<Ticket>?>(context) ?? [];
+
+    print('tickets $tickets');
+
     return MobileScanner(
           // fit: BoxFit.contain,
           controller: cameraController,
@@ -79,12 +94,25 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
               debugPrint('Barcode found! ${barcode.rawValue}');
             }
             cameraController.stop();
+            String? code = barcodes[0].rawValue;
             try {
-              DatabaseService().updateTicket(barcodes[0].rawValue, {
-                'Checked': true,
-              });
+              bool isTicketChecked = false;
+              Ticket? scannedTicket;
+              for (Ticket t in tickets) {
+                if (t.id == code) {
+                  scannedTicket = t;
+                  if(scannedTicket.checked == false) {
+                    DatabaseService().updateTicket(code, {
+                      'Checked': true,
+                    });
+                  }
+                  else {
+                    throw Exception('Ticket já usado');
+                  }
+                }
+              }              
             } catch (e) {
-              
+              print('erro: $e');
             }
             Navigator.push(
               context,

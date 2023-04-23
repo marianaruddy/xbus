@@ -12,51 +12,12 @@ class ConfirmScan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    // final tickets = Provider.of<List<Ticket>?>(context) ?? [];
-
-    // print('tickets $tickets');
-
-    return MultiProvider(
-      providers: [
-        StreamProvider<List<Ticket>?>.value(
-          value: DatabaseService().tickets,
-          initialData: null,
-        ),
-      ],
-      child: Scaffold(
+    return  Scaffold(
         appBar: AppBar(
           elevation: 0.0,
         ),
-        body: ConfirmScanWidget(code),
-      )
+        body: Text('ticket scaneado com sucesso: \n$code'),
+      
     );
-  }
-}
-class ConfirmScanWidget extends StatelessWidget {
-  String? code;
-  ConfirmScanWidget(
-    this.code,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-
-    final tickets = Provider.of<List<Ticket>?>(context) ?? [];
-
-    print('tickets $tickets');
-
-    for (Ticket t in tickets) {
-      if (t.id == code) {
-        print("-- id: ${t.id}");
-        print("-- BoardingHour: ${t.boardingHour}");
-        print("-- Checked: ${t.checked}");
-        print("-- Price: ${t.price}");
-        print("-- StopId: ${t.stopId}");
-        print("-- StopRef: ${t.stopRef}");
-      }
-      print(t.id);
-    }
-
-    return Text('ticket scaneado com sucesso: \n$code');
   }
 }
