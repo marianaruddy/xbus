@@ -86,6 +86,24 @@ showTemporaryDialog (String status, String? code, context) {
   );
 } 
 
+_showTemporaryDialog (String status, String? code, context, cameraController) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) {
+      Timer timer = Timer(const Duration(milliseconds: 3000), () => Navigator.pop(context));
+      return SimpleDialog(
+        title: Text('$status: $code'),
+        children: <Widget>[
+          SimpleDialogOption(
+            onPressed: () { timer.cancel(); Navigator.pop(context); },
+            child: const Text('fechar'),
+          ),
+        ],
+      );
+    }),
+  ).then((value) => cameraController.start());
+}
+
 class _QRCodePageBodyState extends State<QRCodePageBody> {
   
   MobileScannerController cameraController;
@@ -112,7 +130,6 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
         }
         cameraController.stop();
         String? code = barcodes[0].rawValue;
-        bool isTicketChecked = false;
         Ticket? scannedTicket;
         for (Ticket t in tickets) {
           if (t.id == code) {
@@ -121,22 +138,12 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
               await DatabaseService().updateTicket(code, {
                 'Checked': true,
               }).then((value) => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return showTemporaryDialog('sucesso', code, context);
-                  }),
-                ).then((value) => cameraController.start())
+                _showTemporaryDialog('sucesso', code, context, cameraController)
               });
               
             }
             else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return showTemporaryDialog('erro', code, context);
-                }),
-              ).then((value) => cameraController.start());
+              _showTemporaryDialog('erro', code, context, cameraController);
             }
           }
         }
