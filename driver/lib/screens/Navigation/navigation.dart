@@ -16,7 +16,8 @@ class Navigation extends StatefulWidget {
 
 class RoundedNumber extends StatelessWidget {
   int number;
-  RoundedNumber(this.number);
+  String message;
+  RoundedNumber(this.number, this.message);
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +25,14 @@ class RoundedNumber extends StatelessWidget {
       width:50.0,
       height:50.0,
       alignment: Alignment.center,
-      child: Text(
-        '$number',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 34
+      child: Tooltip(
+        message: message,
+        child: Text(
+          '$number',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 34
+          ),
         ),
       ),
       decoration: BoxDecoration(
@@ -58,8 +62,8 @@ class _NavigationState extends State<Navigation> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              RoundedNumber(peopleInBus),
-              RoundedNumber(peopleAtNextStop),
+              RoundedNumber(peopleInBus, 'Pessoas atualmente no ônibus'),
+              RoundedNumber(peopleAtNextStop, 'Pessoas esperando no próximo ponto'),
             ],
           ),
           Expanded(
