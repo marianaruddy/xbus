@@ -76,28 +76,48 @@ class _NavigationState extends State<Navigation> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  DatabaseService().updateTrip(
-                  selectedTrip?.id,
-                  {
-                    'ActualArrivalTime': DateTime.now(),
-                  }
-                );
-                Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(builder: (context) => Home())
+              Tooltip(
+                message: 'Finalizar Viagem',
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(15.0),
+                  ),
+                  onPressed: () {
+                    DatabaseService().updateTrip(
+                    selectedTrip?.id,
+                    {
+                      'ActualArrivalTime': DateTime.now(),
+                    }
                   );
-                },
-                child: Text('Finalizar Viagem'),
+                  Navigator.of(context)
+                    .push(
+                      MaterialPageRoute(builder: (context) => Home())
+                    );
+                  },
+                  child: Icon(
+                    Icons.flag,
+                    size: 40.0,
+                  ),
+                ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => QrCodePage(),
-                  ));
-                },
-                child: Text('Escanear ticket'),
+              Tooltip(
+                message: 'Escanear ticket',
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(15.0),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => QrCodePage(),
+                    ));
+                  },
+                  child: Icon(
+                    Icons.qr_code_scanner,
+                    size: 40.0,
+                  ),
+                ),
               ),
             ],
           ),
