@@ -65,12 +65,15 @@ class _RouteFormState extends State<RouteForm> {
                 children: [
                   SizedBox(height: 20.0),
                   routes.length > 0 ? DropdownButtonFormField<RouteModel>(
+                    isExpanded: true,
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione uma rota'),
                     value: _currentRoute,
                     items: routes.map((route) {
                       return DropdownMenuItem(
                         value: route,
-                        child: Text('Linha ${route.number.toString()}: ${route.origin} - ${route.destiny}'),
+                        child: Text('Linha ${route.number.toString()}: ${route.origin} - ${route.destiny}',
+                        overflow: TextOverflow.visible,
+                      ),
                       );
                     }).toList(), 
                     onChanged: (value) {
@@ -80,12 +83,15 @@ class _RouteFormState extends State<RouteForm> {
                   Text('Nenhuma rota cadastrada'),
                   SizedBox(height: 20.0),
                   licensePlates.length > 0 ? DropdownButtonFormField<Vehicle>(
+                    isExpanded: true,
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
                     value: _currentLicensePlate,
                     items: licensePlates.map((license) {
                       return DropdownMenuItem(
                         value: license,
-                        child: Text(license.licensePlate.toString()),
+                        child: Text(license.licensePlate.toString(),
+                          overflow: TextOverflow.visible,
+                        ),
                       );
                     }).toList(), 
                     onChanged: (value) {
@@ -95,12 +101,15 @@ class _RouteFormState extends State<RouteForm> {
                   Text('Nenhum veículo cadastrado'),
                   SizedBox(height: 20.0),
                   selectedRoutesTrips.length > 0 ? DropdownButtonFormField<Trip>(
+                    isExpanded: true,
                     decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
                     value: _currentHour,
                     items: selectedRoutesTrips.map((hour) {
                       return DropdownMenuItem(
                         value: hour,
-                        child: Text(formatDateTime2DateAndTimeString(hour.intendedDepartureTime)),
+                        child: Text(formatDateTime2DateAndTimeString(hour.intendedDepartureTime),
+                          overflow: TextOverflow.visible,
+                        ),
                       );
                     }).toList(), 
                     onChanged: (value) { 

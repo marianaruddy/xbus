@@ -12,9 +12,9 @@ class DatabaseService {
     return snapshot.docs.map((doc) {
       return RouteModel(
         id: doc.id,
-        destiny: doc['destiny'] ?? '',
-        number: doc['number'] ?? '',
-        origin: doc['origin'] ?? '',
+        destiny: doc['Destiny'] ?? '',
+        number: doc['Number'] ?? '',
+        origin: doc['Origin'] ?? '',
       );
     }).toList();
   }
