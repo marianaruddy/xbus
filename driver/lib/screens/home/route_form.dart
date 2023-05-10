@@ -139,6 +139,7 @@ class _RouteFormState extends State<RouteForm> {
                         _selectedHour?.id,
                         {
                           'ActualDepartureTime': DateTime.now(),
+                          'ActualArrivalTime': null,
                           'DriverId': uid,
                           'DriverRef': DatabaseService().getDriverRefById(uid),
                           'RouteId': _currentRoute?.id,
