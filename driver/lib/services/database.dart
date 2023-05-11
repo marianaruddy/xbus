@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/models/route.dart';
+import 'package:driver/models/route_stop.dart';
 import 'package:driver/models/ticket.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
@@ -166,4 +167,28 @@ class DatabaseService {
     ticketCollection.doc(docId).update(data);
   }
 
+  List<RouteStop> _routeStopsFromSnapshot(QuerySnapshot snapshot) {
+    try {
+      return snapshot.docs.map((doc) {
+        return RouteStop(
+          id: doc.id,
+          stopId: doc['StopId'] ?? false,
+          routeId: doc['RouteId'] ?? false,
+          order: doc['Order'],
+        );
+      }).toList();
+      
+    } catch (e) {
+      print('erro: $e');
+      return [];
+    }
+  }
+
+  final CollectionReference routeStopCollection = FirebaseFirestore.instance.collection('RouteStops');
+  
+  Stream<List<RouteStop>> get routeStops {
+    return routeStopCollection.snapshots()
+      .map(_routeStopsFromSnapshot);
+  }
+  
 }
