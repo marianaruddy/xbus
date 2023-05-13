@@ -2,6 +2,7 @@ import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/Navigation/navigation.dart';
+import 'package:driver/screens/map_example.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -61,102 +62,99 @@ class _RouteFormState extends State<RouteForm> {
     return Container(
             child: Form(
               key: _formKey,
-              child: Column(
-                children: [
-                  SizedBox(height: 20.0),
-                  routes.length > 0 ? DropdownButtonFormField<RouteModel>(
-                    isExpanded: true,
-                    decoration: textInputDecoration.copyWith(hintText: 'Selecione uma rota'),
-                    value: _currentRoute,
-                    items: routes.map((route) {
-                      return DropdownMenuItem(
-                        value: route,
-                        child: Text('Linha ${route.number.toString()}: ${route.origin} - ${route.destiny}',
-                        overflow: TextOverflow.visible,
-                      ),
-                      );
-                    }).toList(), 
-                    onChanged: (value) {
-                      setState(() { _currentRoute = value; });
-                    },
-                  ) : 
-                  Text('Nenhuma rota cadastrada'),
-                  SizedBox(height: 20.0),
-                  licensePlates.length > 0 ? DropdownButtonFormField<Vehicle>(
-                    isExpanded: true,
-                    decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
-                    value: _currentLicensePlate,
-                    items: licensePlates.map((license) {
-                      return DropdownMenuItem(
-                        value: license,
-                        child: Text(license.licensePlate.toString(),
+              child: Expanded(
+                child: Column(
+                  children: [
+                    SizedBox(height: 20.0),
+                    routes.length > 0 ? DropdownButtonFormField<RouteModel>(
+                      isExpanded: true,
+                      decoration: textInputDecoration.copyWith(hintText: 'Selecione uma rota'),
+                      value: _currentRoute,
+                      items: routes.map((route) {
+                        return DropdownMenuItem(
+                          value: route,
+                          child: Text('Linha ${route.number.toString()}: ${route.origin} - ${route.destiny}',
                           overflow: TextOverflow.visible,
                         ),
-                      );
-                    }).toList(), 
-                    onChanged: (value) {
-                      setState(() { _currentLicensePlate = value; });
-                    },
-                  ) : 
-                  Text('Nenhum veículo cadastrado'),
-                  SizedBox(height: 20.0),
-                  selectedRoutesTrips.length > 0 ? DropdownButtonFormField<Trip>(
-                    isExpanded: true,
-                    decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
-                    value: _currentHour,
-                    items: selectedRoutesTrips.map((hour) {
-                      return DropdownMenuItem(
-                        value: hour,
-                        child: Text(formatDateTime2DateAndTimeString(hour.intendedDepartureTime),
-                          overflow: TextOverflow.visible,
-                        ),
-                      );
-                    }).toList(), 
-                    onChanged: (value) { 
-                      setState(() { _currentHour = value; });
-                    },
-                  ) : (
-                    _currentRoute == null
-                    ? Text('Selecione uma rota') 
-                    : Text('Nenhum horário cadastrado')
-                  ),
-                  SizedBox(height: 20.0),
-    
-                  // TODO: add google maps integration
-    
-                  // // TODO: image not working
-                  // Image.asset(
-                  //   'assets/map.png',
-                  //   fit: BoxFit.contain,
-                  // ),
-    
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      _selectedHour = _currentHour;
-                      _currentHour = null;
-                      DatabaseService().updateTrip(
-                        _selectedHour?.id,
-                        {
-                          'ActualDepartureTime': DateTime.now(),
-                          'ActualArrivalTime': null,
-                          'DriverId': uid,
-                          'DriverRef': DatabaseService().getDriverRefById(uid),
-                          'RouteId': _currentRoute?.id,
-                          'RouteRef': DatabaseService().getRouteRefById(_currentRoute?.id),
-                          'VehicleId': _currentLicensePlate?.id,
-                          'VehicleRef': DatabaseService().getVehicleRefById(_currentLicensePlate?.id),
-                        }
-                      );
-                      Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(builder: (context) => Navigation(_selectedHour))
                         );
-                    },
-                    child: Text('Iniciar Viagem'),
-                  ),
-                  SizedBox(height: 20.0),
-                ],
+                      }).toList(), 
+                      onChanged: (value) {
+                        setState(() { _currentRoute = value; });
+                      },
+                    ) : 
+                    Text('Nenhuma rota cadastrada'),
+                    SizedBox(height: 20.0),
+                    licensePlates.length > 0 ? DropdownButtonFormField<Vehicle>(
+                      isExpanded: true,
+                      decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
+                      value: _currentLicensePlate,
+                      items: licensePlates.map((license) {
+                        return DropdownMenuItem(
+                          value: license,
+                          child: Text(license.licensePlate.toString(),
+                            overflow: TextOverflow.visible,
+                          ),
+                        );
+                      }).toList(), 
+                      onChanged: (value) {
+                        setState(() { _currentLicensePlate = value; });
+                      },
+                    ) : 
+                    Text('Nenhum veículo cadastrado'),
+                    SizedBox(height: 20.0),
+                    selectedRoutesTrips.length > 0 ? DropdownButtonFormField<Trip>(
+                      isExpanded: true,
+                      decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
+                      value: _currentHour,
+                      items: selectedRoutesTrips.map((hour) {
+                        return DropdownMenuItem(
+                          value: hour,
+                          child: Text(formatDateTime2DateAndTimeString(hour.intendedDepartureTime),
+                            overflow: TextOverflow.visible,
+                          ),
+                        );
+                      }).toList(), 
+                      onChanged: (value) { 
+                        setState(() { _currentHour = value; });
+                      },
+                    ) : (
+                      _currentRoute == null
+                      ? Text('Selecione uma rota') 
+                      : Text('Nenhum horário cadastrado')
+                    ),
+                    SizedBox(height: 20.0),
+                    // Expanded(
+                    //   child: MyMap(),
+                    // ),
+                  
+                    SizedBox(height: 20.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        _selectedHour = _currentHour;
+                        _currentHour = null;
+                        DatabaseService().updateTrip(
+                          _selectedHour?.id,
+                          {
+                            'ActualDepartureTime': DateTime.now(),
+                            'ActualArrivalTime': null,
+                            'DriverId': uid,
+                            'DriverRef': DatabaseService().getDriverRefById(uid),
+                            'RouteId': _currentRoute?.id,
+                            'RouteRef': DatabaseService().getRouteRefById(_currentRoute?.id),
+                            'VehicleId': _currentLicensePlate?.id,
+                            'VehicleRef': DatabaseService().getVehicleRefById(_currentLicensePlate?.id),
+                          }
+                        );
+                        Navigator.of(context)
+                          .push(
+                            MaterialPageRoute(builder: (context) => Navigation(_selectedHour))
+                          );
+                      },
+                      child: Text('Iniciar Viagem'),
+                    ),
+                    SizedBox(height: 20.0),
+                  ],
+                ),
               ),
             ),);
   }
