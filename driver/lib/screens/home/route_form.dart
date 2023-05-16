@@ -58,6 +58,10 @@ class _RouteFormState extends State<RouteForm> {
 
     List<Trip> selectedRoutesTrips = _currentRoute != null ? trips.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
   
+    double startLat = -22.9797462;
+    double startLong = -43.2382729;
+    double destinyLat = -22.947481;
+    double destinyLong = -43.182599;
   
     return Container(
             child: Form(
@@ -123,9 +127,9 @@ class _RouteFormState extends State<RouteForm> {
                       : Text('Nenhum horário cadastrado')
                     ),
                     SizedBox(height: 20.0),
-                    // Expanded(
-                    //   child: MyMap(),
-                    // ),
+                    Expanded(
+                      child: MyMap(destinyLat, destinyLong, startLat, startLong),
+                    ),
                   
                     SizedBox(height: 20.0),
                     ElevatedButton(
