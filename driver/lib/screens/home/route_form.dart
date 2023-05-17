@@ -2,7 +2,7 @@ import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/Navigation/navigation.dart';
-import 'package:driver/screens/map_example.dart';
+import 'package:driver/screens/navigation_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -128,7 +128,7 @@ class _RouteFormState extends State<RouteForm> {
                     ),
                     SizedBox(height: 20.0),
                     Expanded(
-                      child: MyMap(destinyLat, destinyLong, startLat, startLong),
+                      child: NavigationScreen(startLat, startLong, destinyLat, destinyLong),
                     ),
                   
                     SizedBox(height: 20.0),
