@@ -32,13 +32,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
   PolylinePoints polylinePoints = PolylinePoints();
   Location location = Location();
   Marker? sourcePosition, destinationPosition;
-  loc.LocationData? _currentPosition;
-  LatLng curLocation = LatLng(23.0525, 72.5667); //TODO: botar puc caso nao pussa mudar
+  LatLng startLocation = LatLng(-22.979242, -43.231765);  // PUC
   StreamSubscription<loc.LocationData>? locationSubscription;
 
   @override
   void initState() {
-    // TODO: implement initState //TODO: remove comment
     super.initState();
     getNavigation();
     addMarker();
@@ -54,59 +52,62 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: sourcePosition == null
-          ? Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                GoogleMap(
-                  zoomControlsEnabled: false,
-                  polylines: Set<Polyline>.of(polylines.values),
-                  initialCameraPosition: CameraPosition(
-                    target: curLocation,
-                    zoom: 16,
-                  ),
-                  markers: {sourcePosition!, destinationPosition!},
-                  onTap: (latLng) { //TODO: remove?
-                    print(latLng);
-                  },
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                ),
-                Positioned(
-                  top: 30,
-                  left: 15,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => Home()),
-                          (route) => false);
-                    },
-                    child: Icon(Icons.arrow_back),
-                  ),
-                ),
-                Positioned(
-                    bottom: 10,
-                    right: 10,
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.blue),
-                      child: Center(
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.navigation_outlined,
-                            color: Colors.white,
-                          ),
-                          onPressed: () async {
-                            await launchUrl(Uri.parse(
-                                'google.navigation:q=${widget.destinyLat}, ${widget.destinyLng}&key=$googleMapsApiKey'));
-                          },
-                        ),
-                      ),
-                    ))
-              ],
+        ? Center(child: CircularProgressIndicator())
+        : Stack(
+          children: [
+            GoogleMap(
+              zoomControlsEnabled: false,
+              polylines: Set<Polyline>.of(polylines.values),
+              initialCameraPosition: CameraPosition(
+                target: startLocation,
+                zoom: 16,
+              ),
+              markers: {sourcePosition!, destinationPosition!},
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
             ),
+            Positioned(
+              top: 30,
+              left: 15,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => Home()),
+                      (route) => false
+                    );
+                },
+                child: Icon(Icons.arrow_back),
+              ),
+            ),
+            Positioned(
+              bottom: 10,
+              right: 10,
+              child: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.blue
+                ),
+                child: Center(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.navigation_outlined,
+                      color: Colors.white,
+                    ),
+                    onPressed: () async {
+                      await launchUrl(
+                        Uri.parse(
+                          'google.navigation:q=${widget.destinyLat}, ${widget.destinyLng}&key=$googleMapsApiKey'
+                        )
+                      );
+                    },
+                  ),
+                ),
+              )
+            )
+          ],
+        ),
     );
   }
 
@@ -132,40 +133,39 @@ class _NavigationScreenState extends State<NavigationScreen> {
       }
     }
     if (_permissionGranted == loc.PermissionStatus.granted) {
-      // _currentPosition = await location.getLocation();
-      curLocation =
-          LatLng(startLat, startLng);
-      locationSubscription =
-          location.onLocationChanged.listen((LocationData currentLocation) {
-        controller?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target: LatLng(startLat, startLng),
-          zoom: 16,
-        )));
-        if (mounted) {
-          controller
-              ?.showMarkerInfoWindow(MarkerId(sourcePosition!.markerId.value));
-          setState(() {
-            curLocation =
-                LatLng(startLat, startLng);
-            sourcePosition = Marker(
-              markerId: MarkerId(currentLocation.toString()),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  BitmapDescriptor.hueBlue),
-              position:
-                  LatLng(startLat, startLng),
-              infoWindow: InfoWindow(
-                  title: '${double.parse(
-                          (getDistance(LatLng(widget.startLat, widget.startLng), LatLng(widget.destinyLat, widget.destinyLng))
-                              .toStringAsFixed(2)))} km'
-                     ),
-              onTap: () {
-                print('market tapped');
-              },
-            );
-          });
-          getDirections(LatLng(widget.startLat, widget.startLng), LatLng(widget.destinyLat, widget.destinyLng));
+      startLocation = LatLng(startLat, startLng);
+      locationSubscription = location.onLocationChanged.listen(
+        (LocationData currentLocation) {
+          controller?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+            target: LatLng(startLat, startLng),
+            zoom: 16,
+          )));
+          if (mounted) {
+            controller
+                ?.showMarkerInfoWindow(MarkerId(sourcePosition!.markerId.value));
+            setState(() {
+              startLocation = LatLng(startLat, startLng);
+              sourcePosition = Marker(
+                markerId: MarkerId(currentLocation.toString()),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueBlue
+                  ),
+                position:
+                    LatLng(startLat, startLng),
+                infoWindow: InfoWindow(
+                    title: '${double.parse((
+                      getDistance(
+                        LatLng(widget.startLat, widget.startLng),
+                        LatLng(widget.destinyLat, widget.destinyLng)
+                      ).toStringAsFixed(2)
+                    ))} km'
+                      ),
+              );
+            });
+            getDirections(LatLng(widget.startLat, widget.startLng), LatLng(widget.destinyLat, widget.destinyLng));
+          }
         }
-      });
+      );
     }
   }
 
@@ -173,10 +173,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
     List<LatLng> polylineCoordinates = [];
     List<dynamic> points = [];
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        googleMapsApiKey,
-        PointLatLng(start.latitude, start.longitude),
-        PointLatLng(dst.latitude, dst.longitude),
-        travelMode: TravelMode.driving);
+      googleMapsApiKey,
+      PointLatLng(start.latitude, start.longitude),
+      PointLatLng(dst.latitude, dst.longitude),
+      travelMode: TravelMode.driving
+    );
     if (result.points.isNotEmpty) {
       result.points.forEach((PointLatLng point) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
@@ -203,21 +204,23 @@ class _NavigationScreenState extends State<NavigationScreen> {
    double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
   double getDistance(LatLng startposition, LatLng destposition) {
-    return calculateDistance(startposition.latitude, startposition.longitude,
-        destposition.latitude, destposition.longitude);
+    return calculateDistance(
+      startposition.latitude,
+      startposition.longitude,
+      destposition.latitude,
+      destposition.longitude
+    );
   }
   addMarker() {
     setState(() {
       sourcePosition = Marker(
         markerId: MarkerId('source'),
-        position: curLocation,
+        position: startLocation,
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
       );
       destinationPosition = Marker(

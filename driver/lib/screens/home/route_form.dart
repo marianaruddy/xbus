@@ -58,8 +58,8 @@ class _RouteFormState extends State<RouteForm> {
 
     List<Trip> selectedRoutesTrips = _currentRoute != null ? trips.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
   
-    double startLat = -22.9797462;
-    double startLong = -43.2382729;
+    double startLat = -22.979242;
+    double startLong = -43.231765;
     double destinyLat = -22.947481;
     double destinyLong = -43.182599;
   
