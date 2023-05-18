@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import RegionModel,Vehicle,Region,Driver,Stop,Trip, RouteModel
+from .models import RegionModel,Vehicle,Region,Driver,Stop,Trip, RouteModel, ReportRoute
 
 #There should be a cleaner way to tranform into tuple (id,name)
 regionModel = RegionModel()
@@ -74,4 +74,17 @@ class DriverForm(forms.ModelForm):
         fields = ('Name','Company','Document','Email','Id',)
         widgets = {
             'Id': forms.HiddenInput(),
+        }
+
+class ReportRouteForm(forms.ModelForm):
+
+    class Meta:
+        model = ReportRoute
+        fields = ('RouteId','Date',)
+        labels = {
+            'RouteId': 'Route',
+        }
+        widgets = {
+            'RouteId': forms.Select(choices=allRoutes),
+            'Date': forms.DateInput(attrs={'type': 'date'}),
         }

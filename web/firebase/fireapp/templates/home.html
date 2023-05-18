@@ -39,7 +39,8 @@
                                           <li><a href="tickets" class="link-dark rounded">Tickets</a></li>
                                           <li><a href="#" class="link-dark rounded">Stops</a></li>
                                           <li><a href="#" class="link-dark rounded">Passengers</a></li>
-                                          <li><a href="Reports/routes" class="link-dark rounded">Routes</a></li>
+                                          <li><a href="{% url 'reportRoutes' %}" class="link-dark rounded">Routes</a>
+                                          </li>
                                           <li><a href="#" class="link-dark rounded">Trips</a></li>
                                           <li><a href="#" class="link-dark rounded">Region</a></li>
                                     </ul>
@@ -54,11 +55,16 @@
                                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                           <li><a href="{% url 'managementRegions' %}"
                                                       class="link-dark rounded">Region</a></li>
-                                          <li><a href="Management/routes" class="link-dark rounded">Route</a></li>
-                                          <li><a href="Management/vehicles" class="link-dark rounded">Vehicle</a></li>
-                                          <li><a href="Management/stops" class="link-dark rounded">Stop</a></li>
-                                          <li><a href="Management/drivers" class="link-dark rounded">Driver</a></li>
-                                          <li><a href="Management/trips" class="link-dark rounded">Trip</a></li>
+                                          <li><a href="{% url 'managementRoutes' %}" class="link-dark rounded">Route</a>
+                                          </li>
+                                          <li><a href="{% url 'managementVehicles' %}"
+                                                      class="link-dark rounded">Vehicle</a></li>
+                                          <li><a href="{% url 'managementStops' %}" class="link-dark rounded">Stop</a>
+                                          </li>
+                                          <li><a href="{% url 'managementDrivers' %}"
+                                                      class="link-dark rounded">Driver</a></li>
+                                          <li><a href="{% url 'managementTrips' %}" class="link-dark rounded">Trip</a>
+                                          </li>
                                     </ul>
                               </div>
                         </li>
