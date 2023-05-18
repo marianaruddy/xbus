@@ -9,7 +9,8 @@ def reportRoutes(request):
         if form.is_valid():
             reportRouteModel = ReportRouteModel()
             post = form.save(commit=False)
-            report = reportRouteModel.getReportRoute(post.RouteId, post.Date)
+            date = datetime(post.Date.year, post.Date.month, post.Date.day)
+            report = reportRouteModel.getReportRoute(post.RouteId, date)
             form = ReportRouteForm()
             return render(request, 'Reports/routes.html', {'form': form, 'report': report})
         else:
