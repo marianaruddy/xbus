@@ -11,11 +11,36 @@ class DatabaseService {
 
   List<RouteModel> _routeListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
+      String destiny;
+      int number;
+      String origin;
+      
+      if ((doc.data() as Map<String,dynamic>).containsKey('Destiny')) {
+        destiny = doc['Destiny'];
+      }
+      else {
+        destiny = '';
+      }
+      
+      if ((doc.data() as Map<String,dynamic>).containsKey('Number')) {
+        number = doc['Number'];
+      }
+      else {
+        number = -1;
+      }
+      
+      if ((doc.data() as Map<String,dynamic>).containsKey('Origin')) {
+        origin = doc['Origin'];
+      }
+      else {
+        origin = '';
+      }
+
       return RouteModel(
         id: doc.id,
-        destiny: doc['Destiny'] ?? '',
-        number: doc['Number'] ?? '',
-        origin: doc['Origin'] ?? '',
+        destiny: destiny,
+        number: number,
+        origin: origin,
       );
     }).toList();
   }
@@ -36,10 +61,24 @@ class DatabaseService {
 
   List<Vehicle> _vehicleListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
+      String licensePlate;
+      int capacity;
+      if ((doc.data() as Map<String,dynamic>).containsKey('LicensePlate')) {
+        licensePlate = doc['LicensePlate'];
+      }
+      else {
+        licensePlate = '';
+      }
+      if ((doc.data() as Map<String,dynamic>).containsKey('Capacity')) {
+        capacity = doc['Capacity'];
+      }
+      else {
+        capacity = 0;
+      }
       return Vehicle(
         id: doc.id,
-        licensePlate: doc['LicensePlate'] ?? '',
-        capacity: doc['Capacity'] ?? 0,
+        licensePlate: licensePlate,
+        capacity: capacity,
       );
     }).toList();
   }
@@ -89,18 +128,91 @@ class DatabaseService {
 
   List<Trip> _tripsListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
+      DateTime? actualArrivalTime;
+      DateTime? actualDepartureTime;
+      String driverId;
+      DocumentReference? driverRef;
+      DateTime intendedArrivalTime;
+      DateTime intendedDepartureTime;
+      String routeId;
+      DocumentReference? routeRef;
+      String vehicleId;
+      DocumentReference? vehicleRef;
+
+      
+      if ((doc.data() as Map<String,dynamic>).containsKey('ActualArrivalTime')) {
+        actualArrivalTime = doc['ActualArrivalTime'] != null ? (doc['ActualArrivalTime'] as Timestamp).toDate() : null;
+      }
+      else {
+        actualArrivalTime = null;
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('ActualDepartureTime')) {
+        actualDepartureTime = doc['ActualDepartureTime'] != null ? (doc['ActualDepartureTime'] as Timestamp).toDate() : null;
+      }
+      else {
+        actualDepartureTime = null;
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('DriverId')) {
+        driverId = doc['DriverId'];
+      }
+      else {
+        driverId = '';
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('DriverRef')) {
+        driverRef = doc['DriverRef'];
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('IntendedArrivalTime')) {
+        intendedArrivalTime = (doc['IntendedArrivalTime'] as Timestamp).toDate();
+      }
+      else {
+        intendedArrivalTime = DateTime.now();
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('IntendedDepartureTime')) {
+        intendedDepartureTime = (doc['IntendedDepartureTime'] as Timestamp).toDate();
+      }
+      else {
+        intendedDepartureTime = DateTime.now();
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('RouteId')) {
+        routeId = doc['RouteId'];
+      }
+      else {
+        routeId = '';
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('RouteRef')) {
+        routeRef = doc['RouteRef'];
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('VehicleId')) {
+        vehicleId = doc['VehicleId'];
+      }
+      else {
+        vehicleId = '';
+      }
+
+      if ((doc.data() as Map<String,dynamic>).containsKey('VehicleRef')) {
+        vehicleRef = doc['VehicleRef'];
+      }
+
       return Trip(
         id: doc.id,
-        actualArrivalTime: doc['ActualArrivalTime'] != null ? (doc['ActualArrivalTime'] as Timestamp).toDate() : null,
-        actualDepartureTime: doc['ActualDepartureTime'] != null ? (doc['ActualDepartureTime'] as Timestamp).toDate() : null,
-        driverId: doc['DriverId'] ?? '',
-        driverRef: doc['DriverRef'],
-        intendedArrivalTime: (doc['IntendedArrivalTime'] as Timestamp).toDate(),
-        intendedDepartureTime: (doc['IntendedDepartureTime'] as Timestamp).toDate(),
-        routeId: doc['RouteId'] ?? '',
-        routeRef: doc['RouteRef'],
-        vehicleId: doc['VehicleId'] ?? '',
-        vehicleRef: doc['VehicleRef'],
+        actualArrivalTime: actualArrivalTime,
+        actualDepartureTime: actualDepartureTime,
+        driverId: driverId,
+        driverRef: driverRef,
+        intendedArrivalTime: intendedArrivalTime,
+        intendedDepartureTime: intendedDepartureTime,
+        routeId: routeId,
+        routeRef: routeRef,
+        vehicleId: vehicleId,
+        vehicleRef: vehicleRef,
       );
     }).toList();
   }
@@ -134,13 +246,54 @@ class DatabaseService {
   List<Ticket> _ticketFromSnapshot(QuerySnapshot snapshot) {
     try {
       return snapshot.docs.map((doc) {
+        DateTime? boardingHour;
+        bool? checked;
+        double? price;
+        String? stopId;
+        DocumentReference? stopRef;
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('BoardingHour')) {
+          boardingHour = doc['BoardingHour'] != null ? (doc['BoardingHour'] as Timestamp).toDate() : null;
+        }
+        else {
+          boardingHour = null;
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('Checked')) {
+          checked = doc['Checked'];
+        }
+        else {
+          checked = false;
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('Price')) {
+          price = doc['Price'];
+        }
+        else {
+          price = null;
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('StopId')) {
+          stopId = doc['StopId'];
+        }
+        else {
+          stopId = '';
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('StopRef')) {
+          stopRef = doc['StopRef'];
+        }
+        else {
+          stopRef = null;
+        }
+
         return Ticket(
           id: doc.id,
-          boardingHour: doc['BoardingHour'] != null ? (doc['BoardingHour'] as Timestamp).toDate() : null,
-          checked: doc['Checked'] ?? false,
-          price: doc['Price'],
-          stopId: doc['StopId'] ?? '',
-          stopRef: doc['StopRef'],
+          boardingHour: boardingHour,
+          checked: checked,
+          price: price,
+          stopId: stopId,
+          stopRef: stopRef,
         );
       }).toList();
       
@@ -170,11 +323,37 @@ class DatabaseService {
   List<RouteStop> _routeStopsFromSnapshot(QuerySnapshot snapshot) {
     try {
       return snapshot.docs.map((doc) {
+        String stopId;
+        String routeId;
+        int order;
+        
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('StopId')) {
+          stopId = doc['StopId'];
+        }
+        else {
+          stopId = '';
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('RouteId')) {
+          routeId = doc['RouteId'];
+        }
+        else {
+          routeId = '';
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('Order')) {
+          order = doc['Order'];
+        }
+        else {
+          order = -1;
+        }
+
         return RouteStop(
           id: doc.id,
-          stopId: doc['StopId'] ?? false,
-          routeId: doc['RouteId'] ?? false,
-          order: doc['Order'],
+          stopId: stopId,
+          routeId: routeId,
+          order: order,
         );
       }).toList();
       
