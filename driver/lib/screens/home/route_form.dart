@@ -5,6 +5,7 @@ import 'package:driver/screens/Navigation/navigation.dart';
 import 'package:driver/screens/navigation_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/services/database.dart';
@@ -34,6 +35,13 @@ String formatDateTime2DateAndTimeString(DateTime original) {
   return '$time - $date';
 }
 
+Future<List> getGeoCoderData(address) async {
+  List<Location> locations =
+    await locationFromAddress(address);
+  
+  return [locations.first.latitude, locations.first.longitude];
+}
+
 class _RouteFormState extends State<RouteForm> {
   RouteModel? _currentRoute;
 
@@ -42,6 +50,10 @@ class _RouteFormState extends State<RouteForm> {
   Trip? _currentHour;
     
   Trip? _selectedHour;
+    double? startLat;
+    double? startLong;
+    double? destinyLat;
+    double? destinyLong;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +96,20 @@ class _RouteFormState extends State<RouteForm> {
                       }).toList(), 
                       onChanged: (value) {
                         setState(() { _currentRoute = value; });
+                        if (value?.origin != null){
+                          getGeoCoderData(_currentRoute?.origin).then((location) => {
+                            setState(() { startLat = location.elementAt(0); }),
+                            setState(() { startLong = location.elementAt(1); })
+                          }).then((value) => print('set value: ${startLat.toString()}'));
+                          
+                        }
+                        if (value?.destiny != null){
+                          getGeoCoderData(_currentRoute?.destiny).then((location) => {
+                            setState(() { destinyLat = location.elementAt(0); }),
+                            setState(() { destinyLong = location.elementAt(1); })
+                          }).then((value) => print('set value: ${destinyLat.toString()}'));
+                          
+                        }
                       },
                     ) : 
                     Text('Nenhuma rota cadastrada'),
@@ -127,9 +153,13 @@ class _RouteFormState extends State<RouteForm> {
                       : Text('Nenhum horário cadastrado')
                     ),
                     SizedBox(height: 20.0),
-                    Expanded(
-                      child: NavigationScreen(startLat, startLong, destinyLat, destinyLong),
-                    ),
+                    if (startLat!=null && startLong!=null && destinyLat!=null && destinyLong!=null) ...[
+                      Expanded(
+                        // child: MyMap(destinyLat, destinyLong, startLat, startLong),
+                        child: NavigationScreen(startLat ?? 0.0, startLong ?? 0.0, destinyLat ?? 0.0, destinyLong ?? 0.0, false),
+                      ),
+                    ],
+                    
                   
                     SizedBox(height: 20.0),
                     ElevatedButton(

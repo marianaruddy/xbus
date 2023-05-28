@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:driver/config/google_maps_api_key.dart';
-import 'package:driver/screens/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -15,10 +14,11 @@ class NavigationScreen extends StatefulWidget {
   final double destinyLng;
   final double startLat;
   final double startLng;
-  NavigationScreen(this.startLat, this.startLng, this.destinyLat, this.destinyLng);
+  bool showNavBtn;
+  NavigationScreen(this.startLat, this.startLng, this.destinyLat, this.destinyLng, this.showNavBtn);
 
   @override
-  State<NavigationScreen> createState() => _NavigationScreenState(startLat, startLng, destinyLat, destinyLng);
+  State<NavigationScreen> createState() => _NavigationScreenState(startLat, startLng, destinyLat, destinyLng, showNavBtn);
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
@@ -26,12 +26,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
   final double destinyLng;
   final double startLat;
   final double startLng;
-  _NavigationScreenState(this.startLat, this.startLng, this.destinyLat, this.destinyLng);
+  bool showNavBtn = false;
+  _NavigationScreenState(this.startLat, this.startLng, this.destinyLat, this.destinyLng, this.showNavBtn);
   final Completer<GoogleMapController?> _controller = Completer();
   Map<PolylineId, Polyline> polylines = {};
   PolylinePoints polylinePoints = PolylinePoints();
   Location location = Location();
   Marker? sourcePosition, destinationPosition;
+  loc.LocationData? _currentPosition;
+  LatLng curLocation = LatLng(-22.979242, -43.231765);  // PUC
   LatLng startLocation = LatLng(-22.979242, -43.231765);  // PUC
   StreamSubscription<loc.LocationData>? locationSubscription;
 
@@ -66,46 +69,37 @@ class _NavigationScreenState extends State<NavigationScreen> {
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
               },
+              myLocationEnabled: true,
+              compassEnabled: true,
             ),
-            Positioned(
-              top: 30,
-              left: 15,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => Home()),
-                      (route) => false
-                    );
-                },
-                child: Icon(Icons.arrow_back),
-              ),
-            ),
-            Positioned(
-              bottom: 10,
-              right: 10,
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.blue
-                ),
-                child: Center(
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.navigation_outlined,
-                      color: Colors.white,
-                    ),
-                    onPressed: () async {
-                      await launchUrl(
-                        Uri.parse(
-                          'google.navigation:q=${widget.destinyLat}, ${widget.destinyLng}&key=$googleMapsApiKey'
-                        )
-                      );
-                    },
+            if (showNavBtn) ...[
+              Positioned(
+                bottom: 10,
+                right: 10,
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.green
                   ),
-                ),
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.navigation_outlined,
+                        color: Colors.white,
+                      ),
+                      onPressed: () async {
+                        await launchUrl(
+                          Uri.parse(
+                            'google.navigation:q=${widget.destinyLat}, ${widget.destinyLng}&key=$googleMapsApiKey'
+                          )
+                        );
+                      },
+                    ),
+                  ),
+                )
               )
-            )
+            ]
           ],
         ),
     );
@@ -148,7 +142,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               sourcePosition = Marker(
                 markerId: MarkerId(currentLocation.toString()),
                 icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueBlue
+                    BitmapDescriptor.hueGreen
                   ),
                 position:
                     LatLng(startLat, startLng),
@@ -193,7 +187,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     PolylineId id = PolylineId('poly');
     Polyline polyline = Polyline(
       polylineId: id,
-      color: Colors.blue,
+      color: Colors.green,
       points: polylineCoordinates,
       width: 5,
     );
