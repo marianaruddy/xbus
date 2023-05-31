@@ -17,7 +17,7 @@ class StopForm(forms.ModelForm):
 
     class Meta:
         model = Stop
-        fields = ('Address','Name', 'RegionId','Id',)
+        fields = ('Name', 'RegionId','Id',)
         widgets = {
             'RegionId': forms.Select(choices=allRegions),
             'Id': forms.HiddenInput(),
@@ -88,3 +88,7 @@ class ReportRouteForm(forms.ModelForm):
             'RouteId': forms.Select(choices=allRoutes),
             'Date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+class ReportTicketForm(forms.Form):
+    StartDate = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    EndDate = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

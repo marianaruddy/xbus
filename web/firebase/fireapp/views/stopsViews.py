@@ -3,10 +3,12 @@ from django.http import HttpResponse
 import json
 from ..models import StopModel, Stop
 from ..forms import StopForm
+from decimal import Decimal
 
 #Stops
 def searchStops(request):
     if request.method == 'GET':
+        print("OI")
         stopModel = StopModel()
         stops = stopModel.getAllStops()
 
@@ -37,12 +39,14 @@ def managementStopsAdd(request):
         form = StopForm(request.POST)
         if form.is_valid():
             stopModel = StopModel()
-            print(form)
             stop = Stop()
-            stop.Address = form.cleaned_data.get('Address')
+            
+            stop.Address = request.POST["addressMap"]
             stop.Name = form.cleaned_data.get('Name')
             stop.RegionId = form.cleaned_data.get('RegionId')
-            print(stop)
+            stop.Latitude = Decimal(request.POST["latitude"])
+            stop.Longitude = Decimal(request.POST["longitude"])
+
             stopModel.createStop(stop)
         return redirect('managementStops')
     else:
@@ -62,7 +66,7 @@ def managementStopsEdit(request, id):
         stopModel = StopModel()
         stop = stopModel.getStopById(id)
         form = StopForm(instance=stop)
-    return render(request, 'Management/stopsAdd.html', {'form': form})
+    return render(request, 'Management/stopsAdd.html', {'form': form, 'address': stop.Address, 'latitude': stop.Latitude, 'longitude': stop.Longitude})
 
 def deleteStop(request, id):
         stopModel = StopModel()

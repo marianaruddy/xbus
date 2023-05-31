@@ -3,13 +3,97 @@
 <html lang="en">
 
 <head>
-      <title>Bootstrap 5 Example</title>
+      <title>XBus</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
       <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
       <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+      <script>
+            
+            // This sample uses the Places Autocomplete widget to:
+            // 1. Help the user select a place
+            // 2. Retrieve the address components associated with that place
+            // 3. Populate the form fields with those address components.
+            // This sample requires the Places library, Maps JavaScript API.
+            // Include the libraries=places parameter when you first load the API.
+            // For example: <script
+            // src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+            let autocomplete;
+            let address1Field;
+    
+            function initAutocomplete() {
+                  document.getElementById("latitudeLabel").style.display = 'none';
+                  document.getElementById("longitudeLabel").style.display = 'none';
+                  document.getElementById("latitudeInput").value = '{{ latitude }}';
+                  document.getElementById("longitudeInput").value = '{{ longitude }}';
+                  document.getElementById("addressMap").value = '{{ address }}';
+                  address1Field = document.querySelector("#addressMap");
+
+                  // Create the autocomplete object, restricting the search predictions to
+                  // addresses in the US and Canada.
+                  autocomplete = new google.maps.places.Autocomplete(address1Field, {
+                  componentRestrictions: { country: ["br"] },
+                  fields: ["address_components", "geometry"],
+                  });
+      
+                  address1Field.focus();
+                  // When the user selects an address from the drop-down, populate the
+                  // address fields in the form.
+                  autocomplete.addListener("place_changed", fillInAddress);
+            
+            }
+    
+            function fillInAddress() {
+            // Get the place details from the autocomplete object.
+            const place = autocomplete.getPlace();
+            let address1 = "";
+            let postcode = "";
+    
+            var latitude = place.geometry.location.lat();
+            var longitude = place.geometry.location.lng();
+    
+            document.getElementById('latitudeInput').value = latitude;
+            document.getElementById('longitudeInput').value = longitude;
+    
+            // Get each component of the address from the place details,
+            // and then fill-in the corresponding field on the form.
+            // place.address_components are google.maps.GeocoderAddressComponent objects
+            // which are documented at http://goo.gle/3l5i5Mr
+            for (const component of place.address_components) {
+                // @ts-ignore remove once typings fixed
+                const componentType = component.types[0];
+    
+                switch (componentType) {
+                  case "street_number": {
+                        address1 = `${component.long_name} ${address1}`;
+                        break;
+                  }
+      
+                  case "route": {
+                        address1 += component.short_name;
+                        break;
+                  }
+                }
+            }
+    
+            address1Field.value = address1;
+            }
+    
+            window.initAutocomplete = initAutocomplete;
+        </script>
+        <style>
+            .form-label {
+            width: 100%;
+            padding: 0.5em;
+            }
+    
+            .full-field {
+            flex: 400px;
+            margin: 15px 0;
+            }
+        </style>
 </head>
 
 <body class="row" style="min-height: 100vh;">
@@ -20,14 +104,12 @@
                         <svg class="bi me-2" width="30" height="24">
                               <use xlink:href="#bootstrap"></use>
                         </svg>
-                        <span class="fs-5 fw-semibold">Collapsible</span>
+                        <span class="fs-5 fw-semibold">XBus</span>
                   </a>
                   <ul class="list-unstyled ps-0">
                         <li class="mb-1">
-                              <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-target="#home"
-                                    aria-expanded="true">
-                                    Home
-                              </button>
+                              <a class="btn btn-toggle align-items-center rounded collapsed"
+                                    href="{% url 'home' %}">Home</a>
                         </li>
                         <li class="mb-1">
                               <button class="btn btn-toggle align-items-center rounded collapsed"
@@ -37,10 +119,12 @@
                               </button>
                               <div class="collapse" id="dashboard-collapse">
                                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                          <li><a href="tickets" class="link-dark rounded">Tickets</a></li>
+                                          <li><a href="{% url 'reportTicket' %}" class="link-dark rounded">Tickets</a>
+                                          </li>
                                           <li><a href="#" class="link-dark rounded">Stops</a></li>
                                           <li><a href="#" class="link-dark rounded">Passengers</a></li>
-                                          <li><a href="Reports/routes" class="link-dark rounded">Routes</a></li>
+                                          <li><a href="{% url 'reportRoutes' %}" class="link-dark rounded">Routes</a>
+                                          </li>
                                           <li><a href="#" class="link-dark rounded">Trips</a></li>
                                           <li><a href="#" class="link-dark rounded">Region</a></li>
                                     </ul>
@@ -101,7 +185,25 @@
                               <div class="container" style="border: 1px solid rgb(0, 245, 123);">
                                     <form method="POST">
                                           {% csrf_token %}
+                                          <label class="full-field">
+                                                <!-- Avoid the word "address" in id, name, or label text to avoid browser autofill from conflicting with Place Autocomplete. Star or comment bug https://crbug.com/587466 to request Chromium to honor autocomplete="off" attribute. -->
+                                                <span class="form-label">Address Map</span>
+                                                <input
+                                                      id="addressMap"
+                                                      name="addressMap"
+                                                      required
+                                                      autocomplete="off"
+                                                />
+                                          </label>
                                           {{ form.as_p }}
+                                          <label id="latitudeLabel" class="full-field">
+                                                <span class="form-label">Latitude</span>
+                                                <input id="latitudeInput" name="latitude" required />
+                                          </label>
+                                          <label id="longitudeLabel" class="full-field">
+                                                <span class="form-label">Longitude</span>
+                                                <input id="longitudeInput" name="longitude" required />
+                                          </label>
                                           <input type="submit" class="btn btn-primary" value="Add">
                                     </form>
                               </div>
@@ -124,5 +226,8 @@
             </div>
             <!-- Footer -->
       </div>
-
+      <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9FYSQEuxFscyNIGiDahnHVfd6KFt6ipw&callback=initAutocomplete&libraries=places&v=weekly"
+      defer
+    ></script>
 </body>

@@ -29,3 +29,17 @@ def login(request):
 
         return render(request, 'login.html')
 #End Ajax example
+
+def addressTest(request):
+
+    if request.method == 'POST':
+        print(request.POST["ship-address"])
+
+
+        response_data = 'successful!'
+
+        return render(request, 'Components/addressTest.html')
+    else:
+        return render(request, 'Components/addressTest.html')
+     
+    

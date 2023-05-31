@@ -8,3 +8,4 @@ from .vehiclesViews import *
 from .driversViews import *
 from .tripsViews import *
 from .reportRoutesViews import *
+from .reportTicketsViews import *
