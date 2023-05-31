@@ -115,10 +115,10 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
     List<Ticket> tickets = Provider.of<List<Ticket>?>(context) ?? [];
 
     print('tickets $tickets');
-    if (tickets.length < 1) {
-      return Loading();
-    }
-    else {
+    // if (tickets.length < 1) {
+    //   return Loading();
+    // }
+    // else {
 
     return MobileScanner(
       // fit: BoxFit.contain,
@@ -148,6 +148,6 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
           }
         }
       });
-    }
+    // }
   }
 }

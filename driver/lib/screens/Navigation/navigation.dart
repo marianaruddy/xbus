@@ -6,6 +6,7 @@ import 'package:driver/screens/qrcode.dart';
 import 'package:driver/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:driver/screens/navigation_screen.dart';
 
 class Navigation extends StatefulWidget {
   Trip? selectedTrip;
@@ -54,6 +55,14 @@ class _NavigationState extends State<Navigation> {
 
   int peopleInBus = 10; // TODO pegar dados do firebase
   int peopleAtNextStop = 5; // TODO pegar dados do firebase
+
+  
+  double startLat = -22.979242;
+  double startLong = -43.231765;
+  double destinyLat = -22.947481;
+  double destinyLong = -43.182599;
+
+
   @override
   Widget build(BuildContext context) {
     return  MultiProvider(
@@ -80,14 +89,16 @@ class _NavigationState extends State<Navigation> {
               flex: 1,
               child: Container( //TODO add google maps
                 alignment: Alignment.center,
-                child: Text('mapa aqui')
+                child: Expanded(
+                    child: NavigationScreen(startLat ?? 0.0, startLong ?? 0.0, destinyLat ?? 0.0, destinyLong ?? 0.0, true),
+                  )
               ),
             ),
-            Row(
-              children: [
-                Page3(selectedTrip?.routeId)
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Page3(selectedTrip?.routeId)
+            //   ],
+            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
