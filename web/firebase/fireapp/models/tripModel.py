@@ -7,7 +7,13 @@ from .currentTripModel import *
 from .trip import *
 from .routeModel import *
 
+from .stop import *
+
 from firebase_admin import firestore
+
+from django.conf import settings
+import requests
+import json
 
 db = firestore.client()
 
@@ -28,14 +34,48 @@ class TripModel(models.Model):
         routeStopsModel = RouteStopsModel()
         stopsByRouteId = routeStopsModel.getStopsFromRouteId(trip.RouteId)
 
+        if len(stopsByRouteId) > 0:
+            self.createPlannedCurrentTrips(tripId, stopsByRouteId, trip.IntendedDepartureTime)
+
+    def createPlannedCurrentTrips(self, tripId, stopsByRouteId, intendedDepartureTime):
         #we are creating all the current trips related to that trip beforehand
         currentTripModel = CurrentTripModel()
-        for stopId in stopsByRouteId:
+        oldStop = stopsByRouteId[0]
+        currentTime = intendedDepartureTime
+
+        for stop in stopsByRouteId:
             currentTrip = CurrentTrip()
-            currentTrip.StopId = stopId
+            currentTrip.StopId = stop.Id
             currentTrip.TripId = tripId
-            currentTrip.IntendedTime = datetime.now() #this is temporary, it needs to be changed to the time difference between two stops(api google)
+            if oldStop != stop:
+                secondsToBeAdded = self.getTimeBetweenTwoStops(oldStop, stop)
+                currentTime = currentTime + timedelta(seconds=secondsToBeAdded)
+                currentTrip.IntendedTime = currentTime
+            else:
+                currentTrip.IntendedTime = intendedDepartureTime
             currentTripModel.createCurrentTrip(currentTrip)
+            oldStop = stop
+
+    def getTimeBetweenTwoStops(self, oldStop, stop):
+        latOldStop = oldStop.Latitude
+        longOldStop = oldStop.Longitude
+        latStop = stop.Latitude
+        longStop = stop.Longitude
+
+        origin = f'{latOldStop},{longOldStop}'
+        destination = f'{latStop},{longStop}'
+
+        result = requests.get(
+            'https://maps.googleapis.com/maps/api/directions/json?',
+            params={
+                'origin': origin,
+                'destination': destination,
+                "key": settings.GOOGLE_KEY
+            }
+        )
+
+        timeInsSeconds = result.json()["routes"][0]["legs"][0]["duration"]["value"]
+        return timeInsSeconds
 
 
     #Read
