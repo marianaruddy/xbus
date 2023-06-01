@@ -1,3 +1,4 @@
+import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/screens/home/home.dart';
@@ -6,7 +7,7 @@ import 'package:driver/screens/qrcode.dart';
 import 'package:driver/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:driver/screens/navigation_screen.dart';
+// import 'package:driver/screens/navigation_screen.dart';
 
 class Navigation extends StatefulWidget {
   Trip? selectedTrip;
@@ -71,6 +72,10 @@ class _NavigationState extends State<Navigation> {
           value: DatabaseService().routeStops,
           initialData: null,
         ),
+        StreamProvider<List<CurrentTrip>?>.value(
+          value: DatabaseService().currentTrips,
+          initialData: null,
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -90,7 +95,8 @@ class _NavigationState extends State<Navigation> {
               child: Container( //TODO add google maps
                 alignment: Alignment.center,
                 child: Expanded(
-                    child: NavigationScreen(startLat ?? 0.0, startLong ?? 0.0, destinyLat ?? 0.0, destinyLong ?? 0.0, true),
+                    child: Page3(selectedTrip?.routeId, selectedTrip?.id),
+                    // child: NavigationScreen(startLat ?? 0.0, startLong ?? 0.0, destinyLat ?? 0.0, destinyLong ?? 0.0, true),
                   )
               ),
             ),
