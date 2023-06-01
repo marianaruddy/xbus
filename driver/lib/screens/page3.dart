@@ -15,63 +15,49 @@ class Page3 extends StatefulWidget {
 class _Page3State extends State<Page3> {
   String? routeId, tripId;
   _Page3State(this.routeId, this.tripId);
+  List<bool> val = [];
   @override
   Widget build(BuildContext context) {
     List<RouteStop> routeStops = Provider.of<List<RouteStop>?>(context) ?? [];
     List<CurrentTrip> currentTrips = Provider.of<List<CurrentTrip>?>(context) ?? [];
-    routeStops.forEach((routeStop) {
-      // print('');
-      // print('routeStop?.id: ${routeStop?.id}');
-      // print('routeStop?.routeId: ${routeStop?.routeId}');
-      // print('routeStop?.stopId: ${routeStop?.stopId}');
-      
-    });
-    print('routeId: ${routeId}',);
+    
     List<RouteStop> thisRouteStops = routeStops.where((routeStop) => routeStop?.routeId == routeId).toList();
     List<CurrentTrip> currentTripsThisTrip = currentTrips.where((currentTrips) => currentTrips?.tripId == tripId).toList();
-    // print('----------------thisRouteStops:');
+    // val = List.generate(thisRouteStops[thisRouteStops.length-1].order, (index) => false);
+    val = currentTripsThisTrip.map((currTrip) => currTrip.actualTime != null).toList();
     thisRouteStops.sort((a, b) => a.order - b.order);
-    print('lent ${currentTripsThisTrip.length}');
-    currentTrips.forEach((currentTrip) {
-      print('tripId: ${tripId}-----------');
-      print('currentTrip.tripId: ${currentTrip.tripId}-----------');
-      
-    });
-    thisRouteStops.forEach((routeStop) {
-      print('[${routeStop?.order}]');
-      print('routeStop?.id: ${routeStop?.id}');
-      print('routeStop?.routeId: ${routeStop?.routeId}');
-      
-    });
-    bool val = false;
-    String? currentTripId = null;
+    String? currentTripId;
+
     return Container(
       child: SingleChildScrollView (
         child: Column(
           children: [
             Text('routeId: $routeId'),
             Text('tripId: $tripId'),
-            ...thisRouteStops.map((routeStop) => Row(
-            children: [
-              Checkbox(
-                value: val,
-                onChanged: (value) => {
-                  currentTripId = currentTripsThisTrip.firstWhere((currTrip) => 
-                    currTrip.stopId == routeStop.stopId
-                  ).id,
-                  DatabaseService().updateCurrentTrip(
-                    currentTripId,
-                    {
-                      'ActualTime': DateTime.now(),
-                    }
-                  ),
-                  setState(() => val = !val)
-                },
-                
-              ),
-              Text('ponto ${routeStop.stopId.toString()}')
-            ],
-          )).toList()],
+            ...thisRouteStops.map((routeStop) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: CheckboxListTile(
+                      value: val[routeStop.order-1],
+                      onChanged: (bool? value) {
+                         currentTripId = currentTripsThisTrip.firstWhere((currTrip) => 
+                          currTrip.stopId == routeStop.stopId
+                        ).id;
+                        DatabaseService().updateCurrentTrip(
+                          currentTripId,
+                          {
+                            'ActualTime': DateTime.now(),
+                          }
+                        );
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: Text('ponto ${routeStop.stopId.toString()} [${routeStop.order-1}]'),
+                    ),
+                  )
+                ],
+              );
+          }).toList()],
         ),
       ),
     );
