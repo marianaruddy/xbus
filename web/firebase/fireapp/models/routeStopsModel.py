@@ -1,5 +1,5 @@
 from django.db import models
-
+from .stopModel import *
 from firebase_admin import firestore
 
 db = firestore.client()
@@ -10,9 +10,11 @@ class RouteStopsModel(models.Model):
     def getStopsFromRouteId(self, routeId):
         routeStopsByRouteId = db.collection('RouteStops').where('RouteId','==',routeId).get()
         stopsList = []
+        stopModel = StopModel()
         for r in routeStopsByRouteId:
             rDict = r.to_dict()
-            stopsList.append(rDict['StopId'])
+            stop = stopModel.getStopById(rDict['StopId'])
+            stopsList.append(stop)
         return stopsList
 
     #Create
