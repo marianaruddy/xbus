@@ -163,7 +163,9 @@ class _RouteFormState extends State<RouteForm> {
                   
                     SizedBox(height: 20.0),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: (_currentHour == null || _currentLicensePlate == null || _currentRoute == null)
+                        ? null
+                        : () {
                         _selectedHour = _currentHour;
                         _currentHour = null;
                         DatabaseService().updateTrip(
