@@ -67,14 +67,6 @@ class _HomeState extends State<Home> {
               child: loading ? Loading() : Column(
                 children: [
                   RouteForm(),
-    
-                  // TODO: add google maps integration
-    
-                  // // TODO: image not working
-                  // Image.asset(
-                  //   'assets/map.png',
-                  //   fit: BoxFit.contain,
-                  // ),
                 ],
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/models/ticket.dart';
@@ -318,6 +319,104 @@ class DatabaseService {
   
   Future updateTicket(docId, data) async {
     ticketCollection.doc(docId).update(data);
+  }
+  
+  final CollectionReference currentTripsCollection = FirebaseFirestore.instance.collection('CurrentTrip');
+  
+  Stream<List<CurrentTrip>> get currentTrips {
+    return currentTripsCollection.snapshots()
+      .map(_currentTripsFromSnapshot);
+  }
+
+  List<CurrentTrip> _currentTripsFromSnapshot(QuerySnapshot snapshot) {
+    try {
+      return snapshot.docs.map((doc) {
+        DateTime? actualTime;
+        DateTime intendedTime;
+        int capacityInVehicle;
+        int passengersQtyAfter;  
+        int passengersQtyBefore;  
+        int passengersQtyNew;  
+        String? stopId;
+        String? tripId;
+        
+        if ((doc.data() as Map<String,dynamic>).containsKey('ActualTime')) {
+          actualTime = doc['ActualTime'] != null ? (doc['ActualTime'] as Timestamp).toDate() : null;
+        }
+        else {
+          actualTime = null;
+        }
+        
+        if ((doc.data() as Map<String,dynamic>).containsKey('IntendedTime')) {
+          intendedTime = doc['IntendedTime'] != null ? (doc['IntendedTime'] as Timestamp).toDate() : DateTime.now();
+        }
+        else {
+          intendedTime = DateTime.now();
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('CapacityInVehicle')) {
+          capacityInVehicle = doc['CapacityInVehicle'];
+        }
+        else {
+          capacityInVehicle = -1;
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('PassengersQtyAfter')) {
+          passengersQtyAfter = doc['PassengersQtyAfter'];
+        }
+        else {
+          passengersQtyAfter = -1;
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('PassengersQtyBefore')) {
+          passengersQtyBefore = doc['PassengersQtyBefore'];
+        }
+        else {
+          passengersQtyBefore = -1;
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('PassengersQtyNew')) {
+          passengersQtyNew = doc['PassengersQtyNew'];
+        }
+        else {
+          passengersQtyNew = 0;
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('StopId')) {
+          stopId = doc['StopId'];
+        }
+        else {
+          stopId = '';
+        }
+
+        if ((doc.data() as Map<String,dynamic>).containsKey('TripId')) {
+          tripId = doc['TripId'];
+        }
+        else {
+          tripId = '';
+        }
+
+        return CurrentTrip(
+          id: doc.id,
+          actualTime: actualTime,
+          intendedTime: intendedTime,
+          capacityInVehicle: capacityInVehicle,
+          passengersQtyAfter: passengersQtyAfter,
+          passengersQtyBefore: passengersQtyBefore,
+          passengersQtyNew: passengersQtyNew,
+          stopId: stopId,
+          tripId: tripId,
+        );
+
+      }).toList();
+    } catch (e) {
+      print('erro: $e');
+      return [];
+    }
+  }
+
+  Future updateCurrentTrip(docId, data) async {
+    currentTripsCollection.doc(docId).update(data);
   }
 
   List<RouteStop> _routeStopsFromSnapshot(QuerySnapshot snapshot) {
