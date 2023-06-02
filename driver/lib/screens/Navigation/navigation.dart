@@ -79,6 +79,9 @@ class _NavigationState extends State<Navigation> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0.0,
+          automaticallyImplyLeading: false,
+          title: const Text('xBus'),
+          centerTitle: true,
         ),
         body: Column(
           children: [

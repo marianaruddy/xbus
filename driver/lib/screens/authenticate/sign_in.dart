@@ -31,7 +31,8 @@ class _SignInState extends State<SignIn> {
     return loading ? Loading() : Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Text('xbus'),
+        title: const Text('xBus'),
+        centerTitle: true,
         actions: [
           TextButton.icon(
             icon: Icon(Icons.person, color: Colors.white),

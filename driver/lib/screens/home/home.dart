@@ -3,7 +3,6 @@ import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/services/auth.dart';
 import 'package:driver/services/database.dart';
-import 'package:driver/shared/constants.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,28 +43,24 @@ class _HomeState extends State<Home> {
       child: Scaffold(
           appBar: AppBar(
             elevation: 0.0,
-            title: Text('xbus'),
-          ),
-          drawer: Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                ListTile(
-                  title: Text('sair'),
-                  leading: Icon(Icons.logout, color: Colors.green),
-                  onTap: () async {
-                    await _auth.signOut();
-                  },
-                )
-              ],
+            title: const Text('xBus'),
+            centerTitle: true,
+            automaticallyImplyLeading: false,
+            actions: [
+              IconButton(
+              icon: const Icon(Icons.logout, color: Colors.white),
+              onPressed: () async {
+                await _auth.signOut();
+              },
             ),
+            ],
           ),
           body: Container(
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             child: Form(
               key: _formKey,
               child: loading ? Loading() : Column(
-                children: [
+                children: const [
                   RouteForm(),
                 ],
               ),
