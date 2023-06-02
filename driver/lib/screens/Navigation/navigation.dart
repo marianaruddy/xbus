@@ -1,8 +1,8 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/models/trip.dart';
+import 'package:driver/screens/Navigation/stopsList.dart';
 import 'package:driver/screens/home/home.dart';
-import 'package:driver/screens/page3.dart';
 import 'package:driver/screens/qrcode.dart';
 import 'package:driver/services/database.dart';
 import 'package:flutter/material.dart';
@@ -95,14 +95,14 @@ class _NavigationState extends State<Navigation> {
               child: Container( //TODO add google maps
                 alignment: Alignment.center,
                 child: Expanded(
-                    child: Page3(selectedTrip?.routeId, selectedTrip?.id),
+                    child: StopsList(selectedTrip?.routeId, selectedTrip?.id),
                     // child: NavigationScreen(startLat ?? 0.0, startLong ?? 0.0, destinyLat ?? 0.0, destinyLong ?? 0.0, true),
                   )
               ),
             ),
             // Row(
             //   children: [
-            //     Page3(selectedTrip?.routeId)
+            //     StopsList(selectedTrip?.routeId)
             //   ],
             // ),
             Row(
