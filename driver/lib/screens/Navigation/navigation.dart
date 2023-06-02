@@ -7,7 +7,6 @@ import 'package:driver/screens/qrcode.dart';
 import 'package:driver/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// import 'package:driver/screens/navigation_screen.dart';
 
 class Navigation extends StatefulWidget {
   Trip? selectedTrip;
@@ -92,19 +91,13 @@ class _NavigationState extends State<Navigation> {
             ),
             Expanded(
               flex: 1,
-              child: Container( //TODO add google maps
+              child: Container(
                 alignment: Alignment.center,
                 child: Expanded(
                     child: StopsList(selectedTrip?.routeId, selectedTrip?.id),
-                    // child: NavigationScreen(startLat ?? 0.0, startLong ?? 0.0, destinyLat ?? 0.0, destinyLong ?? 0.0, true),
                   )
               ),
             ),
-            // Row(
-            //   children: [
-            //     StopsList(selectedTrip?.routeId)
-            //   ],
-            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
