@@ -49,6 +49,9 @@ class _StopsListState extends State<StopsList> {
                   child: CheckboxListTile(
                     value: val[routeStop.order-1],
                     onChanged: (bool? value) {
+                      currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
+                        currTrip.stopId == routeStop.stopId
+                      );
                       DatabaseService().updateCurrentTrip(
                         currentTrip?.id,
                         {
