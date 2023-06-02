@@ -1,5 +1,6 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route_stop.dart';
+import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -18,17 +19,20 @@ class _StopsListState extends State<StopsList> {
   List<bool> val = [];
   @override
   Widget build(BuildContext context) {
+    CurrentTrip? currentTrip;
     List<RouteStop> routeStops = Provider.of<List<RouteStop>?>(context) ?? [];
     List<CurrentTrip> currentTrips = Provider.of<List<CurrentTrip>?>(context) ?? [];
     
-    List<RouteStop> thisRouteStops = routeStops.where((routeStop) => routeStop?.routeId == routeId).toList();
-    List<CurrentTrip> currentTripsThisTrip = currentTrips.where((currentTrips) => currentTrips?.tripId == tripId).toList();
+    List<RouteStop> thisRouteStops = routeStops.where((routeStop) {
+      return routeStop.routeId == routeId;
+    }).toList();
+    List<CurrentTrip> currentTripsThisTrip = currentTrips.where((currentTrips) {
+      return currentTrips.tripId == tripId;
+    }).toList();
 
     val = currentTripsThisTrip.map((currTrip) => currTrip.actualTime != null).toList();
 
     thisRouteStops.sort((a, b) => a.order - b.order);
-    String? currentTripId;
-    CurrentTrip? currentTrip;
 
     return SingleChildScrollView (
       child: Column(
