@@ -36,15 +36,15 @@ class _StopsListState extends State<StopsList> {
           Text('routeId: $routeId'),
           Text('tripId: $tripId'),
           ...thisRouteStops.map((routeStop) {
+            currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
+              currTrip.stopId == routeStop.stopId
+            );
             return Row(
               children: [
                 Expanded(
                   child: CheckboxListTile(
                     value: val[routeStop.order-1],
                     onChanged: (bool? value) {
-                      currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
-                        currTrip.stopId == routeStop.stopId
-                      );
                       DatabaseService().updateCurrentTrip(
                         currentTrip?.id,
                         {
@@ -53,7 +53,9 @@ class _StopsListState extends State<StopsList> {
                       );
                     },
                     controlAffinity: ListTileControlAffinity.leading,
-                    title: Text('ponto ${routeStop.stopId.toString()} [${routeStop.order-1}]'),
+                    title: Text(
+                      '[${formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0]}] ponto ${routeStop.stopId.toString()} [${routeStop.order-1}]'
+                    ),
                   ),
                 )
               ],
