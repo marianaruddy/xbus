@@ -131,7 +131,7 @@ class DatabaseService {
     return snapshot.docs.map((doc) {
       DateTime? actualArrivalTime;
       DateTime? actualDepartureTime;
-      String driverId;
+      String? driverId;
       DocumentReference? driverRef;
       DateTime intendedArrivalTime;
       DateTime intendedDepartureTime;
