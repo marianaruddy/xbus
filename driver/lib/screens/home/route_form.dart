@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
@@ -69,7 +70,27 @@ class _RouteFormState extends State<RouteForm> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
 
     List<Trip> selectedRoutesTrips = _currentRoute != null ? trips.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
-  
+    debugPrint('@@@ before');
+    if (selectedRoutesTrips.isNotEmpty) {
+      debugPrint('@@@ selectedRoutesTrips.isNotEmpty');
+      selectedRoutesTrips.forEach((trip) {
+        debugPrint('@@@ trip.routeRef: ${trip.routeRef}');
+        if (trip.routeRef !=null) {
+          trip.routeRef?.get().then((DocumentSnapshot document) {
+            if (document.exists) {
+              Map<String, dynamic> finData =
+                  document.data() as Map<String, dynamic>;
+              debugPrint('@@@finData: ${finData["Destiny"]}');
+              debugPrint('@@@finData: ${finData["Origin"]}');
+            }
+          });
+        }
+      });
+    }
+    else {
+      debugPrint('@@@ selectedRoutesTrips.isEmpty');
+    }
+
     double startLat = -22.979242;
     double startLong = -43.231765;
     double destinyLat = -22.947481;
