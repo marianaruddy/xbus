@@ -27,6 +27,7 @@ urlpatterns = [
     path('Reports/routes', views.reportRoutes, name='reportRoutes'),
     path('Management/routes', views.managementRoutes, name='managementRoutes'),
     path('Management/routesAdd', views.managementRoutesAdd, name='managementRoutesAdd'),
+    path('Management/routesEdit/<str:id>/', views.managementRoutesEdit, name='managementRoutesEdit'),
     path('Management/routes/delete/<str:id>/', views.deleteRoute, name='deleteRoute'),
     path('Management/my-ajax-test/', views.myajaxtestview, name='ajax-test-view'),
     path('Management/routes/searchStops/', views.searchStops, name='searchStops'),

@@ -50,6 +50,14 @@ class StopModel(models.Model):
 
         return stopModel
     
+    def getStopDictNoCoordsById(self, id):
+        stop = db.collection('Stop').document(id).get()
+        stopDict = stop.to_dict()
+        stopDict["Id"] = id
+        stopDict["Coords"] = ""
+
+        return stopDict
+    
     #Update
     def updateStop(self, stop):
         print(stop.info())

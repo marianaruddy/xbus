@@ -33,6 +33,17 @@ def managementRoutes(request):
 
 def managementRoutesAdd(request):
         return render(request, 'Management/routesAdd.html')
+
+def managementRoutesEdit(request, id):
+        routeStopsModel = RouteStopsModel()
+        stops = routeStopsModel.getStopsDictNoCoordsFromRouteId(id)
+
+        context = {
+               'stops': json.dumps(stops),
+               'routeId': id,
+        }
+
+        return render(request, 'Management/routesAdd.html', context)
     
 def createRoute(request):
     if request.method == 'POST':
@@ -42,11 +53,25 @@ def createRoute(request):
         route.Destiny = stopsList[-1]
         route.Origin = stopsList[0]
         routeModel = RouteModel()
-        routeId = routeModel.createRoute(route)
-
+        routeId = request.POST.get('routeId')
         routeStopsModel = RouteStopsModel()
-        for stopId in stopsList:
-            routeStopsModel.createRouteStops(routeId,stopId)
+
+        if (routeId != ""):
+                route.Id = routeId
+                routeModel.updateRoute(route)
+                for i,stopId in enumerate(stopsList):
+                        order = i + 1
+                        routeStops = routeStopsModel.getRouteStopsFromRouteIdAndStopId(routeId,stopId)
+                        if routeStops != {}:
+                                routeStops["Order"] = order
+                                routeStopsModel.updateRouteStops(routeStops)
+                        else:
+                                routeStopsModel.createRouteStops(routeId,stopId, order)
+        else:
+                routeId = routeModel.createRoute(route)
+                for i,stopId in enumerate(stopsList):
+                        order = i + 1
+                        routeStopsModel.createRouteStops(routeId,stopId, order)
 
         return redirect('managementRoutes')
 

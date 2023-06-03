@@ -65,6 +65,16 @@ class RouteModel(models.Model):
         else:
             return ""
         
+    #Update
+    def updateRoute(self, route):
+        routes = db.collection('Route')
+        routes.document(route.Id).set(
+            {
+                'Destiny': route.Destiny,
+                'Origin': route.Origin
+            }
+        )
+        
     #Delete
     def deleteRouteById(self, id):
         db.collection('Route').document(id).delete()
