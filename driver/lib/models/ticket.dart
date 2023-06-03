@@ -4,7 +4,7 @@ class Ticket {
   final String id;
   final DateTime? boardingHour;
   final bool? checked;
-  final double? price;
+  final num? price;
   final String? stopId;
   final DocumentReference? stopRef;
 
