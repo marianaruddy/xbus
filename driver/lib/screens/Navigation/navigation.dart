@@ -3,7 +3,7 @@ import 'package:driver/models/route_stop.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/screens/Navigation/stopsList.dart';
 import 'package:driver/screens/home/home.dart';
-import 'package:driver/screens/qrcode/scan.dart';
+import 'package:driver/screens/qrcode/scan_qrcode_wrapper.dart';
 import 'package:driver/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -138,7 +138,7 @@ class _NavigationState extends State<Navigation> {
                     ),
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const ScanQRCode(),
+                        builder: (context) => ScanQRCodeWrapper(),
                       ));
                     },
                     child: Icon(

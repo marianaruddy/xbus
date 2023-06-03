@@ -1,6 +1,8 @@
+import 'package:driver/models/ticket.dart';
 import 'package:driver/screens/qrcode/found_code_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
 
 
 class ScanQRCode extends StatefulWidget {
@@ -16,6 +18,15 @@ class _ScanQRCodeState extends State<ScanQRCode> {
 
   @override
   Widget build(BuildContext context) {
+
+    List<Ticket> tickets = Provider.of<List<Ticket>?>(context) ?? [];
+    print('tickets: -------------');
+    if (tickets.isNotEmpty) {
+      tickets.forEach((tkt) {
+        print('tickets: ${tkt.id}');
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("xBus"),
