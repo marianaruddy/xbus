@@ -45,15 +45,24 @@ class _HomeState extends State<Home> {
             elevation: 0.0,
             title: const Text('xBus'),
             centerTitle: true,
-            automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-              icon: const Icon(Icons.logout, color: Colors.white),
-              onPressed: () async {
-                await _auth.signOut();
-              },
+          ),
+          drawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const ListTile(
+                  title: Text('xBus'),
+                ),
+                ListTile(
+                  title: const Text('sair'),
+                  leading: const Icon(Icons.logout, color: Colors.green),
+                  onTap: () {
+                    _auth.signOut().then((value) {
+                  });
+                  },
+                )
+              ],
             ),
-            ],
           ),
           body: Container(
             padding: const EdgeInsets.all(20.0),
