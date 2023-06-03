@@ -249,7 +249,7 @@ class DatabaseService {
       return snapshot.docs.map((doc) {
         DateTime? boardingHour;
         bool? checked;
-        double? price;
+        num? price;
         String? stopId;
         DocumentReference? stopRef;
 
