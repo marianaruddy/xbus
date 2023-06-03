@@ -82,7 +82,7 @@ class _RouteFormState extends State<RouteForm> {
                 child: Column(
                   children: [
                     SizedBox(height: 20.0),
-                    routes.length > 0 ? DropdownButtonFormField<RouteModel>(
+                    routes.isNotEmpty ? DropdownButtonFormField<RouteModel>(
                       isExpanded: true,
                       decoration: textInputDecoration.copyWith(hintText: 'Selecione uma rota'),
                       value: _currentRoute,
@@ -114,7 +114,7 @@ class _RouteFormState extends State<RouteForm> {
                     ) : 
                     Text('Nenhuma rota cadastrada'),
                     SizedBox(height: 20.0),
-                    licensePlates.length > 0 ? DropdownButtonFormField<Vehicle>(
+                    licensePlates.isNotEmpty ? DropdownButtonFormField<Vehicle>(
                       isExpanded: true,
                       decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
                       value: _currentLicensePlate,
@@ -132,7 +132,7 @@ class _RouteFormState extends State<RouteForm> {
                     ) : 
                     Text('Nenhum veículo cadastrado'),
                     SizedBox(height: 20.0),
-                    selectedRoutesTrips.length > 0 ? DropdownButtonFormField<Trip>(
+                    selectedRoutesTrips.isNotEmpty ? DropdownButtonFormField<Trip>(
                       isExpanded: true,
                       decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
                       value: _currentHour,
