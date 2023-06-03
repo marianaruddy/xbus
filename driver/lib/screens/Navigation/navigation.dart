@@ -1,7 +1,7 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/models/trip.dart';
-import 'package:driver/screens/Navigation/stopsList.dart';
+import 'package:driver/screens/Navigation/stops_list.dart';
 import 'package:driver/screens/home/home.dart';
 import 'package:driver/screens/qrcode/scan_qrcode_wrapper.dart';
 import 'package:driver/services/database.dart';
@@ -29,19 +29,19 @@ class RoundedNumber extends StatelessWidget {
       width:50.0,
       height:50.0,
       alignment: Alignment.center,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.green,
+      ),
       child: Tooltip(
         message: message,
         child: Text(
           '$number',
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 34
           ),
         ),
-      ),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.green,
       ),
     );
   }
@@ -108,8 +108,8 @@ class _NavigationState extends State<Navigation> {
                   message: 'Finalizar Viagem',
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(15.0),
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(15.0),
                     ),
                     onPressed: () {
                       DatabaseService().updateTrip(
@@ -120,10 +120,10 @@ class _NavigationState extends State<Navigation> {
                     );
                     Navigator.of(context)
                       .push(
-                        MaterialPageRoute(builder: (context) => Home())
+                        MaterialPageRoute(builder: (context) => const Home())
                       );
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.flag,
                       size: 40.0,
                     ),
@@ -133,15 +133,15 @@ class _NavigationState extends State<Navigation> {
                   message: 'Escanear ticket',
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(15.0),
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(15.0),
                     ),
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => ScanQRCodeWrapper(selectedTrip?.id),
                       ));
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.qr_code_scanner,
                       size: 40.0,
                     ),

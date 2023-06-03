@@ -5,7 +5,6 @@ class NavigationDrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: develop drawer
-    return Drawer();
+    return const Drawer();
   }
 }

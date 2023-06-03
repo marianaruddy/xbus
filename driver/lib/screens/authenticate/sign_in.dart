@@ -7,7 +7,7 @@ class SignIn extends StatefulWidget {
 
   final Function toggleView;
 
-  SignIn({ required this.toggleView });
+  const SignIn({super.key,  required this.toggleView });
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -35,9 +35,9 @@ class _SignInState extends State<SignIn> {
         centerTitle: true,
         actions: [
           TextButton.icon(
-            icon: Icon(Icons.person, color: Colors.white),
-            style: TextButton.styleFrom(primary: Colors.white),
-            label: Text('Cadastro'),
+            icon: const Icon(Icons.person, color: Colors.white),
+            style: TextButton.styleFrom(foregroundColor: Colors.white),
+            label: const Text('Cadastro'),
             onPressed: () {
               widget.toggleView();
             },
@@ -45,12 +45,12 @@ class _SignInState extends State<SignIn> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 TextFormField(
                   decoration: textInputDecoration.copyWith(hintText: 'E-mail'),
                   validator: (value) => (
@@ -60,7 +60,7 @@ class _SignInState extends State<SignIn> {
                     setState(() => email = value);
                   },
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 TextFormField(
                   decoration: textInputDecoration.copyWith(hintText: 'Senha'),
                   obscureText: true,
@@ -71,7 +71,7 @@ class _SignInState extends State<SignIn> {
                     setState(() => password = value);
                   },
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
@@ -85,15 +85,15 @@ class _SignInState extends State<SignIn> {
                       }
                     }
                   }, 
-                  child: Text(
+                  child: const Text(
                     'Entrar',
                     style: TextStyle(color: Colors.white),
                   )
                 ),
-                SizedBox(height: 12.0),
+                const SizedBox(height: 12.0),
                 Text(
                   error,
-                  style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  style: const TextStyle(color: Colors.red, fontSize: 14.0),
                 ),
             ],
           ),

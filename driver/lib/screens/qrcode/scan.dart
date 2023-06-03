@@ -22,10 +22,7 @@ class ScanQRCode extends StatefulWidget {
 
 class _ScanQRCodeState extends State<ScanQRCode> {
   String? selectedTripId;
-  _ScanQRCodeState(
-    this.selectedTripId,
-    {Key? key}
-  );
+  _ScanQRCodeState(this.selectedTripId);
 
   MobileScannerController cameraController = MobileScannerController();
   bool _screenOpened = false;
