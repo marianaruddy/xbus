@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
-class FoundCodeScreen extends StatefulWidget {
-  final String value;
+class ScanFailed extends StatefulWidget {
   final Function() screenClosed;
-  const FoundCodeScreen({
+  const ScanFailed({
     Key? key,
-    required this.value,
     required this.screenClosed,
   }) : super(key: key);
 
   @override
-  State<FoundCodeScreen> createState() => _FoundCodeScreenState(screenClosed: screenClosed, value: value);
+  State<ScanFailed> createState() => _ScanFailedState(screenClosed: screenClosed);
 }
 
-class _FoundCodeScreenState extends State<FoundCodeScreen> {
-  final String value;
+class _ScanFailedState extends State<ScanFailed> {
   final Function() screenClosed;
-  _FoundCodeScreenState({
-    required this.value,
+  _ScanFailedState({
     required this.screenClosed,
   });
 
+  goBack () {
+    widget.screenClosed();
+    Navigator.of(context).pop(true);
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    Timer(const Duration(milliseconds: 3000), goBack);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("xBus"),
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {
-            widget.screenClosed();
-            Navigator.pop(context);
-          },
+          onPressed: goBack,
           icon: const Icon(Icons.arrow_back_outlined,),
         ),
       ),
@@ -40,10 +42,9 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Scanned Code:", style: TextStyle(fontSize: 20,),),
-              const SizedBox(height: 20,),
-              Text(widget.value, style: const TextStyle(fontSize: 16,),),
+            children: const [
+              Text("ATENÇÃO!\nticket já utlizado", style: TextStyle(fontSize: 20,color: Colors.red),),
+              SizedBox(height: 20,),
             ],
           ),
         ),

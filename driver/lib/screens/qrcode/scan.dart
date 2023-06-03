@@ -1,5 +1,8 @@
 import 'package:driver/models/ticket.dart';
-import 'package:driver/screens/qrcode/found_code_screen.dart';
+import 'package:driver/screens/qrcode/scan_succeeded.dart';
+import 'package:driver/screens/qrcode/scan_failed.dart';
+import 'package:driver/services/database.dart';
+import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
@@ -20,14 +23,9 @@ class _ScanQRCodeState extends State<ScanQRCode> {
   Widget build(BuildContext context) {
 
     List<Ticket> tickets = Provider.of<List<Ticket>?>(context) ?? [];
-    print('tickets: -------------');
-    if (tickets.isNotEmpty) {
-      tickets.forEach((tkt) {
-        print('tickets: ${tkt.id}');
-      });
-    }
 
-    return Scaffold(
+
+    Widget result =  tickets.isEmpty ? Loading() : Scaffold(
       appBar: AppBar(
         title: const Text("xBus"),
         actions: [
@@ -67,21 +65,45 @@ class _ScanQRCodeState extends State<ScanQRCode> {
       ),
       body: MobileScanner(
         controller: cameraController,
-        onDetect: (capture) {
+        onDetect: (capture) async {
           final List<Barcode> barcodes = capture.barcodes;
           if (!_screenOpened) {
             final String code = barcodes[0].rawValue ?? "---";
-            debugPrint('Barcode found! $code');
-            _screenOpened = true;
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>
-              FoundCodeScreen(screenClosed: _screenWasClosed, value: code),));
+            Ticket? scannedTicket;
+            scannedTicket = tickets.firstWhere((t) => t.id == code);
+            if(scannedTicket.checked == false) {
+              await DatabaseService().updateTicket(code, {
+                'Checked': true,
+              }).then((value) => {
+                _screenOpened = true,
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>
+                    ScanSucceeded(screenClosed: _screenWasClosed, value: code))
+                ).then(_goBack),
+              });
+            } else {
+              _screenOpened = true;
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>
+                  ScanFailed(screenClosed: _screenWasClosed))
+              ).then(_goBack);
+            }
           }
         },
       ),
     );
+    return result;
   }
 
   void _screenWasClosed() {
     _screenOpened = false;
+  }
+
+  void _goBack(value) { 
+    if(value!=null && value==true) {
+      Navigator.pop(context);
+    }
   }
 }
