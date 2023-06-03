@@ -138,7 +138,7 @@ class _NavigationState extends State<Navigation> {
                     ),
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ScanQRCodeWrapper(),
+                        builder: (context) => ScanQRCodeWrapper(selectedTrip?.id),
                       ));
                     },
                     child: Icon(

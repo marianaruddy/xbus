@@ -1,3 +1,4 @@
+import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/ticket.dart';
 import 'package:driver/screens/qrcode/scan_succeeded.dart';
 import 'package:driver/screens/qrcode/scan_failed.dart';
@@ -9,13 +10,23 @@ import 'package:provider/provider.dart';
 
 
 class ScanQRCode extends StatefulWidget {
-  const ScanQRCode({Key? key}) : super(key: key);
+  String? selectedTripId;
+  ScanQRCode(
+    this.selectedTripId,
+    {Key? key}
+  ) : super(key: key);
 
   @override
-  State<ScanQRCode> createState() => _ScanQRCodeState();
+  State<ScanQRCode> createState() => _ScanQRCodeState(selectedTripId);
 }
 
 class _ScanQRCodeState extends State<ScanQRCode> {
+  String? selectedTripId;
+  _ScanQRCodeState(
+    this.selectedTripId,
+    {Key? key}
+  );
+
   MobileScannerController cameraController = MobileScannerController();
   bool _screenOpened = false;
 
@@ -24,6 +35,9 @@ class _ScanQRCodeState extends State<ScanQRCode> {
 
     List<Ticket> tickets = Provider.of<List<Ticket>?>(context) ?? [];
 
+    List<CurrentTrip> currentTrips = Provider.of<List<CurrentTrip>?>(context) ?? [];
+
+    CurrentTrip currentTrip = currentTrips.firstWhere((curr) => curr.tripId == selectedTripId);
 
     Widget result =  tickets.isEmpty ? Loading() : Scaffold(
       appBar: AppBar(
@@ -72,9 +86,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
             Ticket? scannedTicket;
             scannedTicket = tickets.firstWhere((t) => t.id == code);
             if(scannedTicket.checked == false) {
-              await DatabaseService().updateTicket(code, {
-                'Checked': true,
-              }).then((value) => {
+              await updateDB(code, currentTrip).then((value) => {
                 _screenOpened = true,
                 Navigator.push(
                   context,
@@ -105,5 +117,19 @@ class _ScanQRCodeState extends State<ScanQRCode> {
     if(value!=null && value==true) {
       Navigator.pop(context);
     }
+  }
+  updateDB(String code, CurrentTrip currentTrip) {
+    return DatabaseService().updateTicket(code, {
+      'Checked': true,
+    }).then((value) {
+      DatabaseService().updateCurrentTrip(
+        currentTrip.id,
+        {
+          'PassengersQtyAfter': currentTrip.passengersQtyAfter + 1,
+          'PassengersQtyBefore': currentTrip.passengersQtyAfter,
+          'PassengersQtyNew': 1,
+        }
+      );
+    });
   }
 }
