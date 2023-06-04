@@ -92,7 +92,30 @@
                   });
 
                   //to add an event to the marker just use .addListener
+                  marker.addListener("click", () => {
+                        let stopName = marker.getTitle();
+                        let url = '{% url "stopDetails" %}';
+                        $.ajax({
+                                    url: url, // the endpoint
+                                    type: "GET", // http method
+                                    data: { 'stopName': stopName },
+                                    // handle a successful response
+                                    success: function (json) {
+                                          console.log("success"); // another sanity check
+                                          console.log(json);
+                                    },
+                                    // handle a non-successful response
+                                    error: function (xhr, errmsg, err) {
+                                          console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                                    }
+                              });
+                  });
         }
+      }
+
+      function clickMarker(e){
+            console.log("Entrei");
+            console.log(e.getTitle());
       }
 
       window.initMap = initMap;

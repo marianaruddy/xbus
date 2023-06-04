@@ -4,6 +4,7 @@ from .stop import *
 
 from firebase_admin import firestore
 from google.cloud.firestore import GeoPoint
+from datetime import datetime, timedelta
 
 db = firestore.client()
 
@@ -57,6 +58,26 @@ class StopModel(models.Model):
         stopDict["Coords"] = ""
 
         return stopDict
+    
+    def getStopDictByName(self, name):
+        stops = db.collection('Stop').where('Name','==',name).get()
+        stopDict = {}
+        if len(stops) > 0:
+            stop = stops[0]
+            stopDict = stop.to_dict()
+            stopDict["Id"] = stop.id
+        return stopDict
+    
+    def getQuantityOfTicketsGeneratedToStopToTheNext30Minutes(self,stopId):
+        now = datetime.now()
+        next30Minutes = now + timedelta(minutes=30)
+        tickets = db.collection('Ticket').where('StopId','==',stopId).where('Checked','==',False).where('BoardingHour','>=',now).where('BoardingHour','<=',next30Minutes).get()
+        ticketsList = []
+        for t in tickets:
+            tDict = t.to_dict()
+            ticketsList.append(tDict)
+
+        return len(ticketsList)
     
     #Update
     def updateStop(self, stop):

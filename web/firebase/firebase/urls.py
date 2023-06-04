@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.login, name='login'),
     path('home', views.home, name='home'),
+    path('home/stopDetails', views.stopDetails, name='stopDetails'),
     path('Components/addressTest', views.addressTest, name='addressTest'),
     path('Reports/tickets', views.reportTicket, name='reportTicket'),
     path('Reports/routes', views.reportRoutes, name='reportRoutes'),
