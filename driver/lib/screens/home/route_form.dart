@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/models/route.dart';
+import 'package:driver/models/stop.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/Navigation/navigation.dart';
@@ -10,6 +11,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/services/database.dart';
+import 'package:collection/collection.dart';
 
 class RouteForm extends StatefulWidget {
   const RouteForm({super.key});
@@ -49,6 +51,10 @@ class _RouteFormState extends State<RouteForm> {
   Vehicle? _currentLicensePlate;
 
   Trip? _currentHour;
+  
+  Stop? startStop;
+  
+  Stop? destinyStop;
     
   Trip? _selectedHour;
     double? startLat;
@@ -64,38 +70,36 @@ class _RouteFormState extends State<RouteForm> {
     final licensePlates = Provider.of<List<Vehicle>?>(context) ?? [];
 
     final trips = Provider.of<List<Trip>?>(context) ?? [];
-  
+
+    final stops = Provider.of<List<Stop>?>(context) ?? [];
+
     final formKey = GlobalKey<FormState>();
 
     final uid = FirebaseAuth.instance.currentUser?.uid;
 
     List<Trip> selectedRoutesTrips = _currentRoute != null ? trips.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
-    debugPrint('@@@ before');
-    if (selectedRoutesTrips.isNotEmpty) {
-      debugPrint('@@@ selectedRoutesTrips.isNotEmpty');
-      selectedRoutesTrips.forEach((trip) {
-        debugPrint('@@@ trip.routeRef: ${trip.routeRef}');
-        if (trip.routeRef !=null) {
-          trip.routeRef?.get().then((DocumentSnapshot document) {
-            if (document.exists) {
-              Map<String, dynamic> finData =
-                  document.data() as Map<String, dynamic>;
-              debugPrint('@@@finData: ${finData["Destiny"]}');
-              debugPrint('@@@finData: ${finData["Origin"]}');
-            }
-          });
-        }
+    startStop = _currentRoute != null
+      ? stops.firstWhereOrNull((stop) => stop.id == _currentRoute?.origin)
+      : null;
+    destinyStop = _currentRoute != null
+      ? stops.firstWhereOrNull((stop) => stop.id == _currentRoute?.destiny)
+      : null;
+    if (startStop != null) {
+      setState(() {
+        startLat = startStop?.coord.latitude;
+        startLong = startStop?.coord.longitude;
       });
-    }
-    else {
-      debugPrint('@@@ selectedRoutesTrips.isEmpty');
+    } else {
     }
 
-    double startLat = -22.979242;
-    double startLong = -43.231765;
-    double destinyLat = -22.947481;
-    double destinyLong = -43.182599;
-  
+    if (destinyStop != null) {
+      setState(() {
+        destinyLat = destinyStop?.coord.latitude;
+        destinyLong = destinyStop?.coord.longitude;
+      });
+    } else {
+    }
+
     return Form(
       key: formKey,
       child: Expanded(
@@ -173,11 +177,11 @@ class _RouteFormState extends State<RouteForm> {
               : const Text('Nenhum horário cadastrado')
             ),
             const SizedBox(height: 20.0),
-            Expanded(
-              // child: MyMap(destinyLat, destinyLong, startLat, startLong),
-              child: NavigationScreen(startLat, startLong, destinyLat, destinyLong, false),
-            ),
-          
+            if (startLat != null && startLong != null && destinyLat != null && destinyLong != null) ...[
+              Expanded(
+                child: NavigationScreen(startLat!, startLong!, destinyLat!, destinyLong!, false),
+              ),
+            ],
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: (_currentHour == null || _currentLicensePlate == null || _currentRoute == null)

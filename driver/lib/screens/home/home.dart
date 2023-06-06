@@ -1,3 +1,4 @@
+import 'package:driver/models/stop.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/home/route_form.dart';
@@ -37,6 +38,10 @@ class _HomeState extends State<Home> {
         ),
         StreamProvider<List<Trip>?>.value(
           value: DatabaseService().trips,
+          initialData: null,
+        ),
+        StreamProvider<List<Stop>?>.value(
+          value: DatabaseService().stops,
           initialData: null,
         ),
       ],
