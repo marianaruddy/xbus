@@ -111,9 +111,12 @@ class _RouteFormState extends State<RouteForm> {
               decoration: textInputDecoration.copyWith(hintText: 'Selecione uma rota'),
               value: _currentRoute,
               items: routes.map((route) {
+                Stop? currRouteStart = stops.firstWhereOrNull((stop) => stop.id == route.origin);
+                Stop? currRouteDestiny = stops.firstWhereOrNull((stop) => stop.id == route.destiny);
+                String optionLabel = 'Linha ${route.number.toString()}: ${currRouteStart?.name} - ${currRouteDestiny?.name}';
                 return DropdownMenuItem(
                   value: route,
-                  child: Text('Linha ${route.number.toString()}: ${route.origin} - ${route.destiny}',
+                  child: Text(optionLabel,
                   overflow: TextOverflow.visible,
                 ),
                 );
