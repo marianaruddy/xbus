@@ -94,11 +94,12 @@ class _NavigationState extends State<Navigation> {
             ),
             Expanded(
               flex: 1,
-              child: Container(
-                alignment: Alignment.center,
-                child: Expanded(
+              child: Column(
+                children: [
+                  Expanded(
                     child: StopsList(selectedTrip?.routeId, selectedTrip?.id),
-                  )
+                  ),
+                ]
               ),
             ),
             Row(
