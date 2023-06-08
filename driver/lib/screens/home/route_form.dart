@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/models/route.dart';
 import 'package:driver/models/stop.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
-import 'package:driver/screens/Navigation/navigation.dart';
+import 'package:driver/screens/navigation/navigation.dart';
 import 'package:driver/screens/navigation_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
