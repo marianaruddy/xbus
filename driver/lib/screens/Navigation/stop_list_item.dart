@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 
 class StopListItem extends StatefulWidget {
   String stopId;
-  StopListItem(this.stopId, {super.key});
+  String intendedTime;
+  StopListItem(this.stopId, this.intendedTime, {super.key});
 
   @override
-  State<StopListItem> createState() => _StopListItemState(stopId);
+  State<StopListItem> createState() => _StopListItemState(stopId, intendedTime);
 }
 
 class _StopListItemState extends State<StopListItem> {
   String stopId;
-  _StopListItemState(this.stopId);
+  String intendedTime;
+  _StopListItemState(this.stopId, this.intendedTime);
   @override
   Widget build(BuildContext context) {
     String errorText = '[NOME DA PARADA INDISPONÍVEL]';
@@ -23,7 +25,7 @@ class _StopListItemState extends State<StopListItem> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           Stop? stop = snapshot.data;
-          return Text(stop?.name ?? errorText);
+          return Text('[$intendedTime] ${stop?.name ?? errorText}');
         }
         else if (snapshot.connectionState == ConnectionState.waiting) {
           return Text(loadingText);

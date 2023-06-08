@@ -1,6 +1,7 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
+import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/screens/navigation/stop_list_item.dart';
 import 'package:driver/services/current_trip.dart';
 import 'package:driver/services/route.dart';
@@ -50,9 +51,7 @@ class _StopsListState extends State<StopsList> {
                 Text('Linha: ${route?.number}'),
                 Text('tripId: $tripId'),
                 ...thisRouteStops.map((routeStop) {
-                  currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
-                    currTrip.stopId == routeStop.stopId
-                  );
+                  String intendedTime = formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0];
                   return Row(
                     children: [
                       Expanded(
@@ -70,7 +69,7 @@ class _StopsListState extends State<StopsList> {
                             );
                           },
                           controlAffinity: ListTileControlAffinity.leading,
-                          title: StopListItem(routeStop.stopId)
+                          title: StopListItem(routeStop.stopId, intendedTime)
                         ),
                       )
                     ],
