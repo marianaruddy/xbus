@@ -1,7 +1,7 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
-import 'package:driver/screens/home/route_form.dart';
+import 'package:driver/screens/Navigation/stop_list_item.dart';
 import 'package:driver/services/database.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:provider/provider.dart';
@@ -69,9 +69,7 @@ class _StopsListState extends State<StopsList> {
                             );
                           },
                           controlAffinity: ListTileControlAffinity.leading,
-                          title: Text(
-                            '[${formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0]}] ponto ${routeStop.stopId.toString()} [${routeStop.order-1}]'
-                          ),
+                          title: StopListItem(routeStop.stopId)
                         ),
                       )
                     ],

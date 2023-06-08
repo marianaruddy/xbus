@@ -543,4 +543,56 @@ class DatabaseService {
       return [];
     }
   }
+
+  Future<Stop?>? getStopInstanceById(String? id) {
+    try {
+      if (id != null) {
+        return stopCollection.doc(id).get().then((doc) {
+          if (doc.exists) {
+            String address;
+            String name;
+            String regionId;
+            GeoPoint coord;
+
+            if ((doc.data() as Map<String, dynamic>).containsKey('Address')) {
+              address = doc['Address'];
+            } else {
+              address = '';
+            }
+
+            if ((doc.data() as Map<String, dynamic>).containsKey('Name')) {
+              name = doc['Name'];
+            } else {
+              name = '';
+            }
+
+            if ((doc.data() as Map<String, dynamic>).containsKey('RegionId')) {
+              regionId = doc['RegionId'];
+            } else {
+              regionId = '';
+            }
+
+            if ((doc.data() as Map<String, dynamic>).containsKey('Coords')) {
+              coord = doc['Coords'];
+            } else {
+              coord = const GeoPoint(-22.979242, -43.231765);
+            }
+
+            return Stop(
+              id: doc.id,
+              address: address,
+              name: name,
+              regionId: regionId,
+              coord: coord,
+            );
+          } else {
+            throw Exception('No such document');
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('erro: $e');
+    }
+    return null;
+  }
 }
