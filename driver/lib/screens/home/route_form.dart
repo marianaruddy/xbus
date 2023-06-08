@@ -3,13 +3,15 @@ import 'package:driver/models/stop.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/navigation/navigation.dart';
-import 'package:driver/screens/navigation_screen.dart';
+import 'package:driver/services/driver.dart';
+import 'package:driver/services/route.dart';
+import 'package:driver/services/trip.dart';
+import 'package:driver/services/vehicle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
-import 'package:driver/services/database.dart';
 import 'package:collection/collection.dart';
 
 class RouteForm extends StatefulWidget {
@@ -204,17 +206,17 @@ class _RouteFormState extends State<RouteForm> {
                 : () {
                 _selectedHour = _currentHour;
                 _currentHour = null;
-                DatabaseService().updateTrip(
+                TripService().updateTrip(
                   _selectedHour?.id,
                   {
                     'ActualDepartureTime': DateTime.now(),
                     'ActualArrivalTime': null,
                     'DriverId': uid,
-                    'DriverRef': DatabaseService().getDriverRefById(uid),
+                    'DriverRef': DriverService().getDriverRefById(uid),
                     'RouteId': _currentRoute?.id,
-                    'RouteRef': DatabaseService().getRouteRefById(_currentRoute?.id),
+                    'RouteRef': RouteService().getRouteRefById(_currentRoute?.id),
                     'VehicleId': _currentLicensePlate?.id,
-                    'VehicleRef': DatabaseService().getVehicleRefById(_currentLicensePlate?.id),
+                    'VehicleRef': VehicleService().getVehicleRefById(_currentLicensePlate?.id),
                   }
                 );
                 Navigator.of(context)

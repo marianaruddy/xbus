@@ -1,5 +1,5 @@
 import 'package:driver/models/stop.dart';
-import 'package:driver/services/database.dart';
+import 'package:driver/services/stops.dart';
 import 'package:flutter/material.dart';
 
 class StopListItem extends StatefulWidget {
@@ -19,7 +19,7 @@ class _StopListItemState extends State<StopListItem> {
     String loadingText = '...';
 
     return FutureBuilder(
-      future: DatabaseService().getStopInstanceById(stopId),
+      future: StopService().getStopInstanceById(stopId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           Stop? stop = snapshot.data;

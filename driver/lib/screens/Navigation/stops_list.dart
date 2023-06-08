@@ -2,7 +2,8 @@ import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/screens/navigation/stop_list_item.dart';
-import 'package:driver/services/database.dart';
+import 'package:driver/services/current_trip.dart';
+import 'package:driver/services/route.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class _StopsListState extends State<StopsList> {
     thisRouteStops.sort((a, b) => a.order - b.order);
 
     return FutureBuilder(
-      future: DatabaseService().getRouteInstanceById(routeId),
+      future: RouteService().getRouteInstanceById(routeId),
       builder: (context, snapshot) {
         if(snapshot.connectionState == ConnectionState.done) {
           RouteModel? route = snapshot.data;
@@ -61,7 +62,7 @@ class _StopsListState extends State<StopsList> {
                             currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
                               currTrip.stopId == routeStop.stopId
                             );
-                            DatabaseService().updateCurrentTrip(
+                            CurrentTripService().updateCurrentTrip(
                               currentTrip?.id,
                               {
                                 'ActualTime': value! ? DateTime.now() : null,

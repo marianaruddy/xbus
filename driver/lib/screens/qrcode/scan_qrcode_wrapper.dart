@@ -1,7 +1,8 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/ticket.dart';
 import 'package:driver/screens/qrcode/scan.dart';
-import 'package:driver/services/database.dart';
+import 'package:driver/services/current_trip.dart';
+import 'package:driver/services/ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,11 +27,11 @@ class _ScanQRCodeWrapperState extends State<ScanQRCodeWrapper> {
     return MultiProvider(
       providers: [
         StreamProvider<List<Ticket>?>.value(
-          value: DatabaseService().tickets,
+          value: TicketService().tickets,
           initialData: null,
         ),
         StreamProvider<List<CurrentTrip>?>.value(
-          value: DatabaseService().currentTrips,
+          value: CurrentTripService().currentTrips,
           initialData: null,
         ),
       ],

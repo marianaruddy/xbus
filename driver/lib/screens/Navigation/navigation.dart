@@ -4,7 +4,9 @@ import 'package:driver/models/trip.dart';
 import 'package:driver/screens/navigation/stops_list.dart';
 import 'package:driver/screens/home/home.dart';
 import 'package:driver/screens/qrcode/scan_qrcode_wrapper.dart';
-import 'package:driver/services/database.dart';
+import 'package:driver/services/current_trip.dart';
+import 'package:driver/services/trip.dart';
+import 'package:driver/services/route_stops.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -68,11 +70,11 @@ class _NavigationState extends State<Navigation> {
     return  MultiProvider(
       providers: [
         StreamProvider<List<RouteStop>?>.value(
-          value: DatabaseService().routeStops,
+          value: RouteStopsService().routeStops,
           initialData: null,
         ),
         StreamProvider<List<CurrentTrip>?>.value(
-          value: DatabaseService().currentTrips,
+          value: CurrentTripService().currentTrips,
           initialData: null,
         ),
       ],
@@ -113,7 +115,7 @@ class _NavigationState extends State<Navigation> {
                       padding: const EdgeInsets.all(15.0),
                     ),
                     onPressed: () {
-                      DatabaseService().updateTrip(
+                      TripService().updateTrip(
                       selectedTrip?.id,
                       {
                         'ActualArrivalTime': DateTime.now(),

@@ -3,7 +3,10 @@ import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/services/auth.dart';
-import 'package:driver/services/database.dart';
+import 'package:driver/services/route.dart';
+import 'package:driver/services/stops.dart';
+import 'package:driver/services/trip.dart';
+import 'package:driver/services/vehicle.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,19 +32,19 @@ class _HomeState extends State<Home> {
     return 
       MultiProvider(providers: [
         StreamProvider<List<RouteModel>?>.value(
-          value: DatabaseService().routes,
+          value: RouteService().routes,
           initialData: null,
         ),
         StreamProvider<List<Vehicle>?>.value(
-          value: DatabaseService().vehicles,
+          value: VehicleService().vehicles,
           initialData: null,
         ),
         StreamProvider<List<Trip>?>.value(
-          value: DatabaseService().trips,
+          value: TripService().trips,
           initialData: null,
         ),
         StreamProvider<List<Stop>?>.value(
-          value: DatabaseService().stops,
+          value: StopService().stops,
           initialData: null,
         ),
       ],
