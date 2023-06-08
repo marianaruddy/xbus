@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:driver/models/ticket.dart';
-import 'package:driver/services/database.dart';
+import 'package:driver/services/ticket.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +15,7 @@ class QrCodePage extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider<List<Ticket>?>.value(
-          value: DatabaseService().tickets,
+          value: TicketService().tickets,
           initialData: null,
         ),
       ],
@@ -133,7 +133,7 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
           if (t.id == code) {
             scannedTicket = t;
             if(scannedTicket.checked == false) {
-              await DatabaseService().updateTicket(code, {
+              await TicketService().updateTicket(code, {
                 'Checked': true,
               }).then((value) => {
                 _showTemporaryDialog('sucesso', code, context, cameraController)

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/models/route.dart';
-import 'package:driver/models/ticket.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:flutter/material.dart';
@@ -260,84 +259,5 @@ class DatabaseService {
       return driverCollection.doc(id);
     }
     return null;
-  }
-
-  final CollectionReference ticketCollection = FirebaseFirestore.instance.collection('Ticket');
-
-  List<Ticket> _ticketFromSnapshot(QuerySnapshot snapshot) {
-    try {
-      return snapshot.docs.map((doc) {
-        DateTime? boardingHour;
-        bool? checked;
-        num? price;
-        String? stopId;
-        DocumentReference? stopRef;
-
-        if ((doc.data() as Map<String,dynamic>).containsKey('BoardingHour')) {
-          boardingHour = doc['BoardingHour'] != null ? (doc['BoardingHour'] as Timestamp).toDate() : null;
-        }
-        else {
-          boardingHour = null;
-        }
-
-        if ((doc.data() as Map<String,dynamic>).containsKey('Checked')) {
-          checked = doc['Checked'];
-        }
-        else {
-          checked = false;
-        }
-
-        if ((doc.data() as Map<String,dynamic>).containsKey('Price')) {
-          price = doc['Price'];
-        }
-        else {
-          price = null;
-        }
-
-        if ((doc.data() as Map<String,dynamic>).containsKey('StopId')) {
-          stopId = doc['StopId'];
-        }
-        else {
-          stopId = '';
-        }
-
-        if ((doc.data() as Map<String,dynamic>).containsKey('StopRef')) {
-          stopRef = doc['StopRef'];
-        }
-        else {
-          stopRef = null;
-        }
-
-        return Ticket(
-          id: doc.id,
-          boardingHour: boardingHour,
-          checked: checked,
-          price: price,
-          stopId: stopId,
-          stopRef: stopRef,
-        );
-      }).toList();
-      
-    } catch (e) {
-      debugPrint('erro: $e');
-      return [];
-    }
-  }
-  
-  Stream<List<Ticket>> get tickets {
-    return ticketCollection.snapshots()
-      .map(_ticketFromSnapshot);
-  }
-
-  DocumentReference? getTicketRefById(String? id) {
-    if (id != null) {
-      return ticketCollection.doc(id);
-    }
-    return null;
-  }
-
-  
-  Future updateTicket(docId, data) async {
-    ticketCollection.doc(docId).update(data);
   }
 }
