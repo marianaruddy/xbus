@@ -4,6 +4,7 @@ import 'package:driver/models/trip.dart';
 import 'package:driver/screens/navigation/stops_list.dart';
 import 'package:driver/screens/home/home.dart';
 import 'package:driver/screens/qrcode/scan_qrcode_wrapper.dart';
+import 'package:driver/services/current_trip.dart';
 import 'package:driver/services/database.dart';
 import 'package:driver/services/route_stops.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,7 @@ class _NavigationState extends State<Navigation> {
           initialData: null,
         ),
         StreamProvider<List<CurrentTrip>?>.value(
-          value: DatabaseService().currentTrips,
+          value: CurrentTripService().currentTrips,
           initialData: null,
         ),
       ],

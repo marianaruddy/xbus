@@ -2,6 +2,7 @@ import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/ticket.dart';
 import 'package:driver/screens/qrcode/scan_succeeded.dart';
 import 'package:driver/screens/qrcode/scan_failed.dart';
+import 'package:driver/services/current_trip.dart';
 import 'package:driver/services/database.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +120,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
     return DatabaseService().updateTicket(code, {
       'Checked': true,
     }).then((value) {
-      DatabaseService().updateCurrentTrip(
+      CurrentTripService().updateCurrentTrip(
         currentTrip.id,
         {
           'PassengersQtyAfter': currentTrip.passengersQtyAfter + 1,
