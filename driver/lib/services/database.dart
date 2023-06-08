@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
-import 'package:driver/models/stop.dart';
 import 'package:driver/models/ticket.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
@@ -490,109 +489,5 @@ class DatabaseService {
   Stream<List<RouteStop>> get routeStops {
     return routeStopCollection.snapshots()
       .map(_routeStopsFromSnapshot);
-  }
-
-  final CollectionReference stopCollection = FirebaseFirestore.instance.collection('Stop');
-
-  Stream<List<Stop>> get stops {
-    return stopCollection.snapshots().map(_stopsFromSnapshot);
-  }
-
-  List<Stop> _stopsFromSnapshot(QuerySnapshot snapshot) {
-    try {
-      return snapshot.docs.map((doc) {
-        String address;
-        String name;
-        String regionId;
-        GeoPoint coord;
-
-        if ((doc.data() as Map<String, dynamic>).containsKey('Address')) {
-          address = doc['Address'];
-        } else {
-          address = '';
-        }
-
-        if ((doc.data() as Map<String, dynamic>).containsKey('Name')) {
-          name = doc['Name'];
-        } else {
-          name = '';
-        }
-
-        if ((doc.data() as Map<String, dynamic>).containsKey('RegionId')) {
-          regionId = doc['RegionId'];
-        } else {
-          regionId = '';
-        }
-
-        if ((doc.data() as Map<String, dynamic>).containsKey('Coords')) {
-          coord = doc['Coords'];
-        } else {
-          coord = const GeoPoint(-22.979242, -43.231765);
-        }
-
-        return Stop(
-          id: doc.id,
-          address: address,
-          name: name,
-          regionId: regionId,
-          coord: coord,
-        );
-      }).toList();
-    } catch (e) {
-      debugPrint('erro: $e');
-      return [];
-    }
-  }
-
-  Future<Stop?>? getStopInstanceById(String? id) {
-    try {
-      if (id != null) {
-        return stopCollection.doc(id).get().then((doc) {
-          if (doc.exists) {
-            String address;
-            String name;
-            String regionId;
-            GeoPoint coord;
-
-            if ((doc.data() as Map<String, dynamic>).containsKey('Address')) {
-              address = doc['Address'];
-            } else {
-              address = '';
-            }
-
-            if ((doc.data() as Map<String, dynamic>).containsKey('Name')) {
-              name = doc['Name'];
-            } else {
-              name = '';
-            }
-
-            if ((doc.data() as Map<String, dynamic>).containsKey('RegionId')) {
-              regionId = doc['RegionId'];
-            } else {
-              regionId = '';
-            }
-
-            if ((doc.data() as Map<String, dynamic>).containsKey('Coords')) {
-              coord = doc['Coords'];
-            } else {
-              coord = const GeoPoint(-22.979242, -43.231765);
-            }
-
-            return Stop(
-              id: doc.id,
-              address: address,
-              name: name,
-              regionId: regionId,
-              coord: coord,
-            );
-          } else {
-            throw Exception('No such document');
-          }
-        });
-      }
-    } catch (e) {
-      debugPrint('erro: $e');
-    }
-    return null;
   }
 }
