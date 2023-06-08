@@ -3,9 +3,8 @@ import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/screens/navigation/stop_list_item.dart';
+import 'package:driver/screens/navigation/trip_info.dart';
 import 'package:driver/services/current_trip.dart';
-import 'package:driver/services/route.dart';
-import 'package:driver/shared/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -40,49 +39,42 @@ class _StopsListState extends State<StopsList> {
 
     thisRouteStops.sort((a, b) => a.order - b.order);
 
-    return FutureBuilder(
-      future: RouteService().getRouteInstanceById(routeId),
-      builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.done) {
-          RouteModel? route = snapshot.data;
-          return SingleChildScrollView(
-            child: Column(
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          TripInfo(routeId!),
+          Text('tripId: $tripId'),
+          ...thisRouteStops.map((routeStop) {
+            currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
+              currTrip.stopId == routeStop.stopId
+            );
+            String intendedTime = formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0];
+            return Row(
               children: [
-                Text('Linha: ${route?.number}'),
-                Text('tripId: $tripId'),
-                ...thisRouteStops.map((routeStop) {
-                  String intendedTime = formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0];
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: CheckboxListTile(
-                          value: val[routeStop.order-1],
-                          onChanged: (bool? value) {
-                            currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
-                              currTrip.stopId == routeStop.stopId
-                            );
-                            CurrentTripService().updateCurrentTrip(
-                              currentTrip?.id,
-                              {
-                                'ActualTime': value! ? DateTime.now() : null,
-                              }
-                            );
-                          },
-                          controlAffinity: ListTileControlAffinity.leading,
-                          title: StopListItem(routeStop.stopId, intendedTime)
-                        ),
-                      )
-                    ],
-                  );
-                }).toList()
+                Expanded(
+                  child: CheckboxListTile(
+                    value: val[routeStop.order-1],
+                    onChanged: (bool? value) {
+                      debugPrint('@value $value');
+                      currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
+                        currTrip.stopId == routeStop.stopId
+                      );
+                      CurrentTripService().updateCurrentTrip(
+                        currentTrip?.id,
+                        {
+                          'ActualTime': value! ? DateTime.now() : null,
+                        }
+                      );
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: StopListItem(routeStop.stopId, intendedTime),
+                  ),
+                )
               ],
-            ),
-          );
-        }
-        else {
-          return Loading();
-        }
-      }, 
+            );
+          }).toList()
+        ],
+      ),
     );
   }
 }
