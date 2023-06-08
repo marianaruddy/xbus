@@ -6,9 +6,7 @@ import 'package:driver/screens/navigation/stop_list_item.dart';
 import 'package:driver/screens/navigation/trip_info.dart';
 import 'package:driver/services/current_trip.dart';
 import 'package:driver/services/route_stops.dart';
-import 'package:driver/services/stops.dart';
 import 'package:driver/shared/loading.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 class StopsList extends StatefulWidget {
