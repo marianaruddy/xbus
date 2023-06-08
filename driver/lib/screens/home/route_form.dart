@@ -4,6 +4,7 @@ import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/navigation/navigation.dart';
 import 'package:driver/services/driver.dart';
+import 'package:driver/services/trip.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -204,7 +205,7 @@ class _RouteFormState extends State<RouteForm> {
                 : () {
                 _selectedHour = _currentHour;
                 _currentHour = null;
-                DatabaseService().updateTrip(
+                TripService().updateTrip(
                   _selectedHour?.id,
                   {
                     'ActualDepartureTime': DateTime.now(),

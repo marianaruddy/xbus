@@ -5,6 +5,7 @@ import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/services/auth.dart';
 import 'package:driver/services/database.dart';
 import 'package:driver/services/stops.dart';
+import 'package:driver/services/trip.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +39,7 @@ class _HomeState extends State<Home> {
           initialData: null,
         ),
         StreamProvider<List<Trip>?>.value(
-          value: DatabaseService().trips,
+          value: TripService().trips,
           initialData: null,
         ),
         StreamProvider<List<Stop>?>.value(
