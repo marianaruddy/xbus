@@ -124,6 +124,7 @@ class _RouteFormState extends State<RouteForm> {
               }).toList(),
               onChanged: (value) {
                 setState(() { _currentRoute = value; });
+                setState(() { _currentHour = null; });
                 if (value?.origin != null){
                   getGeoCoderData(_currentRoute?.origin).then((location) => {
                     setState(() { startLat = location.elementAt(0); }),
