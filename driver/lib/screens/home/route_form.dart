@@ -123,21 +123,26 @@ class _RouteFormState extends State<RouteForm> {
                 );
               }).toList(),
               onChanged: (value) {
-                setState(() { _currentRoute = value; });
-                setState(() { _currentHour = null; });
+                setState(() { 
+                  _currentRoute = value;
+                  _currentHour = null;
+                 });
                 if (value?.origin != null){
                   getGeoCoderData(_currentRoute?.origin).then((location) => {
-                    setState(() { startLat = location.elementAt(0); }),
-                    setState(() { startLong = location.elementAt(1); })
+                    setState(() { 
+                      startLat = location.elementAt(0);
+                      startLong = location.elementAt(1);
+                     }),
                   });
 
                 }
                 if (value?.destiny != null){
                   getGeoCoderData(_currentRoute?.destiny).then((location) => {
-                    setState(() { destinyLat = location.elementAt(0); }),
-                    setState(() { destinyLong = location.elementAt(1); })
+                    setState(() { 
+                      destinyLat = location.elementAt(0);
+                      destinyLong = location.elementAt(1);
+                     }),
                   });
-                  
                 }
               },
             ) : 
