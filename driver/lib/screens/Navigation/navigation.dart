@@ -67,93 +67,81 @@ class _NavigationState extends State<Navigation> {
 
   @override
   Widget build(BuildContext context) {
-    return  MultiProvider(
-      providers: [
-        StreamProvider<List<RouteStop>?>.value(
-          value: RouteStopsService().routeStops,
-          initialData: null,
-        ),
-        StreamProvider<List<CurrentTrip>?>.value(
-          value: CurrentTripService().currentTrips,
-          initialData: null,
-        ),
-      ],
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0.0,
-          automaticallyImplyLeading: false,
-          title: const Text('xBus'),
-          centerTitle: true,
-        ),
-        body: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return  Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        automaticallyImplyLeading: false,
+        title: const Text('xBus'),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              RoundedNumber(peopleInBus, 'Pessoas atualmente no ônibus'),
+              RoundedNumber(peopleAtNextStop, 'Pessoas esperando no próximo ponto'),
+            ],
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
               children: [
-                RoundedNumber(peopleInBus, 'Pessoas atualmente no ônibus'),
-                RoundedNumber(peopleAtNextStop, 'Pessoas esperando no próximo ponto'),
-              ],
+                Expanded(
+                  child: StopsList(selectedTrip?.routeId, selectedTrip?.id),
+                ),
+              ]
             ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: StopsList(selectedTrip?.routeId, selectedTrip?.id),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Tooltip(
+                message: 'Finalizar Viagem',
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(15.0),
                   ),
-                ]
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Tooltip(
-                  message: 'Finalizar Viagem',
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(15.0),
-                    ),
-                    onPressed: () {
-                      TripService().updateTrip(
-                      selectedTrip?.id,
-                      {
-                        'ActualArrivalTime': DateTime.now(),
-                      }
+                  onPressed: () {
+                    TripService().updateTrip(
+                    selectedTrip?.id,
+                    {
+                      'ActualArrivalTime': DateTime.now(),
+                    }
+                  );
+                  Navigator.of(context)
+                    .push(
+                      MaterialPageRoute(builder: (context) => const Home())
                     );
-                    Navigator.of(context)
-                      .push(
-                        MaterialPageRoute(builder: (context) => const Home())
-                      );
-                    },
-                    child: const Icon(
-                      Icons.flag,
-                      size: 40.0,
-                    ),
+                  },
+                  child: const Icon(
+                    Icons.flag,
+                    size: 40.0,
                   ),
                 ),
-                Tooltip(
-                  message: 'Escanear ticket',
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(15.0),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ScanQRCodeWrapper(selectedTrip?.id),
-                      ));
-                    },
-                    child: const Icon(
-                      Icons.qr_code_scanner,
-                      size: 40.0,
-                    ),
+              ),
+              Tooltip(
+                message: 'Escanear ticket',
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(15.0),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ScanQRCodeWrapper(selectedTrip?.id),
+                    ));
+                  },
+                  child: const Icon(
+                    Icons.qr_code_scanner,
+                    size: 40.0,
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

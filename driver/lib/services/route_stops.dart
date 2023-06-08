@@ -57,4 +57,20 @@ class RouteStopsService {
       .map(_routeStopsFromSnapshot);
   }
 
+  Future<List<RouteStop>>? getRouteStopsFromRoute(String? routeId) {
+    try {
+      if (routeId != null){
+        return routeStopCollection.where(
+            'RouteId', isEqualTo: routeId
+          )
+          .orderBy('Order', descending: false)
+          .get().then(_routeStopsFromSnapshot);
+      }
+      return null;
+    } catch (e) {
+      debugPrint('erro: $e');
+    }
+    return null;
+  }
+
 }

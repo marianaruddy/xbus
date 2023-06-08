@@ -100,4 +100,20 @@ class CurrentTripService {
   Future updateCurrentTrip(docId, data) async {
     currentTripsCollection.doc(docId).update(data);
   }
+
+  Future<List<CurrentTrip?>> getCurrTripsFromTrip(String? tripId) async {
+    return currentTripsCollection.where(
+      'TripId', isEqualTo: tripId
+    ).get().then((snapshot) {
+        return snapshot.docs.map((doc) {
+          if (doc.exists) {
+            return createCurrentTripInstance(doc);
+          }
+          else {
+            return null;
+          }
+        }).toList();
+      },
+    );
+  }
 }
