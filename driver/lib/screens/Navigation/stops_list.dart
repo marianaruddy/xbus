@@ -47,15 +47,21 @@ class _StopsListState extends State<StopsList> {
         if (snapshot.connectionState == ConnectionState.done) {
           List<CurrentTrip?>? currentTripsThisTrip = snapshot.data!['currentTripsThisTrip'];
           List<RouteStop>? thisRouteStops = snapshot.data!['thisRouteStops'];
-          val = currentTripsThisTrip!.map((currTrip) => currTrip?.actualTime != null).toList();
+
+          for (var i = 0; i < thisRouteStops!.length; i++) {
+            bool element = currentTripsThisTrip!.firstWhere((currTtip) => (
+              thisRouteStops[i].stopId == currTtip?.stopId
+            ))?.actualTime != null;
+            val.insert(i, element);
+          }
 
           return SingleChildScrollView(
             child: Column(
               children: [
                 TripInfo(routeId!),
                 Text('tripId: $tripId'),
-                ...(thisRouteStops?.map((routeStop) {
-                  currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
+                ...(thisRouteStops.map((routeStop) {
+                  currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
                     currTrip?.stopId == routeStop.stopId
                   );
                   String intendedTime = formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0];
@@ -66,7 +72,7 @@ class _StopsListState extends State<StopsList> {
                           value: val[routeStop.order-1],
                           onChanged: (bool? value) {
                             setState(() {
-                              currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
+                              currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
                                 currTrip?.stopId == routeStop.stopId
                               );
                             });
@@ -85,7 +91,7 @@ class _StopsListState extends State<StopsList> {
                       )
                     ],
                   );
-                }) ?? []).toList()
+                })).toList()
               ],
             ),
           );
