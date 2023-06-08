@@ -1,5 +1,5 @@
 import 'package:driver/services/auth.dart';
-import 'package:driver/services/database.dart';
+import 'package:driver/services/driver.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -117,7 +117,7 @@ class _RegisterState extends State<Register> {
                         loading = false;
                       });
                     } else {
-                      DatabaseService().updateDriver(
+                      DriverService().updateDriver(
                         result.uid, 
                         email,
                         company,

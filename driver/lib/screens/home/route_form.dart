@@ -3,7 +3,7 @@ import 'package:driver/models/stop.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/navigation/navigation.dart';
-import 'package:driver/screens/navigation_screen.dart';
+import 'package:driver/services/driver.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -210,7 +210,7 @@ class _RouteFormState extends State<RouteForm> {
                     'ActualDepartureTime': DateTime.now(),
                     'ActualArrivalTime': null,
                     'DriverId': uid,
-                    'DriverRef': DatabaseService().getDriverRefById(uid),
+                    'DriverRef': DriverService().getDriverRefById(uid),
                     'RouteId': _currentRoute?.id,
                     'RouteRef': DatabaseService().getRouteRefById(_currentRoute?.id),
                     'VehicleId': _currentLicensePlate?.id,
