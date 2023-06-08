@@ -1,7 +1,9 @@
 import 'package:driver/models/current_trip.dart';
+import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/services/database.dart';
+import 'package:driver/shared/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +19,8 @@ class _StopsListState extends State<StopsList> {
   String? routeId, tripId;
   _StopsListState(this.routeId, this.tripId);
   List<bool> val = [];
+  Future<RouteModel?>? routeRef;
+
   @override
   Widget build(BuildContext context) {
     CurrentTrip? currentTrip;
@@ -34,41 +38,53 @@ class _StopsListState extends State<StopsList> {
 
     thisRouteStops.sort((a, b) => a.order - b.order);
 
-    return SingleChildScrollView (
-      child: Column(
-        children: [
-          Text('routeId: $routeId'),
-          Text('tripId: $tripId'),
-          ...thisRouteStops.map((routeStop) {
-            currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
-              currTrip.stopId == routeStop.stopId
-            );
-            return Row(
+    return FutureBuilder(
+      future: DatabaseService().getRouteInstanceById(routeId),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.done) {
+          RouteModel? route = snapshot.data;
+          return SingleChildScrollView(
+            child: Column(
               children: [
-                Expanded(
-                  child: CheckboxListTile(
-                    value: val[routeStop.order-1],
-                    onChanged: (bool? value) {
-                      currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
-                        currTrip.stopId == routeStop.stopId
-                      );
-                      DatabaseService().updateCurrentTrip(
-                        currentTrip?.id,
-                        {
-                          'ActualTime': value! ? DateTime.now() : null,
-                        }
-                      );
-                    },
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(
-                      '[${formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0]}] ponto ${routeStop.stopId.toString()} [${routeStop.order-1}]'
-                    ),
-                  ),
-                )
+                Text('Linha: ${route?.number}'),
+                Text('tripId: $tripId'),
+                ...thisRouteStops.map((routeStop) {
+                  currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
+                    currTrip.stopId == routeStop.stopId
+                  );
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: CheckboxListTile(
+                          value: val[routeStop.order-1],
+                          onChanged: (bool? value) {
+                            currentTrip = currentTripsThisTrip.firstWhere((currTrip) => 
+                              currTrip.stopId == routeStop.stopId
+                            );
+                            DatabaseService().updateCurrentTrip(
+                              currentTrip?.id,
+                              {
+                                'ActualTime': value! ? DateTime.now() : null,
+                              }
+                            );
+                          },
+                          controlAffinity: ListTileControlAffinity.leading,
+                          title: Text(
+                            '[${formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0]}] ponto ${routeStop.stopId.toString()} [${routeStop.order-1}]'
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                }).toList()
               ],
-            );
-        }).toList()],
-      ),
+            ),
+          );
+        }
+        else {
+          return Loading();
+        }
+      }, 
     );
   }
 }

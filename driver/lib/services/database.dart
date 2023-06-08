@@ -60,6 +60,27 @@ class DatabaseService {
     return null;
   }
 
+  Future<RouteModel?>? getRouteInstanceById(String? id) {
+    try {
+      if (id != null) {
+        return getRouteRefById(id)?.get().then((doc) {
+          if (doc.exists) {
+            return RouteModel(
+                id: doc.id,
+                destiny: doc['Destiny'],
+                number: doc['Number'],
+                origin: doc['Origin']);
+          } else {
+            throw Exception('No such document');
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('erro: $e');
+    }
+    return null;
+  }
+
   final CollectionReference vehicleCollection = FirebaseFirestore.instance.collection('Vehicle');
 
   List<Vehicle> _vehicleListFromSnapshot(QuerySnapshot snapshot) {
@@ -437,7 +458,7 @@ class DatabaseService {
         }
 
         if ((doc.data() as Map<String,dynamic>).containsKey('RouteId')) {
-          routeId = doc['RouteId'];
+          routeId = doc['RouteId'] ?? '';
         }
         else {
           routeId = '';
