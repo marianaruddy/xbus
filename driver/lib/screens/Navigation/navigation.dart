@@ -5,6 +5,7 @@ import 'package:driver/screens/navigation/stops_list.dart';
 import 'package:driver/screens/home/home.dart';
 import 'package:driver/screens/qrcode/scan_qrcode_wrapper.dart';
 import 'package:driver/services/database.dart';
+import 'package:driver/services/route_stops.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -68,7 +69,7 @@ class _NavigationState extends State<Navigation> {
     return  MultiProvider(
       providers: [
         StreamProvider<List<RouteStop>?>.value(
-          value: DatabaseService().routeStops,
+          value: RouteStopsService().routeStops,
           initialData: null,
         ),
         StreamProvider<List<CurrentTrip>?>.value(

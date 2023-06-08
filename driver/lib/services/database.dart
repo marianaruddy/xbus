@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route.dart';
-import 'package:driver/models/route_stop.dart';
 import 'package:driver/models/ticket.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
@@ -439,55 +438,5 @@ class DatabaseService {
 
   Future updateCurrentTrip(docId, data) async {
     currentTripsCollection.doc(docId).update(data);
-  }
-
-  List<RouteStop> _routeStopsFromSnapshot(QuerySnapshot snapshot) {
-    try {
-      return snapshot.docs.map((doc) {
-        String stopId;
-        String routeId;
-        int order;
-        
-
-        if ((doc.data() as Map<String,dynamic>).containsKey('StopId')) {
-          stopId = doc['StopId'];
-        }
-        else {
-          stopId = '';
-        }
-
-        if ((doc.data() as Map<String,dynamic>).containsKey('RouteId')) {
-          routeId = doc['RouteId'] ?? '';
-        }
-        else {
-          routeId = '';
-        }
-
-        if ((doc.data() as Map<String,dynamic>).containsKey('Order')) {
-          order = doc['Order'];
-        }
-        else {
-          order = -1;
-        }
-
-        return RouteStop(
-          id: doc.id,
-          stopId: stopId,
-          routeId: routeId,
-          order: order,
-        );
-      }).toList();
-      
-    } catch (e) {
-      debugPrint('erro: $e');
-      return [];
-    }
-  }
-
-  final CollectionReference routeStopCollection = FirebaseFirestore.instance.collection('RouteStops');
-  
-  Stream<List<RouteStop>> get routeStops {
-    return routeStopCollection.snapshots()
-      .map(_routeStopsFromSnapshot);
   }
 }
