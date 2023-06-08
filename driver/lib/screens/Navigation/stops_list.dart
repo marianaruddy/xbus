@@ -74,14 +74,12 @@ class _StopsListState extends State<StopsList> {
                                 currTrip?.stopId == routeStop.stopId
                               );
                             });
-                            if (currentTrip?.actualTime == null) {
-                              CurrentTripService().updateCurrentTrip(
-                                currentTrip?.id,
-                                {
-                                  'ActualTime': value! ? DateTime.now() : null,
-                                }
-                              );
-                            }
+                            CurrentTripService().updateCurrentTrip(
+                              currentTrip?.id,
+                              {
+                                'ActualTime': value! ? DateTime.now() : null,
+                              }
+                            );
                           },
                           controlAffinity: ListTileControlAffinity.leading,
                           title: StopListItem(routeStop.stopId, intendedTime),
