@@ -3,7 +3,7 @@ import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/services/auth.dart';
-import 'package:driver/services/database.dart';
+import 'package:driver/services/route.dart';
 import 'package:driver/services/stops.dart';
 import 'package:driver/services/trip.dart';
 import 'package:driver/services/vehicle.dart';
@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
     return 
       MultiProvider(providers: [
         StreamProvider<List<RouteModel>?>.value(
-          value: DatabaseService().routes,
+          value: RouteService().routes,
           initialData: null,
         ),
         StreamProvider<List<Vehicle>?>.value(
