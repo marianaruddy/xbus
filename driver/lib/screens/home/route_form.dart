@@ -129,14 +129,14 @@ class _RouteFormState extends State<RouteForm> {
                   getGeoCoderData(_currentRoute?.origin).then((location) => {
                     setState(() { startLat = location.elementAt(0); }),
                     setState(() { startLong = location.elementAt(1); })
-                  }).then((value) => print('set value: ${startLat.toString()}'));
+                  });
 
                 }
                 if (value?.destiny != null){
                   getGeoCoderData(_currentRoute?.destiny).then((location) => {
                     setState(() { destinyLat = location.elementAt(0); }),
                     setState(() { destinyLong = location.elementAt(1); })
-                  }).then((value) => print('set value: ${destinyLat.toString()}'));
+                  });
                   
                 }
               },

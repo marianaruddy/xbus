@@ -301,7 +301,7 @@ class DatabaseService {
       }).toList();
       
     } catch (e) {
-      print('erro: $e');
+      debugPrint('erro: $e');
       return [];
     }
   }
@@ -412,7 +412,7 @@ class DatabaseService {
 
       }).toList();
     } catch (e) {
-      print('erro: $e');
+      debugPrint('erro: $e');
       return [];
     }
   }
@@ -459,7 +459,7 @@ class DatabaseService {
       }).toList();
       
     } catch (e) {
-      print('erro: $e');
+      debugPrint('erro: $e');
       return [];
     }
   }
@@ -518,7 +518,7 @@ class DatabaseService {
         );
       }).toList();
     } catch (e) {
-      print('erro: $e');
+      debugPrint('erro: $e');
       return [];
     }
   }

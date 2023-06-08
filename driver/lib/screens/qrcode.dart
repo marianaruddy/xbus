@@ -112,7 +112,7 @@ class _QRCodePageBodyState extends State<QRCodePageBody> {
   
     List<Ticket> tickets = Provider.of<List<Ticket>?>(context) ?? [];
 
-    print('tickets $tickets');
+    debugPrint('tickets $tickets');
     // if (tickets.length < 1) {
     //   return Loading();
     // }

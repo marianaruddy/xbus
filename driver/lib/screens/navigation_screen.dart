@@ -177,7 +177,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         points.add({'lat': point.latitude, 'lng': point.longitude});
       });
     } else {
-      print(result.errorMessage);
+      debugPrint(result.errorMessage);
     }
     addPolyLine(polylineCoordinates);
   }
