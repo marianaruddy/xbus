@@ -5,6 +5,7 @@ import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/navigation/navigation.dart';
 import 'package:driver/services/driver.dart';
 import 'package:driver/services/trip.dart';
+import 'package:driver/services/vehicle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -215,7 +216,7 @@ class _RouteFormState extends State<RouteForm> {
                     'RouteId': _currentRoute?.id,
                     'RouteRef': DatabaseService().getRouteRefById(_currentRoute?.id),
                     'VehicleId': _currentLicensePlate?.id,
-                    'VehicleRef': DatabaseService().getVehicleRefById(_currentLicensePlate?.id),
+                    'VehicleRef': VehicleService().getVehicleRefById(_currentLicensePlate?.id),
                   }
                 );
                 Navigator.of(context)
