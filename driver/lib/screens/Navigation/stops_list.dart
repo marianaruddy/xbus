@@ -23,6 +23,7 @@ class _StopsListState extends State<StopsList> {
   List<bool> val = [];
   int? peopleInBus;
   Future<RouteModel?>? routeRef;
+  int firstUnmarkedIndex=-1;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class _StopsListState extends State<StopsList> {
                 FractionallySizedBox(
                   widthFactor: 1.0,
                   child: Container(
-                    padding: const EdgeInsets.only(top: 10.0, left: 16.0),
+                    padding: const EdgeInsets.only(top: 10.0, left: 16.0, bottom: 10.0),
                     margin: const EdgeInsets.only(left: 0.0),
                     decoration: const BoxDecoration(
                       border: Border(
@@ -90,30 +91,48 @@ class _StopsListState extends State<StopsList> {
                   currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
                     currTrip?.stopId == routeStop.stopId
                   );
+                  firstUnmarkedIndex = val.indexWhere((element) => element == false);
                   String intendedTime = formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0];
+
                   return Row(
                     children: [
                       Expanded(
-                        child: CheckboxListTile(
-                          value: val[routeStop.order-1],
-                          onChanged: (bool? value) {
-                            setState(() {
-                              currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
-                                currTrip?.stopId == routeStop.stopId
-                              );
-                              peopleInBus = currentTrip?.passengersQtyAfter;
-                            });
-                            CurrentTripService().updateCurrentTrip(
-                              currentTrip?.id,
-                              {
-                                'ActualTime': value! ? DateTime.now() : null,
-                              }
-                            );
-                          },
-                          controlAffinity: ListTileControlAffinity.leading,
-                          title: StopListItem(routeStop.stopId, intendedTime),
+                        child: Column(
+                          children: [
+                            if(firstUnmarkedIndex == routeStop.order-1) ...[
+                              const FractionallySizedBox(
+                                widthFactor: 1.0,
+                                child:  Padding(
+                                  padding: EdgeInsets.only(left: 16.0),
+                                  child: Text(
+                                    'PRóXIMA PARADA:',
+                                    style: TextStyle(fontSize: 8.0),
+                                  ),
+                                ),
+                              )
+                            ],
+                            CheckboxListTile(
+                              value: val[routeStop.order-1],
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
+                                    currTrip?.stopId == routeStop.stopId
+                                  );
+                                  peopleInBus = currentTrip?.passengersQtyAfter;
+                                });
+                                CurrentTripService().updateCurrentTrip(
+                                  currentTrip?.id,
+                                  {
+                                    'ActualTime': value! ? DateTime.now() : null,
+                                  }
+                                );
+                              },
+                              controlAffinity: ListTileControlAffinity.leading,
+                              title: StopListItem(routeStop.stopId, intendedTime),
+                            ),
+                          ]
                         ),
-                      )
+                      ),
                     ],
                   );
                 })).toList()
