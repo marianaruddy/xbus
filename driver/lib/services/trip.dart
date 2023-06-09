@@ -129,4 +129,19 @@ class TripService {
   Stream<List<Trip>> get trips {
     return tripCollection.snapshots().map(_tripsListFromSnapshot);
   }
+
+  Future<Trip>? getTripInstaceFromId(String? id) {
+    if (id != null) {
+      return tripCollection.doc(id).get().then((doc) {
+        if (doc.exists) {
+          return createTripInstance(doc);
+        } else {
+          throw Exception('No such document');
+        }
+      });
+    }
+    else {
+      return null;
+    }
+  }
 }
