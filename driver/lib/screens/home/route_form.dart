@@ -3,10 +3,7 @@ import 'package:driver/models/stop.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/models/vehicle.dart';
 import 'package:driver/screens/navigation/navigation.dart';
-import 'package:driver/services/driver.dart';
-import 'package:driver/services/route.dart';
 import 'package:driver/services/trip.dart';
-import 'package:driver/services/vehicle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -77,6 +74,12 @@ class _RouteFormState extends State<RouteForm> {
     final formKey = GlobalKey<FormState>();
 
     final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    List<Vehicle>? availablelicensePlates = _currentHour != null
+      ? licensePlates.where((lcnsPlate) => (
+          lcnsPlate.capacity >= (_currentHour?.capacityInVehicle as num)
+        )).toList()
+      : [];
 
     List<Trip> selectedRoutesTrips = _currentRoute != null ? trips.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
     startStop = _currentRoute != null
@@ -151,26 +154,6 @@ class _RouteFormState extends State<RouteForm> {
 
             const SizedBox(height: 20.0),
 
-            licensePlates.isNotEmpty ? DropdownButtonFormField<Vehicle>(
-              isExpanded: true,
-              decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
-              value: _currentLicensePlate,
-              items: licensePlates.map((license) {
-                return DropdownMenuItem(
-                  value: license,
-                  child: Text(license.licensePlate.toString(),
-                    overflow: TextOverflow.visible,
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() { _currentLicensePlate = value; });
-              },
-            ) : 
-            const Text('Nenhum veículo cadastrado'),
-
-            const SizedBox(height: 20.0),
-
             selectedRoutesTrips.isNotEmpty ? DropdownButtonFormField<Trip>(
               isExpanded: true,
               decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
@@ -187,9 +170,32 @@ class _RouteFormState extends State<RouteForm> {
                 setState(() { _currentHour = value; });
               },
             ) : (
-              _currentRoute == null
-              ? const Text('Selecione uma rota') 
-              : const Text('Nenhum horário cadastrado')
+              _currentRoute != null
+              ? const Text('Nenhum horário cadastrado')
+              : Container()
+            ),
+
+            const SizedBox(height: 20.0),
+
+            availablelicensePlates.isNotEmpty ? DropdownButtonFormField<Vehicle>(
+              isExpanded: true,
+              decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
+              value: _currentLicensePlate,
+              items: availablelicensePlates.map((license) {
+                return DropdownMenuItem(
+                  value: license,
+                  child: Text(license.licensePlate.toString(),
+                    overflow: TextOverflow.visible,
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() { _currentLicensePlate = value; });
+              },
+            ) : (
+              _currentHour != null
+              ? const Text('Nenhum veículo cadastrado')
+              : Container()
             ),
 
             const SizedBox(height: 20.0),
