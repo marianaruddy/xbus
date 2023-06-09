@@ -14,7 +14,7 @@ class StopService {
     String address;
     String name;
     String regionId;
-    GeoPoint coord;
+    GeoPoint coords;
 
     if ((doc.data() as Map<String, dynamic>).containsKey('Address')) {
       address = doc['Address'];
@@ -35,9 +35,9 @@ class StopService {
     }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('Coords')) {
-      coord = doc['Coords'];
+      coords = doc['Coords'];
     } else {
-      coord = const GeoPoint(-22.979242, -43.231765);
+      coords = const GeoPoint(-22.979242, -43.231765);
     }
 
     return Stop(
@@ -45,7 +45,7 @@ class StopService {
       address: address,
       name: name,
       regionId: regionId,
-      coord: coord,
+      coords: coords,
     );
   }
 

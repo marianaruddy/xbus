@@ -87,16 +87,16 @@ class _RouteFormState extends State<RouteForm> {
       : null;
     if (startStop != null) {
       setState(() {
-        startLat = startStop?.coord.latitude;
-        startLong = startStop?.coord.longitude;
+        startLat = startStop?.coords.latitude;
+        startLong = startStop?.coords.longitude;
       });
     } else {
     }
 
     if (destinyStop != null) {
       setState(() {
-        destinyLat = destinyStop?.coord.latitude;
-        destinyLong = destinyStop?.coord.longitude;
+        destinyLat = destinyStop?.coords.latitude;
+        destinyLong = destinyStop?.coords.longitude;
       });
     } else {
     }
