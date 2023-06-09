@@ -9,6 +9,7 @@ class RouteService {
     String destiny;
     int number;
     String origin;
+    num? price;
 
     if ((doc.data() as Map<String, dynamic>).containsKey('Destiny')) {
       destiny = doc['Destiny'];
@@ -28,11 +29,18 @@ class RouteService {
       origin = '';
     }
 
+    if ((doc.data() as Map<String, dynamic>).containsKey('Price')) {
+      price = doc['Price'];
+    } else {
+      price = null;
+    }
+
     return RouteModel(
       id: doc.id,
       destiny: destiny,
       number: number,
       origin: origin,
+      price: price,
     );
   }
 
@@ -56,11 +64,7 @@ class RouteService {
       if (id != null) {
         return getRouteRefById(id)?.get().then((doc) {
           if (doc.exists) {
-            return RouteModel(
-              id: doc.id,
-              destiny: doc['Destiny'],
-              number: doc['Number'],
-              origin: doc['Origin']);
+            return createRouteInstance(doc);
           } else {
             throw Exception('No such document');
           }
