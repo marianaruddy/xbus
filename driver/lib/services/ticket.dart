@@ -6,18 +6,10 @@ class TicketService {
   final CollectionReference ticketCollection = FirebaseFirestore.instance.collection('Ticket');
 
   Ticket createTicketInstance(doc) {
-    DateTime? boardingHour;
     bool? checked;
-    num? price;
+    String currentTripId;
+    String? passangerId;
     String? stopId;
-
-    if ((doc.data() as Map<String, dynamic>).containsKey('BoardingHour')) {
-      boardingHour = doc['BoardingHour'] != null
-        ? (doc['BoardingHour'] as Timestamp).toDate()
-        : null;
-    } else {
-      boardingHour = null;
-    }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('Checked')) {
       checked = doc['Checked'];
@@ -25,10 +17,16 @@ class TicketService {
       checked = false;
     }
 
-    if ((doc.data() as Map<String, dynamic>).containsKey('Price')) {
-      price = doc['Price'];
+    if ((doc.data() as Map<String, dynamic>).containsKey('CurrentTripId')) {
+      currentTripId = doc['CurrentTripId'];
     } else {
-      price = null;
+      currentTripId = ''; // TODO ver oq fazer aqui (throw error?)
+    }
+
+    if ((doc.data() as Map<String, dynamic>).containsKey('PassangerId')) {
+      passangerId = doc['PassangerId'];
+    } else {
+      passangerId = null;
     }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('StopId')) {
@@ -39,9 +37,9 @@ class TicketService {
 
     return Ticket(
       id: doc.id,
-      boardingHour: boardingHour,
       checked: checked,
-      price: price,
+      currentTripId: currentTripId,
+      passangerId: passangerId,
       stopId: stopId,
     );
   }

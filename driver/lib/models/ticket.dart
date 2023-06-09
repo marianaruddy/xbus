@@ -1,15 +1,15 @@
 class Ticket {
   final String id;
-  final DateTime? boardingHour;
   final bool? checked;
-  final num? price;
+  final String currentTripId;
+  final String? passangerId;
   final String? stopId;
 
   Ticket ({ 
     required this.id, 
-    this.boardingHour,
     this.checked,
-    this.price,
+    required this.currentTripId,
+    this.passangerId,
     this.stopId,
   });
   
