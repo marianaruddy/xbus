@@ -31,6 +31,9 @@ class TripService {
   Trip createTripInstance(doc) {
     DateTime? actualArrivalTime;
     DateTime? actualDepartureTime;
+    GeoPoint? currentLocation;
+    int capacityInVehicle;
+    int? passengersQty;
     String? driverId;
     DateTime intendedArrivalTime;
     DateTime intendedDepartureTime;
@@ -45,13 +48,30 @@ class TripService {
       actualArrivalTime = null;
     }
 
-    if ((doc.data() as Map<String, dynamic>)
-        .containsKey('ActualDepartureTime')) {
+    if ((doc.data() as Map<String, dynamic>).containsKey('ActualDepartureTime')) {
       actualDepartureTime = doc['ActualDepartureTime'] != null
         ? (doc['ActualDepartureTime'] as Timestamp).toDate()
         : null;
     } else {
       actualDepartureTime = null;
+    }
+
+    if ((doc.data() as Map<String, dynamic>).containsKey('CurrentLocation')) {
+      currentLocation = doc['CurrentLocation'];
+    } else {
+      currentLocation = null;
+    }
+
+    if ((doc.data() as Map<String, dynamic>).containsKey('CapacityInVehicle')) {
+      capacityInVehicle = doc['CapacityInVehicle'];
+    } else {
+      capacityInVehicle = -1; //TODO: ver oq fazer aqui (throw error?)
+    }
+
+    if ((doc.data() as Map<String, dynamic>).containsKey('PassengersQty')) {
+      passengersQty = doc['PassengersQty'];
+    } else {
+      passengersQty = null;
     }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('DriverId')) {
@@ -60,15 +80,13 @@ class TripService {
       driverId = '';
     }
 
-    if ((doc.data() as Map<String, dynamic>)
-        .containsKey('IntendedArrivalTime')) {
+    if ((doc.data() as Map<String, dynamic>).containsKey('IntendedArrivalTime')) {
       intendedArrivalTime = (doc['IntendedArrivalTime'] as Timestamp).toDate();
     } else {
       intendedArrivalTime = DateTime.now();
     }
 
-    if ((doc.data() as Map<String, dynamic>)
-        .containsKey('IntendedDepartureTime')) {
+    if ((doc.data() as Map<String, dynamic>).containsKey('IntendedDepartureTime')) {
       intendedDepartureTime =
           (doc['IntendedDepartureTime'] as Timestamp).toDate();
     } else {
@@ -91,6 +109,9 @@ class TripService {
       id: doc.id,
       actualArrivalTime: actualArrivalTime,
       actualDepartureTime: actualDepartureTime,
+      currentLocation: currentLocation,
+      capacityInVehicle: capacityInVehicle,
+      passengersQty: passengersQty,
       driverId: driverId,
       intendedArrivalTime: intendedArrivalTime,
       intendedDepartureTime: intendedDepartureTime,
