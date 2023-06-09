@@ -8,25 +8,19 @@ class TripService {
     DateTime? actualArrivalTime,
     DateTime? actualDepartureTime,
     required String driverId,
-    DocumentReference? driverRef,
     required DateTime intendedArrivalTime,
     required DateTime intendedDepartureTime,
-    DocumentReference? routeRef,
     required String routeId,
     required String vehicleId,
-    DocumentReference? vehicleRef,
   }) async {
     await tripCollection.doc().set({
       'ActualArrivalTime': actualArrivalTime,
       'ActualDepartureTime': actualDepartureTime,
       'DriverId': driverId,
-      'DriverRef': driverRef,
       'IntendedArrivalTime': intendedArrivalTime,
       'IntendedDepartureTime': intendedDepartureTime,
       'RouteId': routeId,
-      'RouteRef': routeRef,
       'VehicleId': vehicleId,
-      'VehicleRef': vehicleRef,
     });
   }
 
@@ -38,13 +32,10 @@ class TripService {
     DateTime? actualArrivalTime;
     DateTime? actualDepartureTime;
     String? driverId;
-    DocumentReference? driverRef;
     DateTime intendedArrivalTime;
     DateTime intendedDepartureTime;
     String routeId;
-    DocumentReference? routeRef;
     String vehicleId;
-    DocumentReference? vehicleRef;
 
     if ((doc.data() as Map<String, dynamic>).containsKey('ActualArrivalTime')) {
       actualArrivalTime = doc['ActualArrivalTime'] != null
@@ -69,10 +60,6 @@ class TripService {
       driverId = '';
     }
 
-    if ((doc.data() as Map<String, dynamic>).containsKey('DriverRef')) {
-      driverRef = doc['DriverRef'];
-    }
-
     if ((doc.data() as Map<String, dynamic>)
         .containsKey('IntendedArrivalTime')) {
       intendedArrivalTime = (doc['IntendedArrivalTime'] as Timestamp).toDate();
@@ -94,18 +81,10 @@ class TripService {
       routeId = '';
     }
 
-    if ((doc.data() as Map<String, dynamic>).containsKey('RouteRef')) {
-      routeRef = doc['RouteRef'];
-    }
-
     if ((doc.data() as Map<String, dynamic>).containsKey('VehicleId')) {
       vehicleId = doc['VehicleId'];
     } else {
       vehicleId = '';
-    }
-
-    if ((doc.data() as Map<String, dynamic>).containsKey('VehicleRef')) {
-      vehicleRef = doc['VehicleRef'];
     }
 
     return Trip(
@@ -113,13 +92,10 @@ class TripService {
       actualArrivalTime: actualArrivalTime,
       actualDepartureTime: actualDepartureTime,
       driverId: driverId,
-      driverRef: driverRef,
       intendedArrivalTime: intendedArrivalTime,
       intendedDepartureTime: intendedDepartureTime,
       routeId: routeId,
-      routeRef: routeRef,
       vehicleId: vehicleId,
-      vehicleRef: vehicleRef,
     );
   }
 

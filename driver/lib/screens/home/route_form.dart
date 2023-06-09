@@ -212,11 +212,8 @@ class _RouteFormState extends State<RouteForm> {
                     'ActualDepartureTime': DateTime.now(),
                     'ActualArrivalTime': null,
                     'DriverId': uid,
-                    'DriverRef': DriverService().getDriverRefById(uid),
                     'RouteId': _currentRoute?.id,
-                    'RouteRef': RouteService().getRouteRefById(_currentRoute?.id),
                     'VehicleId': _currentLicensePlate?.id,
-                    'VehicleRef': VehicleService().getVehicleRefById(_currentLicensePlate?.id),
                   }
                 );
                 Navigator.of(context)

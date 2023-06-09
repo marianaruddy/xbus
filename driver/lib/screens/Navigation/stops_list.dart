@@ -22,7 +22,6 @@ class _StopsListState extends State<StopsList> {
   _StopsListState(this.routeId, this.tripId);
   List<bool> val = [];
   int? peopleInBus;
-  Future<RouteModel?>? routeRef;
   int firstUnmarkedIndex=-1;
 
   @override

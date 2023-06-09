@@ -10,7 +10,6 @@ class TicketService {
     bool? checked;
     num? price;
     String? stopId;
-    DocumentReference? stopRef;
 
     if ((doc.data() as Map<String, dynamic>).containsKey('BoardingHour')) {
       boardingHour = doc['BoardingHour'] != null
@@ -38,19 +37,12 @@ class TicketService {
       stopId = '';
     }
 
-    if ((doc.data() as Map<String, dynamic>).containsKey('StopRef')) {
-      stopRef = doc['StopRef'];
-    } else {
-      stopRef = null;
-    }
-
     return Ticket(
       id: doc.id,
       boardingHour: boardingHour,
       checked: checked,
       price: price,
       stopId: stopId,
-      stopRef: stopRef,
     );
   }
 
