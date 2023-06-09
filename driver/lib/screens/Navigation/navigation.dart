@@ -29,6 +29,28 @@ class _NavigationState extends State<Navigation> {
 
   @override
   Widget build(BuildContext context) {
+    Future openConfirmModal(context) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Deseja realmente finalizar a viagem atual?"),
+        actions: [
+          TextButton(
+            onPressed: () => {
+              Navigator.of(context).pop()
+              },
+            child: const Text('Cancelar')
+          ),
+          TextButton(
+            onPressed: () => {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const Home()
+              ))
+            },
+            child: const Text('Finalizar')
+          ),
+        ],
+      ));
+
     return  Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -51,6 +73,7 @@ class _NavigationState extends State<Navigation> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              
               Tooltip(
                 message: 'Finalizar Viagem',
                 child: ElevatedButton(
@@ -65,10 +88,7 @@ class _NavigationState extends State<Navigation> {
                       'ActualArrivalTime': DateTime.now(),
                     }
                   );
-                  Navigator.of(context)
-                    .push(
-                      MaterialPageRoute(builder: (context) => const Home())
-                    );
+                  openConfirmModal(context);
                   },
                   child: const Icon(
                     Icons.flag,
