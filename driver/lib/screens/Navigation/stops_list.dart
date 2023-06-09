@@ -21,6 +21,7 @@ class _StopsListState extends State<StopsList> {
   String? routeId, tripId;
   _StopsListState(this.routeId, this.tripId);
   List<bool> val = [];
+  int? peopleInBus;
   Future<RouteModel?>? routeRef;
 
   @override
@@ -56,8 +57,35 @@ class _StopsListState extends State<StopsList> {
           return SingleChildScrollView(
             child: Column(
               children: [
+                const SizedBox(height: 30.0),
+
                 TripInfo(routeId!),
-                Text('tripId: $tripId'),
+
+                if ((peopleInBus ?? -1) > 0) ...[
+                  const SizedBox(height: 10.0),
+                  Text('pessoas no ônibus: $peopleInBus'),
+                ],
+
+                const SizedBox(height: 20.0),
+                FractionallySizedBox(
+                  widthFactor: 1.0,
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 10.0, left: 16.0),
+                    margin: const EdgeInsets.only(left: 0.0),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.green)
+                      ),
+                    ),
+                    child: const Text(
+                      'Marque os pontos já visitados:',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                ),
+
                 ...(thisRouteStops.map((routeStop) {
                   currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
                     currTrip?.stopId == routeStop.stopId
@@ -73,6 +101,7 @@ class _StopsListState extends State<StopsList> {
                               currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
                                 currTrip?.stopId == routeStop.stopId
                               );
+                              peopleInBus = currentTrip?.passengersQtyAfter;
                             });
                             CurrentTripService().updateCurrentTrip(
                               currentTrip?.id,
