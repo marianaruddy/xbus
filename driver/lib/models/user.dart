@@ -4,7 +4,6 @@ class Driver {
   final String? company;
   final String? document;
   final String? name;
-  final String? photo;
 
   Driver({
     required this.uid,
@@ -12,7 +11,6 @@ class Driver {
     this.company,
     this.document,
     this.name,
-    this.photo,
   });
 
 }

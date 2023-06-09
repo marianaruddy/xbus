@@ -38,7 +38,6 @@ class AuthService {
         'Company': null,
         'Document': null,
         'Name': null,
-        'Photo': null,
       });
       return driver;
     } catch (e) {

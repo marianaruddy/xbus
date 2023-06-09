@@ -123,7 +123,6 @@ class _RegisterState extends State<Register> {
                         company,
                         document,
                         name,
-                        'photo',
                       );
                     }
                   }

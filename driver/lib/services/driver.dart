@@ -9,14 +9,12 @@ class DriverService {
     String? company,
     String? document,
     String? name,
-    String? photo
   ) async {
     FirebaseFirestore.instance.collection('Driver').doc(uid).update({
       'Email': email,
       'Company': company,
       'Document': document,
       'Name': name,
-      'Photo': photo,
     });
   }
 
