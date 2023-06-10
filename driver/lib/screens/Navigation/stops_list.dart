@@ -157,17 +157,6 @@ class _StopsListState extends State<StopsList> {
                   child: Center(child: Text('IR PARA O PRÓXIMO PONTO')),
                 ),
               ),
-
-              // TODO: tirar esse botao daqui
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    currentTripIndex = 0;
-                    stopsRemaining = true;
-                  });
-                },
-                child: const Text('zerar (tirar esse botao daqui)'),
-              )
             ],
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
