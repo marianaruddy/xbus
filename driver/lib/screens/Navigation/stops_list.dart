@@ -1,5 +1,4 @@
 import 'package:driver/models/current_trip.dart';
-import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/screens/navigation/stop_list_item.dart';
@@ -23,6 +22,7 @@ class _StopsListState extends State<StopsList> {
   List<bool> val = [];
   int? peopleInBus;
   int currentTripIndex = 0;
+  bool stopsRemaining = true;
 
   @override
   Widget build(BuildContext context) {
@@ -55,104 +55,105 @@ class _StopsListState extends State<StopsList> {
           }
           currentTrip = currentTripsThisTrip?[currentTripIndex];
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 30.0),
+          return Column(
+            children: [
+              const SizedBox(height: 30.0),
 
-                TripInfo(routeId!),
+              TripInfo(routeId!),
 
-                if ((peopleInBus ?? -1) > 0) ...[
-                  const SizedBox(height: 10.0),
-                  Text('pessoas no ônibus: $peopleInBus'),
-                ],
+              if ((peopleInBus ?? -1) > 0) ...[
+                const SizedBox(height: 10.0),
+                Text('pessoas no ônibus: $peopleInBus'),
+              ],
 
-                const SizedBox(height: 20.0),
-                FractionallySizedBox(
-                  widthFactor: 1.0,
-                  child: Container(
-                    padding: const EdgeInsets.only(top: 10.0, left: 16.0, bottom: 10.0),
-                    margin: const EdgeInsets.only(left: 0.0),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: Colors.green)
-                      ),
-                    ),
-                    child: ListView(
-                              shrinkWrap: true,
+              const SizedBox(height: 20.0),
+              Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: Colors.green)),
+                ),
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    ...thisRouteStops.map((routeStop) {
+                      String? status;
+                      if(!stopsRemaining) {
+                        status= 'passed';
+                      }
+                      else if (currentTripIndex == routeStop.order - 1) {
+                        status = 'next';
+                      }
+                      else if (currentTripIndex >= routeStop.order - 1) {
+                        status = 'passed';
+                      }
+                      String intendedTime = formatDateTime2DateAndTimeString(
+                        currentTrip?.intendedTime ?? DateTime.now()
+                      ).split(' ')[0];
+                      return Container(
+                        height: 50.0,
+                        padding: const EdgeInsets.only(
+                          left: 10.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ...thisRouteStops.map((routeStop) {
-                                  String? status;
-                                  if(currentTripIndex==routeStop.order-1){
-                                    status = 'next';
-                                  }
-                                  else if(currentTripIndex>=routeStop.order-1){
-                                    status = 'passed';
-                                  }
-                                  return Container(
-                                    height: 50.0,
-                                    padding: const EdgeInsets.only(
-                                      left: 20.0,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            if(status=='next')...[
-                                              const Text(
-                                                'PRóXIMO PONTO:',
-                                                style: TextStyle(fontSize: 10.0),
-                                              )
-                                            ],
-                                            StopListItem(routeStop.stopId, '00:00', status),
-                                          ]
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                })
+                                if (status == 'next') ...[
+                                  const Text(
+                                    'PRóXIMO PONTO:',
+                                    style: TextStyle(fontSize: 10.0),
+                                  )
+                                ],
+                                StopListItem(
+                                    routeStop.stopId, intendedTime, status),
                               ],
                             ),
-                  ),
+                          ],
+                        ),
+                      );
+                    })
+                  ],
                 ),
+              ),
 
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          if(currentTripIndex <= (currentTripsThisTrip?.length ?? -2)) {
-                                            currentTrip = currentTripsThisTrip?[currentTripIndex];
-                                            currentTripIndex += 1;
-                                          }
-                                        });
-                                        CurrentTripService().updateCurrentTrip(
-                                          currentTrip?.id,
-                                          {
-                                            'ActualTime': DateTime.now(),
-                                          }
-                                        );
-                                      },
-                                      child: const Text('IR PARA PRÓXIMO PONTO'),
-                                    ),
+              ElevatedButton(
+                onPressed: stopsRemaining ?  () {
+                  debugPrint('currentTripIndex: ${currentTripIndex}');
+                  debugPrint('currentTripsThisTrip?.length: ${currentTripsThisTrip?.length}');
+                  setState(() {
+                    stopsRemaining = currentTripIndex + 1 < ((currentTripsThisTrip?.length ?? -2));
+                    if (stopsRemaining) {
+                      currentTrip = currentTripsThisTrip?[currentTripIndex];
+                      currentTripIndex += 1;
+                    }
+                  });
+                  CurrentTripService().updateCurrentTrip(currentTrip?.id, {
+                    'ActualTime': DateTime.now(),
+                  });
+                }:null ,
+                child: const SizedBox(
+                  height: 60.0,
+                  width: 220.0,
+                  child: Center(child: Text('IR PARA O PRÓXIMO PONTO')),
+                ),
+              ),
 
-                
-                            
-                            // TODO: tirar esse botao daqui
-                        ElevatedButton(
-                          onPressed: () {
-                              setState(() {
-                                currentTripIndex=0;
-                              });
-                            },
-                          child: const Text('zerar (tirar esse botao daqui)'),
-                        )
-              ],
-            ),
+              // TODO: tirar esse botao daqui
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    currentTripIndex = 0;
+                    stopsRemaining = true;
+                  });
+                },
+                child: const Text('zerar (tirar esse botao daqui)'),
+              )
+            ],
           );
-        }
-        else if (snapshot.connectionState == ConnectionState.waiting) {
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
           return Loading();
-        }
-        else {
+        } else {
           return const Text('[ERRO]');
         }
       },
