@@ -4,6 +4,7 @@ import 'package:driver/screens/qrcode/scan_succeeded.dart';
 import 'package:driver/screens/qrcode/scan_failed.dart';
 import 'package:driver/services/current_trip.dart';
 import 'package:driver/services/ticket.dart';
+import 'package:driver/services/trip.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -126,6 +127,13 @@ class _ScanQRCodeState extends State<ScanQRCode> {
           'PassengersQtyAfter': currentTrip.passengersQtyAfter + 1,
           'PassengersQtyBefore': currentTrip.passengersQtyAfter,
           'PassengersQtyNew': 1,
+        }
+      );
+    }).then((value) {
+      TripService().updateTrip(
+        currentTrip.tripId,
+        {
+          'PassengersQty': currentTrip.passengersQtyAfter + 1,
         }
       );
     });
