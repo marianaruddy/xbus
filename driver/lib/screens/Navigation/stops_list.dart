@@ -23,7 +23,7 @@ class _StopsListState extends State<StopsList> {
   _StopsListState(this.routeId, this.tripId);
   List<bool> val = [];
   int? peopleInBus;
-  int firstUnmarkedIndex=-1;
+  int currentTripIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +56,7 @@ class _StopsListState extends State<StopsList> {
             ))?.actualTime != null;
             val.insert(i, element);
           }
+          currentTrip = currentTripsThisTrip?[currentTripIndex];
 
           return SingleChildScrollView(
             child: Column(
@@ -66,7 +67,11 @@ class _StopsListState extends State<StopsList> {
 
                 if ((peopleInBus ?? -1) > 0) ...[
                   const SizedBox(height: 10.0),
-                  Text('pessoas no ônibus: $peopleInBus'),
+                  // Text('pessoas no ônibus: $peopleInBus'),
+                ]
+                else ...[
+                  const SizedBox(height: 10.0),
+                  Text('pessoas no ônibus: 10'),
                 ],
 
                 const SizedBox(height: 20.0),
@@ -80,64 +85,66 @@ class _StopsListState extends State<StopsList> {
                         top: BorderSide(color: Colors.green)
                       ),
                     ),
-                    child: const Text(
-                      'Marque os pontos já visitados:',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      ),
-                    ),
+                    child: Container(),
                   ),
                 ),
-
-                ...(thisRouteStops.map((routeStop) {
-                  currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
-                    currTrip?.stopId == routeStop.stopId
-                  );
-                  firstUnmarkedIndex = val.indexWhere((element) => element == false);
-                  String intendedTime = formatDateTime2DateAndTimeString(currentTrip?.intendedTime ?? DateTime.now()).split(' ')[0];
-
+                ...thisRouteStops.map((routeStop) {
                   return Row(
                     children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            if(firstUnmarkedIndex == routeStop.order-1) ...[
-                              const FractionallySizedBox(
-                                widthFactor: 1.0,
-                                child:  Padding(
-                                  padding: EdgeInsets.only(left: 16.0),
-                                  child: Text(
+                      Column(
+                        children: [
+                          if(currentTripIndex==routeStop.order-1) ...[
+                            Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.only(top:8.0),
+                                  child: const Text(
                                     'PRóXIMA PARADA:',
-                                    style: TextStyle(fontSize: 8.0),
+                                    style: TextStyle(fontSize: 10.0),
                                   ),
                                 ),
-                              )
-                            ],
-                            CheckboxListTile(
-                              value: val[routeStop.order-1],
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  currentTrip = currentTripsThisTrip?.firstWhere((currTrip) => 
-                                    currTrip?.stopId == routeStop.stopId
-                                  );
-                                  peopleInBus = trip?.passengersQty;
-                                });
-                                CurrentTripService().updateCurrentTrip(
-                                  currentTrip?.id,
-                                  {
-                                    'ActualTime': value! ? DateTime.now() : null,
-                                  }
-                                );
-                              },
-                              controlAffinity: ListTileControlAffinity.leading,
-                              title: StopListItem(routeStop.stopId, intendedTime),
-                            ),
+                                Row(
+                                  children: [
+                                    StopListItem(routeStop.stopId, '00:00'),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          if(currentTripIndex <= (currentTripsThisTrip?.length ?? -2)) {
+                                            currentTrip = currentTripsThisTrip?[currentTripIndex];
+                                            currentTripIndex += 1;
+                                          }
+                                        });
+                                        CurrentTripService().updateCurrentTrip(
+                                          currentTrip?.id,
+                                          {
+                                            'ActualTime': DateTime.now(),
+                                          }
+                                        );
+                                      },
+                                      child: const Text('PONTO VISITADO'),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
                           ]
-                        ),
+                          else ...[
+                            StopListItem(routeStop.stopId, '00:00'),
+                          ]
+                        ],
                       ),
                     ],
                   );
-                })).toList()
+                }),
+                // TODO: tirar esse botao daqui
+                        ElevatedButton(
+                          onPressed: () {
+                              setState(() {
+                                currentTripIndex=0;
+                              });
+                            },
+                          child: const Text('zerar (tirar esse botao daqui)'),
+                        )
               ],
             ),
           );
