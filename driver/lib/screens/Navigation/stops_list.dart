@@ -1,6 +1,7 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route_stop.dart';
 import 'package:driver/screens/home/route_form.dart';
+import 'package:driver/screens/navigation/location_updater.dart';
 import 'package:driver/screens/navigation/stop_list_item.dart';
 import 'package:driver/screens/navigation/trip_info.dart';
 import 'package:driver/services/current_trip.dart';
@@ -68,7 +69,8 @@ class _StopsListState extends State<StopsList> {
             child: const Text('Confirmar')
           ),
         ],
-      ));
+      ),
+    );
 
     return FutureBuilder(
       future: getData(),
@@ -87,6 +89,7 @@ class _StopsListState extends State<StopsList> {
 
           return Column(
             children: [
+              LocationUpdater(tripId),
               const SizedBox(height: 30.0),
 
               TripInfo(routeId!),
