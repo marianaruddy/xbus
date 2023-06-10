@@ -1,12 +1,11 @@
 import 'package:driver/models/current_trip.dart';
+import 'package:driver/models/route.dart';
 import 'package:driver/models/route_stop.dart';
-import 'package:driver/models/trip.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/screens/navigation/stop_list_item.dart';
 import 'package:driver/screens/navigation/trip_info.dart';
 import 'package:driver/services/current_trip.dart';
 import 'package:driver/services/route_stops.dart';
-import 'package:driver/services/trip.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
 
@@ -32,11 +31,10 @@ class _StopsListState extends State<StopsList> {
     Future<Map<String, dynamic>> getData() async {
       List<CurrentTrip?> currentTripsThisTrip = await CurrentTripService().getCurrTripsFromTrip(tripId);
       List<RouteStop>? thisRouteStops = await RouteStopsService().getRouteStopsFromRoute(routeId);
-      Trip? trip = await TripService().getTripInstaceFromId(tripId);
+
       Map<String, dynamic> data = {
         "currentTripsThisTrip": currentTripsThisTrip,
         "thisRouteStops": thisRouteStops,
-        "trip": trip,
       };
 
       return data;
@@ -48,7 +46,6 @@ class _StopsListState extends State<StopsList> {
         if (snapshot.connectionState == ConnectionState.done) {
           List<CurrentTrip?>? currentTripsThisTrip = snapshot.data!['currentTripsThisTrip'];
           List<RouteStop>? thisRouteStops = snapshot.data!['thisRouteStops'];
-          Trip? trip = snapshot.data!['trip'];
 
           for (var i = 0; i < thisRouteStops!.length; i++) {
             bool element = currentTripsThisTrip!.firstWhere((currTtip) => (
@@ -67,11 +64,7 @@ class _StopsListState extends State<StopsList> {
 
                 if ((peopleInBus ?? -1) > 0) ...[
                   const SizedBox(height: 10.0),
-                  // Text('pessoas no ônibus: $peopleInBus'),
-                ]
-                else ...[
-                  const SizedBox(height: 10.0),
-                  Text('pessoas no ônibus: 10'),
+                  Text('pessoas no ônibus: $peopleInBus'),
                 ],
 
                 const SizedBox(height: 20.0),
@@ -85,27 +78,44 @@ class _StopsListState extends State<StopsList> {
                         top: BorderSide(color: Colors.green)
                       ),
                     ),
-                    child: Container(),
+                    child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                ...thisRouteStops.map((routeStop) {
+                                  String? status;
+                                  if(currentTripIndex==routeStop.order-1){
+                                    status = 'next';
+                                  }
+                                  else if(currentTripIndex>=routeStop.order-1){
+                                    status = 'passed';
+                                  }
+                                  return Container(
+                                    height: 50.0,
+                                    padding: const EdgeInsets.only(
+                                      left: 20.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Column(
+                                          children: [
+                                            if(status=='next')...[
+                                              const Text(
+                                                'PRóXIMO PONTO:',
+                                                style: TextStyle(fontSize: 10.0),
+                                              )
+                                            ],
+                                            StopListItem(routeStop.stopId, '00:00', status),
+                                          ]
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                })
+                              ],
+                            ),
                   ),
                 ),
-                ...thisRouteStops.map((routeStop) {
-                  return Row(
-                    children: [
-                      Column(
-                        children: [
-                          if(currentTripIndex==routeStop.order-1) ...[
-                            Column(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.only(top:8.0),
-                                  child: const Text(
-                                    'PRóXIMA PARADA:',
-                                    style: TextStyle(fontSize: 10.0),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    StopListItem(routeStop.stopId, '00:00'),
+
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
@@ -121,22 +131,12 @@ class _StopsListState extends State<StopsList> {
                                           }
                                         );
                                       },
-                                      child: const Text('PONTO VISITADO'),
+                                      child: const Text('IR PARA PRÓXIMO PONTO'),
                                     ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          ]
-                          else ...[
-                            StopListItem(routeStop.stopId, '00:00'),
-                          ]
-                        ],
-                      ),
-                    ],
-                  );
-                }),
-                // TODO: tirar esse botao daqui
+
+                
+                            
+                            // TODO: tirar esse botao daqui
                         ElevatedButton(
                           onPressed: () {
                               setState(() {
