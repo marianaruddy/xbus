@@ -40,6 +40,36 @@ class _StopsListState extends State<StopsList> {
       return data;
     }
 
+    Future openConfirmModal(context, currentTripsThisTrip) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Deseja realmente marcar o ponto como visitado?"),
+        actions: [
+          TextButton(
+            onPressed: () => {
+              Navigator.of(context).pop()
+            },
+            child: const Text('Cancelar')
+          ),
+          TextButton(
+            onPressed: () async => {
+              setState(() {
+                stopsRemaining = currentTripIndex + 1 < ((currentTripsThisTrip?.length ?? -2));
+                if (stopsRemaining) {
+                  currentTrip = currentTripsThisTrip?[currentTripIndex];
+                  currentTripIndex += 1;
+                }
+              }),
+              await CurrentTripService().updateCurrentTrip(currentTrip?.id, {
+                'ActualTime': DateTime.now(),
+              }),
+              Navigator.of(context).pop()
+            },
+            child: const Text('Confirmar')
+          ),
+        ],
+      ));
+
     return FutureBuilder(
       future: getData(),
       builder: (context, snapshot) {
@@ -105,8 +135,7 @@ class _StopsListState extends State<StopsList> {
                                     style: TextStyle(fontSize: 10.0),
                                   )
                                 ],
-                                StopListItem(
-                                    routeStop.stopId, intendedTime, status),
+                                StopListItem(routeStop.stopId, intendedTime, status),
                               ],
                             ),
                           ],
@@ -118,19 +147,9 @@ class _StopsListState extends State<StopsList> {
               ),
 
               ElevatedButton(
-                onPressed: stopsRemaining ?  () {
-                  debugPrint('currentTripIndex: ${currentTripIndex}');
-                  debugPrint('currentTripsThisTrip?.length: ${currentTripsThisTrip?.length}');
-                  setState(() {
-                    stopsRemaining = currentTripIndex + 1 < ((currentTripsThisTrip?.length ?? -2));
-                    if (stopsRemaining) {
-                      currentTrip = currentTripsThisTrip?[currentTripIndex];
-                      currentTripIndex += 1;
-                    }
-                  });
-                  CurrentTripService().updateCurrentTrip(currentTrip?.id, {
-                    'ActualTime': DateTime.now(),
-                  });
+                onPressed: stopsRemaining ?  () async {
+                  await openConfirmModal(context, currentTripsThisTrip);
+                  
                 }:null ,
                 child: const SizedBox(
                   height: 60.0,
