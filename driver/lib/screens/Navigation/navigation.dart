@@ -41,7 +41,13 @@ class _NavigationState extends State<Navigation> {
             child: const Text('Cancelar')
           ),
           TextButton(
-            onPressed: () => {
+            onPressed: () async => {
+              await TripService().updateTrip(
+                selectedTrip?.id,
+                {
+                  'ActualArrivalTime': DateTime.now(),
+                }
+              ),
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const Home()
               ))
@@ -82,13 +88,7 @@ class _NavigationState extends State<Navigation> {
                     padding: const EdgeInsets.all(15.0),
                   ),
                   onPressed: () {
-                    TripService().updateTrip(
-                    selectedTrip?.id,
-                    {
-                      'ActualArrivalTime': DateTime.now(),
-                    }
-                  );
-                  openConfirmModal(context);
+                    openConfirmModal(context);
                   },
                   child: const Icon(
                     Icons.flag,
