@@ -1,5 +1,4 @@
 import 'package:driver/services/auth.dart';
-import 'package:driver/services/driver.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -56,36 +55,6 @@ class _RegisterState extends State<Register> {
             children: [
               const SizedBox(height: 20.0),
               TextFormField(
-                decoration: textInputDecoration.copyWith(hintText: 'E-mail'),
-                validator: (value) => (
-                  value!.isEmpty ? 'Digite um e-mail' : null
-                ),
-                onChanged: (value) {
-                  setState(() => email = value);
-                },
-              ),
-              const SizedBox(height: 20.0),
-              TextFormField(
-                decoration: textInputDecoration.copyWith(hintText: 'Nome'),
-                validator: (value) => (
-                  value!.isEmpty ? 'Digite seu nome' : null
-                ),
-                onChanged: (value) {
-                  setState(() => name = value);
-                },
-              ),
-              const SizedBox(height: 20.0),
-              TextFormField(
-                decoration: textInputDecoration.copyWith(hintText: 'Empresa'),
-                validator: (value) => (
-                  value!.isEmpty ? 'Digite sua empresa' : null
-                ),
-                onChanged: (value) {
-                  setState(() => company = value);
-                },
-              ),
-              const SizedBox(height: 20.0),
-              TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'Documento'),
                 validator: (value) => (
                   value!.isEmpty ? 'Digite um documento' : null
@@ -110,20 +79,12 @@ class _RegisterState extends State<Register> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     setState(() => loading = true);
-                    dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                    dynamic result = await _auth.createPasswordForDriver(document, password);
                     if (result == null) {
                       setState(() {
-                        error = 'Digite um e-mail válido';
+                        error = 'Digite um documento válido';
                         loading = false;
                       });
-                    } else {
-                      DriverService().updateDriver(
-                        result.uid, 
-                        email,
-                        company,
-                        document,
-                        name,
-                      );
                     }
                   }
                 }, 
