@@ -1,7 +1,5 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/ticket.dart';
-import 'package:driver/screens/qrcode/scan_succeeded.dart';
-import 'package:driver/screens/qrcode/scan_failed.dart';
 import 'package:driver/services/current_trip.dart';
 import 'package:driver/services/ticket.dart';
 import 'package:driver/services/trip.dart';
@@ -37,6 +35,28 @@ class _ScanQRCodeState extends State<ScanQRCode> {
       };
 
       return data;
+    }
+
+    Future openConfirmModal(context, isSuccess) {
+      _screenOpened = true;
+      String modalText = isSuccess
+        ? 'Ticket escaneado com sucesso!'
+        : 'Ticket já utilizado. Tente um ticket válido';
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(modalText),
+          actions: [
+            TextButton(
+              onPressed: () => {
+                _screenOpened = false,
+                Navigator.of(context).pop(isSuccess)
+              },
+              child: const Text('Fechar')
+            ),
+          ],
+        ),
+      );
     }
 
     return FutureBuilder(
@@ -97,30 +117,10 @@ class _ScanQRCodeState extends State<ScanQRCode> {
                   scannedTicket = tickets?.firstWhere((t) => t?.id == code);
                   if (scannedTicket?.checked == false) {
                     await updateDB(code, currentTrip).then((value) => {
-                          _screenOpened = true,
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ScanSucceeded(
-                                  screenClosed: _screenWasClosed,
-                                  value: code,
-                                )
-                              )
-                          ).then(_goBack),
-                        });
+                      openConfirmModal(context, true).then(_goBack),
+                    });
                   } else {
-                    _screenOpened = true;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => (
-                          ScanFailed(
-                            screenClosed: _screenWasClosed
-                          )
-                        )
-                      )
-                    )
-                    .then(_goBack);
+                    openConfirmModal(context, false);
                   }
                 }
               },
@@ -133,10 +133,6 @@ class _ScanQRCodeState extends State<ScanQRCode> {
         }
       },
     );
-  }
-
-  void _screenWasClosed() {
-    _screenOpened = false;
   }
 
   void _goBack(value) {
