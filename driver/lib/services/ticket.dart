@@ -67,4 +67,16 @@ class TicketService {
   Future updateTicket(docId, data) async {
     ticketCollection.doc(docId).update(data);
   }
+
+  Future<List<Ticket?>> getTicketsInstances() {
+    return ticketCollection.get().then((snapshot) {
+      return snapshot.docs.map((doc) {
+        if (doc.exists) {
+          return createTicketInstance(doc);
+        } else {
+          return null;
+        }
+      }).toList();
+    });
+  }
 }
