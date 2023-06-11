@@ -58,6 +58,7 @@ class _StopsListState extends State<StopsList> {
                 stopsRemaining = currentTripIndex + 1 < ((currentTripsThisTrip?.length ?? -2));
                 if (stopsRemaining) {
                   currentTrip = currentTripsThisTrip?[currentTripIndex];
+                  peopleInBus = currentTrip?.passengersQtyAfter;
                   currentTripIndex += 1;
                 }
               }),
@@ -94,10 +95,8 @@ class _StopsListState extends State<StopsList> {
 
               TripInfo(routeId!),
 
-              if ((peopleInBus ?? -1) > 0) ...[
-                const SizedBox(height: 10.0),
-                Text('pessoas no ônibus: $peopleInBus'),
-              ],
+              const SizedBox(height: 10.0),
+              Text('passageiros no ônibus: ${((peopleInBus ?? 0) > 0) ? peopleInBus : 0}'),
 
               const SizedBox(height: 20.0),
               Container(
