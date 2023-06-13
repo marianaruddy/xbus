@@ -38,7 +38,7 @@ class TripService {
     DateTime intendedArrivalTime;
     DateTime intendedDepartureTime;
     String routeId;
-    String vehicleId;
+    String? vehicleId;
 
     if ((doc.data() as Map<String, dynamic>).containsKey('ActualArrivalTime')) {
       actualArrivalTime = doc['ActualArrivalTime'] != null
