@@ -7,6 +7,7 @@ class TicketService {
 
   Ticket createTicketInstance(doc) {
     bool? checked;
+    bool active;
     String currentTripId;
     String? passangerId;
     String? stopId;
@@ -14,7 +15,13 @@ class TicketService {
     if ((doc.data() as Map<String, dynamic>).containsKey('Checked')) {
       checked = doc['Checked'];
     } else {
-      checked = false;
+      checked = false; // TODO ver oq fazer aqui (throw error?)
+    }
+
+    if ((doc.data() as Map<String, dynamic>).containsKey('Active')) {
+      active = doc['Active'];
+    } else {
+      active = false;
     }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('CurrentTripId')) {
@@ -38,6 +45,7 @@ class TicketService {
     return Ticket(
       id: doc.id,
       checked: checked,
+      active: active,
       currentTripId: currentTripId,
       passangerId: passangerId,
       stopId: stopId,

@@ -115,7 +115,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
                   final String code = barcodes[0].rawValue ?? "---";
                   Ticket? scannedTicket;
                   scannedTicket = tickets?.firstWhere((t) => t?.id == code);
-                  if (scannedTicket?.checked == false) {
+                  if (scannedTicket?.checked == false || scannedTicket?.active == true) {
                     await updateDB(code, currentTrip).then((value) => {
                       openConfirmModal(context, true).then(_goBack),
                     });
@@ -144,6 +144,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
   updateDB(String code, CurrentTrip? currentTrip) {
     return TicketService().updateTicket(code, {
       'Checked': true,
+      'Active': true,
     }).then((value) {
       if (currentTrip != null) {
         CurrentTripService().updateCurrentTrip(currentTrip.id, {
