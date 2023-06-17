@@ -6,7 +6,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
 class QrCodePage extends StatelessWidget {
-  QrCodePage({Key? key});
+  QrCodePage({super.key});
   
   MobileScannerController cameraController = MobileScannerController();
 

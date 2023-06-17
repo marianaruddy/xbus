@@ -15,7 +15,7 @@ class NavigationScreen extends StatefulWidget {
   final double startLat;
   final double startLng;
   bool showNavBtn;
-  NavigationScreen(this.startLat, this.startLng, this.destinyLat, this.destinyLng, this.showNavBtn);
+  NavigationScreen(this.startLat, this.startLng, this.destinyLat, this.destinyLng, this.showNavBtn, {super.key});
 
   @override
   State<NavigationScreen> createState() => _NavigationScreenState(startLat, startLng, destinyLat, destinyLng, showNavBtn);

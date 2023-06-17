@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 class Navigation extends StatefulWidget {
   Trip? selectedTrip;
   Navigation(
-    this.selectedTrip
+    this.selectedTrip,
+    {super.key}
   );
 
   @override

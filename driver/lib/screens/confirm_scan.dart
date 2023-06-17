@@ -5,6 +5,7 @@ class ConfirmScan extends StatelessWidget {
   String? code;
   ConfirmScan(
     this.code,
+    {super.key}
   );
 
   @override

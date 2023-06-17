@@ -6,7 +6,7 @@ class MyMap extends StatefulWidget {
   double? startLong;
   double? destinyLat;
   double? destinyLong;
-  MyMap(this.destinyLat, this.destinyLong, this.startLat, this.startLong);
+  MyMap(this.destinyLat, this.destinyLong, this.startLat, this.startLong, {super.key});
 
   @override
   _MyMapState createState() => _MyMapState(destinyLat, destinyLong, startLat, startLong);
@@ -20,8 +20,6 @@ class _MyMapState extends State<MyMap> {
   _MyMapState(this.destinyLat, this.destinyLong, this.startLat, this.startLong);
 
   late GoogleMapController mapController;
-
-  final LatLng _center = const LatLng(-22.9797462, -43.2382729);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;

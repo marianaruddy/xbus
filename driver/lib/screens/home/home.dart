@@ -76,7 +76,7 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.all(20.0),
             child: Form(
               key: _formKey,
-              child: loading ? Loading() : Column(
+              child: loading ? const Loading() : Column(
                 children: const [
                   RouteForm(),
                 ],
