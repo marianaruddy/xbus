@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
+from ..forms import LoginForm
 import json
 
 #Ajax example
@@ -23,11 +26,37 @@ def myajaxtestview(request):
             content_type="application/json"
         )
 
-def login(request):
+def myLogin(request):
         #EnewRegion = models.Region("1","Barra da Tijuca")
         #createRegion(newRegion)
+        if request.method == 'POST':
+            form = LoginForm(request.POST)
+            if form.is_valid():
+                print("a")
+                print("b")
+                post = form.cleaned_data
+                username = post['Username']
+                password = post['Password']
 
-        return render(request, 'login.html')
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    print("Success")
+                    login(request, user)
+                    # Redirect to a success page.
+                    return redirect('home')
+                else:
+                    print("Failed")
+
+                    # Return an 'invalid login' error message.
+                    ...
+        else:
+            form = LoginForm()
+
+        return render(request, 'login.html', {'form': form})
+
+def myLogout(request):
+    logout(request)
+    return redirect('myLogin')
 #End Ajax example
 
 def addressTest(request):

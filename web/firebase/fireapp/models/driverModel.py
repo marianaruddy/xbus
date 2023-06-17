@@ -43,7 +43,7 @@ class DriverModel(models.Model):
     #Update
     def updateDriver(self, driver):
         drivers = db.collection('Driver')
-        drivers.document(driver.Id).set(
+        drivers.document(driver.Id).update(
             {
                 'Company': driver.Company,
                 'Document': driver.Document,

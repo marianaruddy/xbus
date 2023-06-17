@@ -109,12 +109,19 @@
       function saveRoute() {
             let mainStops = Array.from(document.getElementById("mainStops").children).filter(checkIdStop);
             let routeId = '{{ routeId }}';
-            console.log(mainStops.map(a => a.className).join());
+            let price = document.getElementById('price').valueAsNumber;
+            console.log(isNaN(price));
+            if (isNaN(price)){
+                  document.getElementById('price').focus();
+                  return;
+            }
+                  
+
             if (mainStops.length > 0) {
                   $.ajax({
                         url: "{% url 'createRoute' %}", // the endpoint
                         type: "POST", // http method
-                        data: { csrfmiddlewaretoken: '{{ csrf_token }}', 'stops': mainStops.map(a => a.className).join(), 'routeId': routeId },
+                        data: { csrfmiddlewaretoken: '{{ csrf_token }}', 'stops': mainStops.map(a => a.className).join(), 'routeId': routeId, 'price': price },
                         success: function (json) {
                               console.log("success"); // another sanity check
                               location.href = "{% url 'managementRoutes' %}"
@@ -131,6 +138,11 @@
             return stop.id.includes("stop");
       }
 
+      function loadPrice() {
+            let price = '{{ price }}';
+            document.getElementById("price").valueAsNumber = price;
+      }
+
       function loadStops() {
             let stops = JSON.parse('{{ stops|escapejs }}');
             console.log(stops);
@@ -142,6 +154,7 @@
       }
 
       window.onload = function() {
+            loadPrice();
             loadStops();
       };
 </script>
@@ -210,10 +223,7 @@
                               </button>
                               <div class="collapse" id="account-collapse">
                                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                          <li><a href="#" class="link-dark rounded">New...</a></li>
-                                          <li><a href="#" class="link-dark rounded">Profile</a></li>
-                                          <li><a href="#" class="link-dark rounded">Settings</a></li>
-                                          <li><a href="#" class="link-dark rounded">Sign out</a></li>
+                                          <li><a href="{% url 'myLogout' %}" class="link-dark rounded">Logout</a></li>
                                     </ul>
                               </div>
                         </li>
@@ -229,11 +239,20 @@
                   style="height: 80%; background-color: rgba(251,252,253,255);">
                   <div class="container">
                         <div style="max-height: 10%; margin: 1%;">
-                              <p class="fs-3 fw-bold">New Route</p>
+                              {% if id %}
+                                    <p class="fs-3 fw-bold">Edit Route</p>
+                              {% else %}
+                                    <p class="fs-3 fw-bold">Add Route</p>
+                              {% endif %}
                         </div>
                         <div class="row" style="height: 80%; margin: 1%;">
                               <div class="col">
 
+                                    <div class="input-group">
+                                          <span class="input-group-text">Price*</span>
+                                          <input id="price" type="number" class="form-control" step=".01">
+                                    </div>
+                                        
                                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#stopsModal"
                                           onclick="searchStops()">
                                           Add stops
@@ -242,6 +261,7 @@
                                     <div id="mainStops" ondrop="drop(event)" ondragover="allowDrop(event)">
 
                                     </div>
+                                    <a href="{% url 'managementRoutes' %}"><input type="button" value="Back" class="btn btn-secondary" /></a>
                                     <button class="btn btn-primary" onclick="saveRoute()">
                                           Save
                                     </button>

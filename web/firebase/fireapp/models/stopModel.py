@@ -96,7 +96,7 @@ class StopModel(models.Model):
     def updateStop(self, stop):
         print(stop.info())
         stops = db.collection('Stop')
-        stops.document(stop.Id).set(
+        stops.document(stop.Id).update(
             {
                 'Name': stop.Name,
                 'Address': stop.Address,

@@ -4,6 +4,8 @@ from ..forms import VehicleForm
 
 #Vehicles
 def managementVehicles(request):
+        if not request.user.is_authenticated:
+            return redirect('myLogin')
         vehicleModel = VehicleModel()
         vehicles = vehicleModel.getAllVehicles()
 
@@ -13,6 +15,8 @@ def managementVehicles(request):
         return render(request, 'Management/vehicles.html', context)
 
 def managementVehiclesAdd(request):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         form = VehicleForm(request.POST)
         if form.is_valid():
@@ -25,6 +29,8 @@ def managementVehiclesAdd(request):
     return render(request, 'Management/vehiclesAdd.html', {'form': form})
 
 def managementVehiclesEdit(request, id):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         form = VehicleForm(request.POST)
         if form.is_valid():
@@ -36,7 +42,7 @@ def managementVehiclesEdit(request, id):
         vehicleModel = VehicleModel()
         vehicle = vehicleModel.getVehicleById(id)
         form = VehicleForm(instance=vehicle)
-    return render(request, 'Management/vehiclesAdd.html', {'form': form})
+    return render(request, 'Management/vehiclesAdd.html', {'form': form, 'id': id})
 
 def deleteVehicle(request, id):
         vehicleModel = VehicleModel()

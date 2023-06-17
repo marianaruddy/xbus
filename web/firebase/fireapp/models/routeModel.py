@@ -26,7 +26,8 @@ class RouteModel(models.Model):
         routeDict = {
                 'Destiny': route.Destiny,
                 'Origin': route.Origin,
-                'Number': number
+                'Number': number,
+                'Price': route.Price
             }
         update_time, route_ref = db.collection('Route').add(routeDict)
         return route_ref.id
@@ -86,10 +87,11 @@ class RouteModel(models.Model):
     #Update
     def updateRoute(self, route):
         routes = db.collection('Route')
-        routes.document(route.Id).set(
+        routes.document(route.Id).update(
             {
                 'Destiny': route.Destiny,
-                'Origin': route.Origin
+                'Origin': route.Origin,
+                'Price': route.Price
             }
         )
         

@@ -39,7 +39,7 @@ class VehicleModel(models.Model):
     #Update
     def updateVehicle(self, vehicle):
         vehicles = db.collection('Vehicle')
-        vehicles.document(vehicle.Id).set(
+        vehicles.document(vehicle.Id).update(
             {
                 'LicensePlate': vehicle.LicensePlate,
                 'Capacity': vehicle.Capacity,

@@ -35,7 +35,8 @@ class TripModel(models.Model):
                 'RouteId': trip.RouteId,
                 'IntendedDepartureTime': trip.IntendedDepartureTime,
                 'IntendedArrivalTime': lastTime,
-                'CapacityInVehicle': trip.CapacityInVehicle,})
+                'CapacityInVehicle': trip.CapacityInVehicle,
+                'Status': 'Future'})
 
 
     def createPlannedCurrentTrips(self, tripId, stopsByRouteId, intendedDepartureTime):
@@ -127,7 +128,7 @@ class TripModel(models.Model):
 
         if len(stopsByRouteId) > 0:
             lastTime = self.updatePlannedCurrentTrips(trip.Id, stopsByRouteId, trip.IntendedDepartureTime)
-            trips.document(trip.Id).set(
+            trips.document(trip.Id).update(
             {
                 'RouteId': trip.RouteId,
                 'IntendedDepartureTime': trip.IntendedDepartureTime,

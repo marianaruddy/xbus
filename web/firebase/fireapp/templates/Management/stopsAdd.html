@@ -180,10 +180,7 @@
                               </button>
                               <div class="collapse" id="account-collapse">
                                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                          <li><a href="#" class="link-dark rounded">New...</a></li>
-                                          <li><a href="#" class="link-dark rounded">Profile</a></li>
-                                          <li><a href="#" class="link-dark rounded">Settings</a></li>
-                                          <li><a href="#" class="link-dark rounded">Sign out</a></li>
+                                          <li><a href="{% url 'myLogout' %}" class="link-dark rounded">Logout</a></li>
                                     </ul>
                               </div>
                         </li>
@@ -199,7 +196,11 @@
                   style="height: 80%; background-color: rgba(251,252,253,255);">
                   <div class="container">
                         <div style="max-height: 10%; margin: 1%;">
-                              <p class="fs-3 fw-bold">New Stop</p>
+                              {% if id %}
+                                    <p class="fs-3 fw-bold">Edit Stop</p>
+                              {% else %}
+                                    <p class="fs-3 fw-bold">Add Stop</p>
+                              {% endif %}
                         </div>
                         <div class="row" style="height: 80%; margin: 1%;">
                               <div class="container" >
@@ -230,7 +231,12 @@
                                                 <span class="form-label">Longitude</span>
                                                 <input id="longitudeInput" name="longitude" required />
                                           </label>
-                                          <input type="submit" class="btn btn-primary" value="Add">
+                                          <a href="{% url 'managementStops' %}"><input type="button" value="Back" class="btn btn-secondary" /></a>
+                                          {% if id %}
+                                                <input type="submit" class="btn btn-primary" value="Save">
+                                          {% else %}
+                                                <input type="submit" class="btn btn-primary" value="Add">
+                                          {% endif %}
                                     </form>
                               </div>
 

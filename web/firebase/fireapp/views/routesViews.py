@@ -23,6 +23,8 @@ def deleteRoute(request, id):
         return managementRoutes(request)
 
 def managementRoutes(request):
+        if not request.user.is_authenticated:
+                return redirect('myLogin')
         route = RouteModel()
         routes = route.getAllRoutes()
 
@@ -32,15 +34,23 @@ def managementRoutes(request):
         return render(request, 'Management/routes.html', context)
 
 def managementRoutesAdd(request):
+        if not request.user.is_authenticated:
+                return redirect('myLogin')
         return render(request, 'Management/routesAdd.html')
 
 def managementRoutesEdit(request, id):
+        if not request.user.is_authenticated:
+                return redirect('myLogin')
         routeStopsModel = RouteStopsModel()
         stops = routeStopsModel.getStopsDictNoCoordsFromRouteId(id)
+        routeModel = RouteModel()
+        price = routeModel.getRouteById(id)['Price']
 
         context = {
                'stops': json.dumps(stops),
                'routeId': id,
+               'price': price,
+               'id': id
         }
 
         return render(request, 'Management/routesAdd.html', context)
@@ -52,6 +62,7 @@ def createRoute(request):
         route = Route()
         route.Destiny = stopsList[-1]
         route.Origin = stopsList[0]
+        route.Price = request.POST.get('price')
         routeModel = RouteModel()
         routeId = request.POST.get('routeId')
         routeStopsModel = RouteStopsModel()

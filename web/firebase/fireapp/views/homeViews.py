@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from ..models import StopModel
 import json
 
 def home(request):
+        if not request.user.is_authenticated:
+                return redirect('myLogin')
         return render(request, 'home.html')
 
 def stopDetails(request):

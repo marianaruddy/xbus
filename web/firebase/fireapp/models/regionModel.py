@@ -37,7 +37,7 @@ class RegionModel(models.Model):
     #Update
     def updateRegion(self, region):
         regions = db.collection('Region')
-        regions.document(region.Id).set(
+        regions.document(region.Id).update(
             {
                 'Name': region.Name,
             }

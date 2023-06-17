@@ -6,6 +6,8 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 def reportTicket(request):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         form = ReportTicketForm(request.POST)
         if form.is_valid():

@@ -40,7 +40,6 @@ class ReportRouteModel(models.Model):
                 if "PassengersQtyNew" not in ctDict:
                     continue
                 numberOfPassengers = numberOfPassengers + ctDict["PassengersQtyNew"]
-
             
         return numberOfPassengers
 

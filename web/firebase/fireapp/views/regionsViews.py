@@ -4,6 +4,8 @@ from ..forms import RegionForm
 
 #Regions
 def managementRegions(request):
+        if not request.user.is_authenticated:
+            return redirect('myLogin')
         regionModel = RegionModel()
         regions = regionModel.getAllRegions()
 
@@ -13,6 +15,8 @@ def managementRegions(request):
         return render(request, 'Management/regions.html', context)
 
 def managementRegionsAdd(request):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         form = RegionForm(request.POST)
         if form.is_valid():
@@ -25,6 +29,8 @@ def managementRegionsAdd(request):
     return render(request, 'Management/regionsAdd.html', {'form': form})
 
 def managementRegionsEdit(request, id):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         form = RegionForm(request.POST)
         if form.is_valid():
@@ -36,7 +42,7 @@ def managementRegionsEdit(request, id):
         regionModel = RegionModel()
         region = regionModel.getRegionById(id)
         form = RegionForm(instance=region)
-    return render(request, 'Management/regionsAdd.html', {'form': form})
+    return render(request, 'Management/regionsAdd.html', {'form': form, 'id': id})
 
 def deleteRegion(request, id):
         regionModel = RegionModel()

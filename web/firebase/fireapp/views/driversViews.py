@@ -5,6 +5,8 @@ from ..forms import DriverForm
 
 #Drivers
 def managementDrivers(request):
+        if not request.user.is_authenticated:
+            return redirect('myLogin')
         driverModel = DriverModel()
         drivers = driverModel.getAllDrivers()
 
@@ -14,6 +16,8 @@ def managementDrivers(request):
         return render(request, 'Management/drivers.html', context)
 
 def managementDriversAdd(request):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         form = DriverForm(request.POST)
         if form.is_valid():
@@ -26,6 +30,8 @@ def managementDriversAdd(request):
     return render(request, 'Management/driversAdd.html', {'form': form})
 
 def managementDriversEdit(request, id):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         form = DriverForm(request.POST)
         if form.is_valid():
@@ -37,7 +43,7 @@ def managementDriversEdit(request, id):
         driverModel = DriverModel()
         driver = driverModel.getDriverById(id)
         form = DriverForm(instance=driver)
-    return render(request, 'Management/driversAdd.html', {'form': form})
+    return render(request, 'Management/driversAdd.html', {'form': form, 'id': id})
 
 def deleteDriver(request, id):
         driverModel = DriverModel()

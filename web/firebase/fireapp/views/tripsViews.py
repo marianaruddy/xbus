@@ -4,6 +4,8 @@ from ..forms import TripForm
 
 #Trips
 def managementTrips(request):
+        if not request.user.is_authenticated:
+            return redirect('myLogin')
         tripModel = TripModel()
         trips = tripModel.getAllTrips()
 
@@ -13,6 +15,8 @@ def managementTrips(request):
         return render(request, 'Management/trips.html', context)
 
 def managementTripsAdd(request):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         allRoutes = fillAllRoutes()
         form = TripForm(request.POST, allRoutes=allRoutes)
@@ -28,6 +32,8 @@ def managementTripsAdd(request):
     return render(request, 'Management/tripsAdd.html', {'form': form})
 
 def managementTripsEdit(request, id):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         allRoutes = fillAllRoutes()
         form = TripForm(request.POST, allRoutes=allRoutes)
@@ -41,7 +47,7 @@ def managementTripsEdit(request, id):
         trip = tripModel.getTripById(id)
         allRoutes = fillAllRoutes()
         form = TripForm(instance=trip,allRoutes=allRoutes)
-    return render(request, 'Management/tripsAdd.html', {'form': form})
+    return render(request, 'Management/tripsAdd.html', {'form': form, 'id': id})
 
 def deleteTrip(request, id):
         tripModel = TripModel()

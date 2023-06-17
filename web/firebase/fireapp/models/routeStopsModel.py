@@ -52,7 +52,7 @@ class RouteStopsModel(models.Model):
     #Update
     def updateRouteStops(self, routeStops):
         routesStops = db.collection('RouteStops')
-        routesStops.document(routeStops["Id"]).set(
+        routesStops.document(routeStops["Id"]).update(
             {
                 'RouteId': routeStops["RouteId"],
                 'StopId': routeStops["StopId"], 

@@ -8,7 +8,6 @@ from decimal import Decimal
 #Stops
 def searchStops(request):
     if request.method == 'GET':
-        print("OI")
         stopModel = StopModel()
         stops = stopModel.getAllStops()
 
@@ -26,6 +25,8 @@ def searchStops(request):
         )
 
 def managementStops(request):
+        if not request.user.is_authenticated:
+            return redirect('myLogin')
         stopModel = StopModel()
         stops = stopModel.getAllStops()
 
@@ -35,6 +36,8 @@ def managementStops(request):
         return render(request, 'Management/stops.html', context)
 
 def managementStopsAdd(request):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         allRegions = fillAllRegions()
         form = StopForm(request.POST, allRegions=allRegions)
@@ -56,6 +59,8 @@ def managementStopsAdd(request):
     return render(request, 'Management/stopsAdd.html', {'form': form})
 
 def managementStopsEdit(request, id):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     if request.method == "POST":
         allRegions = fillAllRegions()
         form = StopForm(request.POST, allRegions=allRegions)
@@ -70,7 +75,7 @@ def managementStopsEdit(request, id):
         stop = stopModel.getStopById(id)
         allRegions = fillAllRegions()
         form = StopForm(instance=stop, allRegions=allRegions)
-    return render(request, 'Management/stopsAdd.html', {'form': form, 'address': stop.Address, 'latitude': stop.Latitude, 'longitude': stop.Longitude})
+    return render(request, 'Management/stopsAdd.html', {'form': form, 'address': stop.Address, 'latitude': stop.Latitude, 'longitude': stop.Longitude, 'id': id})
 
 def deleteStop(request, id):
         stopModel = StopModel()

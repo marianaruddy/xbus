@@ -6,6 +6,8 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 def reportRegions(request):
+    if not request.user.is_authenticated:
+        return redirect('myLogin')
     allRoutes = fillAllRoutes()
     if request.method == "POST":
         form = ReportRegionsForm(request.POST, allRoutes = allRoutes)

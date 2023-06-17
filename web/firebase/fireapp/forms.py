@@ -1,6 +1,10 @@
 from django import forms
 
-from .models import RegionModel,Vehicle,Region,Driver,Stop,Trip, RouteModel, ReportRoute
+from .models import RegionModel,Route,Vehicle,Region,Driver,Stop,Trip, RouteModel, ReportRoute
+
+class LoginForm(forms.Form):
+    Username = forms.CharField()
+    Password = forms.CharField(widget=forms.PasswordInput())
 
 class StopForm(forms.ModelForm):
     Id = forms.CharField(widget=forms.HiddenInput(),required=False)
@@ -71,6 +75,11 @@ class DriverForm(forms.ModelForm):
         widgets = {
             'Id': forms.HiddenInput(),
         }
+
+class RouteForm(forms.ModelForm):
+    class Meta:
+        model = Route
+        fields = ('Price',)
 
 class ReportRouteForm(forms.ModelForm):
     RouteId = forms.ChoiceField(label='Route',choices=[], widget=forms.Select())

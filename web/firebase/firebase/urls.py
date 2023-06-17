@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from fireapp import views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.login, name='login'),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path('', views.myLogin, name='myLogin'),
+    path('logout', views.myLogout, name='myLogout'),
     path('home', views.home, name='home'),
     path('home/stopDetails', views.stopDetails, name='stopDetails'),
     path('Components/addressTest', views.addressTest, name='addressTest'),
