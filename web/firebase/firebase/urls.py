@@ -26,6 +26,7 @@ urlpatterns = [
     path('Components/addressTest', views.addressTest, name='addressTest'),
     path('Reports/tickets', views.reportTicket, name='reportTicket'),
     path('Reports/routes', views.reportRoutes, name='reportRoutes'),
+    path('Reports/regions', views.reportRegions, name='reportRegions'),
     path('Management/routes', views.managementRoutes, name='managementRoutes'),
     path('Management/routesAdd', views.managementRoutesAdd, name='managementRoutesAdd'),
     path('Management/routesEdit/<str:id>/', views.managementRoutesEdit, name='managementRoutesEdit'),

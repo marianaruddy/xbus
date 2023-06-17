@@ -27,9 +27,20 @@ class ReportRouteModel(models.Model):
         tripsThatHappened = db.collection('Trip').where("RouteId","==",route).order_by("ActualDepartureTime")
         tripsThatHappened = tripsThatHappened.where("ActualDepartureTime",">=",date).where("ActualDepartureTime","<",nextDay).get()
         numberOfPassengers = 0
+        if not tripsThatHappened:
+            return 0
+        
         for t in tripsThatHappened:
-            trip = t.to_dict()
-            numberOfPassengers = numberOfPassengers + trip["PassengersQty"]
+            currentTrips = db.collection('CurrentTrip').where('TripId','==',t.id).get()
+            if not currentTrips:
+                continue
+
+            for ct in currentTrips:
+                ctDict = ct.to_dict()
+                if "PassengersQtyNew" not in ctDict:
+                    continue
+                numberOfPassengers = numberOfPassengers + ctDict["PassengersQtyNew"]
+
             
         return numberOfPassengers
 

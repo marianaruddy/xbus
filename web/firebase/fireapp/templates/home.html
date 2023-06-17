@@ -12,10 +12,10 @@
       <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
       <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 
-    <script>
-      function getAllStops() {
-            let url = '{% url "searchStops" %}';
-            $.ajax({
+      <script>
+            function getAllStops() {
+                  let url = '{% url "searchStops" %}';
+                  $.ajax({
                         url: url, // the endpoint
                         type: "GET", // http method
                         // handle a successful response
@@ -34,121 +34,128 @@
                               console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                         }
                   });
-      }
-      /**
-       * @license
-       * Copyright 2019 Google LLC. All Rights Reserved.
-       * SPDX-License-Identifier: Apache-2.0
-       */
-      // The following example creates complex markers to indicate beaches near
-      // Sydney, NSW, Australia. Note that the anchor is set to (0,32) to correspond
-      // to the base of the flagpole.
-      function initMap() {
-            allStops = getAllStops();
-      }
+            }
+            /**
+             * @license
+             * Copyright 2019 Google LLC. All Rights Reserved.
+             * SPDX-License-Identifier: Apache-2.0
+             */
+            // The following example creates complex markers to indicate beaches near
+            // Sydney, NSW, Australia. Note that the anchor is set to (0,32) to correspond
+            // to the base of the flagpole.
+            function initMap() {
+                  allStops = getAllStops();
+            }
 
-      // Data for the markers consisting of a name, a LatLng and a zIndex for the
-      // order in which these markers should display on top of each other.
-      const beaches = [
-        ["Bondi Beach", -33.890542, 151.274856],
-        ["Coogee Beach", -33.923036, 151.259052],
-        ["Cronulla Beach", -34.028249, 151.157507],
-        ["Manly Beach", -33.80010128657071, 151.28747820854187],
-        ["Maroubra Beach", -33.950198, 151.259302],
-      ];
+            // Data for the markers consisting of a name, a LatLng and a zIndex for the
+            // order in which these markers should display on top of each other.
+            const beaches = [
+                  ["Bondi Beach", -33.890542, 151.274856],
+                  ["Coogee Beach", -33.923036, 151.259052],
+                  ["Cronulla Beach", -34.028249, 151.157507],
+                  ["Manly Beach", -33.80010128657071, 151.28747820854187],
+                  ["Maroubra Beach", -33.950198, 151.259302],
+            ];
 
-      function setMarkers(map, stops) {
-        // Adds markers to the map.
-        // Marker sizes are expressed as a Size of X,Y where the origin of the image
-        // (0,0) is located in the top left of the image.
-        // Origins, anchor positions and coordinates of the marker increase in the X
-        // direction to the right and in the Y direction down.
-        const image = {
-          url: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
-          // This marker is 20 pixels wide by 32 pixels high.
-          size: new google.maps.Size(20, 32),
-          // The origin for this image is (0, 0).
-          origin: new google.maps.Point(0, 0),
-          // The anchor for this image is the base of the flagpole at (0, 32).
-          anchor: new google.maps.Point(0, 32),
-        };
-        // Shapes define the clickable region of the icon. The type defines an HTML
-        // <area> element 'poly' which traces out a polygon as a series of X,Y points.
-        // The final coordinate closes the poly by connecting to the first coordinate.
-        const shape = {
-          coords: [1, 1, 1, 20, 18, 20, 18, 1],
-          type: "poly",
-        };
+            function setMarkers(map, stops) {
+                  // Adds markers to the map.
+                  // Marker sizes are expressed as a Size of X,Y where the origin of the image
+                  // (0,0) is located in the top left of the image.
+                  // Origins, anchor positions and coordinates of the marker increase in the X
+                  // direction to the right and in the Y direction down.
+                  const image = {
+                        url: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
+                        // This marker is 20 pixels wide by 32 pixels high.
+                        size: new google.maps.Size(20, 32),
+                        // The origin for this image is (0, 0).
+                        origin: new google.maps.Point(0, 0),
+                        // The anchor for this image is the base of the flagpole at (0, 32).
+                        anchor: new google.maps.Point(0, 32),
+                  };
+                  // Shapes define the clickable region of the icon. The type defines an HTML
+                  // <area> element 'poly' which traces out a polygon as a series of X,Y points.
+                  // The final coordinate closes the poly by connecting to the first coordinate.
+                  const shape = {
+                        coords: [1, 1, 1, 20, 18, 20, 18, 1],
+                        type: "poly",
+                  };
 
-            for (let i = 0; i < stops.length; i++) {
-                  const stop = stops[i];
+                  for (let i = 0; i < stops.length; i++) {
+                        const stop = stops[i];
 
-                  let marker = new google.maps.Marker({
+                        let marker = new google.maps.Marker({
                               position: { lat: stop["Latitude"], lng: stop["Longitude"] },
                               map,
                               icon: image,
                               shape: shape,
                               title: stop["Name"],
-                  });
+                        });
 
-                  //to add an event to the marker just use .addListener
-                  marker.addListener("click", () => {
-                        let stopName = marker.getTitle();
-                        let url = '{% url "stopDetails" %}';
-                        $.ajax({
+                        //to add an event to the marker just use .addListener
+                        marker.addListener("click", () => {
+                              let stopName = marker.getTitle();
+                              let url = '{% url "stopDetails" %}';
+                              $.ajax({
                                     url: url, // the endpoint
                                     type: "GET", // http method
                                     data: { 'stopName': stopName },
                                     // handle a successful response
                                     success: function (json) {
                                           console.log("success"); // another sanity check
-                                          console.log(json);
+                                          loadStopDetailsOnScreen(json);
                                     },
                                     // handle a non-successful response
                                     error: function (xhr, errmsg, err) {
                                           console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                                     }
                               });
-                  });
-        }
-      }
+                        });
+                  }
+            }
 
-      function clickMarker(e){
-            console.log("Entrei");
-            console.log(e.getTitle());
-      }
+            function loadStopDetailsOnScreen(stop) {
+                  let oldTableInfos = document.getElementById('tableInfos');
+                  if (oldTableInfos !== undefined && oldTableInfos !== null)
+                        oldTableInfos.remove();
+                  let stopAddress = stop['Address'];
+                  let stopTickets = stop['Tickets'];
+                  let stopAddressRow = "<tr><td>Address:</td><td>" + stopAddress + "</td></tr>";
+                  let stopTicketsRow = "<tr><td>People Waiting:</td><td>" + stopTickets + "</td></tr>";
+                  let tableInfos = "<div id='tableInfos' background-color: rgba(0, 0, 0, 0.05);'><table>" + stopAddressRow + stopTicketsRow + "</table></div>";
+                  document.getElementById("footer").innerHTML += tableInfos;
+            }
 
-      window.initMap = initMap;
-    </script>
+            window.initMap = initMap;
+      </script>
 
-<style>
-      /**
+      <style>
+            /**
        * @license
        * Copyright 2019 Google LLC. All Rights Reserved.
        * SPDX-License-Identifier: Apache-2.0
        */
-      /* 
+            /* 
         * Always set the map height explicitly to define the size of the div element
         * that contains the map. 
         */
-      #map {
-        height: 100%;
-      }
+            #map {
+                  height: 100%;
+            }
 
-      /* 
+            /* 
       * Optional: Makes the sample page fill the window. 
       */
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
+            html,
+            body {
+                  height: 100%;
+                  margin: 0;
+                  padding: 0;
+            }
+      </style>
 </head>
 
 <body class="row" style="min-height: 100vh;">
-      <div class="col-2" style="border: 1px solid red; height: 100%;">
+      <div class="col-2" style="height: 100%;">
             <!-- Sidebar -->
             <div class="flex-shrink p-3 bg-white">
                   <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
@@ -177,7 +184,8 @@
                                           <li><a href="{% url 'reportRoutes' %}" class="link-dark rounded">Routes</a>
                                           </li>
                                           <li><a href="#" class="link-dark rounded">Trips</a></li>
-                                          <li><a href="#" class="link-dark rounded">Region</a></li>
+                                          <li><a href="{% url 'reportRegions' %}" class="link-dark rounded">Region</a>
+                                          </li>
                                     </ul>
                               </div>
                         </li>
@@ -224,26 +232,19 @@
 
       </div>
 
-      <div class="col-10" style="border: 1px solid rgb(255, 0, 170); ">
+      <div class="col-10">
             <!--Main content-->
-            <div class="row grow w-100" style="border: 1px solid rgb(0, 4, 245); height: 80%;margin: 0px">
+            <div class="row grow w-100" style="height: 80%;margin: 0px">
                   <div id="map"></div>
                   <script
                         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9FYSQEuxFscyNIGiDahnHVfd6KFt6ipw&callback=initMap&v=weekly"
-                        defer
-                  ></script>
+                        defer></script>
             </div>
             <!--Main content-->
             <!-- Footer -->
-            <div class="row grow w-100" style="border: 1px solid rgb(0, 245, 123); height: 20%;">
-                  <div class="text-center text-lg-start bg-light text-muted">
-                        <div class="text-center p-4"
-                              style="background-color: rgba(0, 0, 0, 0.05);left: 0;bottom: 0; width: 100%; height: 100%">
-                              <div style="width: 2%; height: 30%; position: absolute; right: 1%; bottom: 2%;">
-                                    <img src="{% static 'assets/pucLogo.png' %}" width="100%" height="100%">
-                              </div>
-
-                        </div>
+            <div id='footer' class="row grow w-100" style="height: 20%;">
+                  <div style="width: 2%; height: 5%; position: absolute; right: 1%; bottom: 2%;">
+                        <img src="{% static 'assets/pucLogo.png' %}" width="100%" height="100%">
                   </div>
             </div>
             <!-- Footer -->

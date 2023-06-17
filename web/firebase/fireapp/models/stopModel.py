@@ -38,6 +38,19 @@ class StopModel(models.Model):
 
         return stopsList
     
+    def getStopsDictByRegionId(self, regionId):
+        stops = db.collection('Stop').where('RegionId','==',regionId).get()
+        stopsList = []
+        for s in stops:
+            sDict = s.to_dict()
+            sDict["Id"] = s.id
+            sDict["Latitude"] = sDict["Coords"].latitude
+            sDict["Longitude"] = sDict["Coords"].longitude
+            del sDict["Coords"]
+            stopsList.append(sDict)
+
+        return stopsList
+    
     def getStopById(self, id):
         stop = db.collection('Stop').document(id).get()
         stopDict = stop.to_dict()

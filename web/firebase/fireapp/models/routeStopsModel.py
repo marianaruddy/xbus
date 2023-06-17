@@ -9,7 +9,7 @@ class RouteStopsModel(models.Model):
 
     #Read
     def getStopsFromRouteId(self, routeId):
-        routeStopsByRouteId = db.collection('RouteStops').where('RouteId','==',routeId).get()
+        routeStopsByRouteId = db.collection('RouteStops').where('RouteId','==',routeId).order_by('Order').get()
         stopsList = []
         stopModel = StopModel()
         for r in routeStopsByRouteId:

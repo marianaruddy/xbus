@@ -44,7 +44,15 @@ class Ticket(models.Model):
         return ticketsList
     
     def getQuantityOfTicketsGeneratedByPeriod(self, startDate, endDate):
-        tickets = db.collection('Ticket').where("BoardingHour",">=",startDate).where("BoardingHour","<",endDate).get()
+        currentTrips = db.collection('CurrentTrip').where("ActualTime",">=",startDate).where("ActualTime","<",endDate).get()
+        if not currentTrips:
+            return 0
+        
+        currentTripIds = []
+        for currentTrip in currentTrips:
+            currentTripIds.append(currentTrip.id)
+            
+        tickets = db.collection('Ticket').where("CurrentTripId","in",currentTripIds).get()
         ticketsList = []
         for t in tickets:
             ticketsList.append(t.to_dict())

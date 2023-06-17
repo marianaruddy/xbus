@@ -23,3 +23,5 @@ from .trip import *
 from .tripModel import *
 from .vehicle import *
 from .vehicleModel import *
+from .reportRegionsModel import *
+

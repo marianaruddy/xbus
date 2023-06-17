@@ -21,13 +21,7 @@ class TripModel(models.Model):
 
     #Create
     def createTrip(self, trip):
-        print("trip.RouteId")
-        tripDict = {
-                'RouteId': trip.RouteId,
-                'IntendedDepartureTime': trip.IntendedDepartureTime,
-                'IntendedArrivalTime': trip.IntendedArrivalTime,
-                'CapacityInVehicle': trip.CapacityInVehicle
-            }
+        tripDict = {}
         update_time, trip_ref = db.collection('Trip').add(tripDict)
         tripId = trip_ref.id
 
@@ -35,7 +29,14 @@ class TripModel(models.Model):
         stopsByRouteId = routeStopsModel.getStopsFromRouteId(trip.RouteId)
 
         if len(stopsByRouteId) > 0:
-            self.createPlannedCurrentTrips(tripId, stopsByRouteId, trip.IntendedDepartureTime)
+            lastTime = self.createPlannedCurrentTrips(tripId, stopsByRouteId, trip.IntendedDepartureTime)
+            
+            db.collection('Trip').document(tripId).set({
+                'RouteId': trip.RouteId,
+                'IntendedDepartureTime': trip.IntendedDepartureTime,
+                'IntendedArrivalTime': lastTime,
+                'CapacityInVehicle': trip.CapacityInVehicle,})
+
 
     def createPlannedCurrentTrips(self, tripId, stopsByRouteId, intendedDepartureTime):
         #we are creating all the current trips related to that trip beforehand
@@ -55,6 +56,7 @@ class TripModel(models.Model):
                 currentTrip.IntendedTime = intendedDepartureTime
             currentTripModel.createCurrentTrip(currentTrip)
             oldStop = stop
+        return currentTime
 
     def getTimeBetweenTwoStops(self, oldStop, stop):
         latOldStop = oldStop.Latitude
@@ -89,6 +91,13 @@ class TripModel(models.Model):
             route = routeModel.getRouteById(tDict["RouteId"])
             tDict["Origin"] = route["Origin"]
             tDict["Destiny"] = route["Destiny"]
+
+            stopModel = StopModel()
+            origin = stopModel.getStopById(route["Origin"])
+            destiny = stopModel.getStopById(route["Destiny"])
+            tDict["OriginName"] = origin.Name
+            tDict["DestinyName"] = destiny.Name
+
             tripsList.append(tDict)
 
         return tripsList
@@ -107,19 +116,57 @@ class TripModel(models.Model):
     #Update
     def updateTrip(self, trip):
         trips = db.collection('Trip')
-        trips.document(trip.Id).set(
+        
+
+        currentTripModel = CurrentTripModel()
+        existingCurrentTrips = currentTripModel.getCurrentTripsByTripId(trip.Id)
+        
+
+        routeStopsModel = RouteStopsModel()
+        stopsByRouteId = routeStopsModel.getStopsFromRouteId(trip.RouteId)
+
+        if len(stopsByRouteId) > 0:
+            lastTime = self.updatePlannedCurrentTrips(trip.Id, stopsByRouteId, trip.IntendedDepartureTime)
+            trips.document(trip.Id).set(
             {
                 'RouteId': trip.RouteId,
                 'IntendedDepartureTime': trip.IntendedDepartureTime,
-                'IntendedArrivalTime': trip.IntendedArrivalTime,
                 'CapacityInVehicle': trip.CapacityInVehicle,
+                'IntendedArrivalTime': lastTime
             }
         )
+        else:
+            for currentTrip in existingCurrentTrips:
+                currentTripModel.deleteCurrentTripById(currentTrip['Id'])
 
-        self.updateCurrentTrips()
-    
-    def updateCurrentTrips(self):
-        pass
+    def updatePlannedCurrentTrips(self, tripId, stopsByRouteId, intendedDepartureTime):
+        #we are creating all the current trips related to that trip beforehand
+        currentTripModel = CurrentTripModel()
+        oldStop = stopsByRouteId[0]
+        currentTime = intendedDepartureTime
+
+        for stop in stopsByRouteId:
+            currentTrip = CurrentTrip()
+            currentTrip.StopId = stop.Id
+            currentTrip.TripId = tripId
+            if oldStop != stop:
+                secondsToBeAdded = self.getTimeBetweenTwoStops(oldStop, stop)
+                currentTime = currentTime + timedelta(seconds=secondsToBeAdded)
+                currentTrip.IntendedTime = currentTime
+            else:
+                currentTrip.IntendedTime = intendedDepartureTime
+
+            existingCurrentTrip = currentTripModel.getCurrentTripByTripIdAndStopId(tripId,stop.Id)
+            if existingCurrentTrip == None:
+                currentTripModel.createCurrentTrip(currentTrip)
+            else:
+                existingCurrentTrip.StopId = currentTrip.StopId
+                existingCurrentTrip.TripId = currentTrip.TripId
+                existingCurrentTrip.IntendedTime = currentTrip.IntendedTime
+
+                currentTripModel.updateCurrentTrip(existingCurrentTrip)
+            oldStop = stop
+        return currentTime
 
     #Delete
     def deleteTripById(self, id):

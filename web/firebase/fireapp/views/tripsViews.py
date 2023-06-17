@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from ..models import TripModel
+from ..models import TripModel,RouteModel
 from ..forms import TripForm
 
 #Trips
@@ -14,22 +14,23 @@ def managementTrips(request):
 
 def managementTripsAdd(request):
     if request.method == "POST":
-        form = TripForm(request.POST)
-        print("oi")
+        allRoutes = fillAllRoutes()
+        form = TripForm(request.POST, allRoutes=allRoutes)
         if form.is_valid():
-            print("ola")
             tripModel = TripModel()
             post = form.save(commit=False)
             tripModel.createTrip(post)
             return redirect('managementTrips')
         
     else:
-        form = TripForm()
+        allRoutes = fillAllRoutes()
+        form = TripForm(allRoutes=allRoutes)
     return render(request, 'Management/tripsAdd.html', {'form': form})
 
 def managementTripsEdit(request, id):
     if request.method == "POST":
-        form = TripForm(request.POST)
+        allRoutes = fillAllRoutes()
+        form = TripForm(request.POST, allRoutes=allRoutes)
         if form.is_valid():
             tripModel = TripModel()
             post = form.save(commit=False)
@@ -38,7 +39,8 @@ def managementTripsEdit(request, id):
     else:
         tripModel = TripModel()
         trip = tripModel.getTripById(id)
-        form = TripForm(instance=trip)
+        allRoutes = fillAllRoutes()
+        form = TripForm(instance=trip,allRoutes=allRoutes)
     return render(request, 'Management/tripsAdd.html', {'form': form})
 
 def deleteTrip(request, id):
@@ -47,4 +49,15 @@ def deleteTrip(request, id):
         tripModel.deleteTripById(id)
 
         return redirect('managementTrips')
+
+def fillAllRoutes():
+    routeModel = RouteModel()
+    allRoutesDict = routeModel.getAllRoutes()
+    allRoutes = []
+    for route in allRoutesDict:
+        value = route.OriginName + ' - ' + route.DestinyName
+        key = route.Id
+        myTuple = (key, value)
+        allRoutes.append(myTuple)
+    return allRoutes
 #End Trips

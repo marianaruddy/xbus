@@ -2,47 +2,40 @@ from django import forms
 
 from .models import RegionModel,Vehicle,Region,Driver,Stop,Trip, RouteModel, ReportRoute
 
-#There should be a cleaner way to tranform into tuple (id,name)
-regionModel = RegionModel()
-allRegionsDict = regionModel.getAllRegions()
-allRegions = []
-for region in allRegionsDict:
-    value = region['Name']
-    key = region['Id']
-    myTuple = (key, value)
-    allRegions.append(myTuple)
-
 class StopForm(forms.ModelForm):
     Id = forms.CharField(widget=forms.HiddenInput(),required=False)
+    RegionId = forms.ChoiceField(label='Region',choices=[], widget=forms.Select())
+
+    def __init__(self, *args, **kwargs):
+        self._allRegions = kwargs.pop('allRegions', None)
+        super().__init__(*args,**kwargs)
+        self.fields['RegionId'].choices = self._allRegions
 
     class Meta:
         model = Stop
         fields = ('Name', 'RegionId','Id',)
         widgets = {
-            'RegionId': forms.Select(choices=allRegions),
             'Id': forms.HiddenInput(),
         }
 
-#There should be a cleaner way to tranform into tuple (id,name)
-routeModel = RouteModel()
-allRoutesDict = routeModel.getAllRoutes()
-allRoutes = []
-for route in allRoutesDict:
-    value = route.Origin + ' - ' + route.Destiny
-    key = route.Id
-    myTuple = (key, value)
-    allRoutes.append(myTuple)
-
 class TripForm(forms.ModelForm):
     Id = forms.CharField(widget=forms.HiddenInput(),required=False)
+    RouteId = forms.ChoiceField(label='Route',choices=[], widget=forms.Select())
+
+    def __init__(self, *args, **kwargs):
+        self._allRoutes = kwargs.pop('allRoutes', None)
+        super().__init__(*args,**kwargs)
+        self.fields['RouteId'].choices = self._allRoutes
 
     class Meta:
         model = Trip
-        fields = ('RouteId','IntendedDepartureTime', 'IntendedArrivalTime','CapacityInVehicle','Id',)
+        fields = ('RouteId','IntendedDepartureTime','CapacityInVehicle','Id',)
+        labels = {
+            'IntendedDepartureTime': 'Intended Departure',
+            'CapacityInVehicle': 'Capacity In Vehicle',
+        }
         widgets = {
-            'RouteId': forms.Select(choices=allRoutes),
             'IntendedDepartureTime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'IntendedArrivalTime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'Id': forms.HiddenInput(attrs={'required':False}),
         }
 
@@ -51,7 +44,10 @@ class VehicleForm(forms.ModelForm):
 
     class Meta:
         model = Vehicle
-        fields = ('Name', 'LicensePlate','Capacity','Id',)
+        fields = ('LicensePlate','Capacity','Id',)
+        labels = {
+            'LicensePlate': 'License Plate',
+        }
         widgets = {
             'Id': forms.HiddenInput(),
         }
@@ -77,18 +73,29 @@ class DriverForm(forms.ModelForm):
         }
 
 class ReportRouteForm(forms.ModelForm):
+    RouteId = forms.ChoiceField(label='Route',choices=[], widget=forms.Select())
+
+    def __init__(self, *args, **kwargs):
+        self._allRoutes = kwargs.pop('allRoutes', None)
+        super().__init__(*args,**kwargs)
+        self.fields['RouteId'].choices = self._allRoutes
 
     class Meta:
         model = ReportRoute
         fields = ('RouteId','Date',)
-        labels = {
-            'RouteId': 'Route',
-        }
         widgets = {
-            'RouteId': forms.Select(choices=allRoutes),
             'Date': forms.DateInput(attrs={'type': 'date'}),
         }
 
 class ReportTicketForm(forms.Form):
-    StartDate = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-    EndDate = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    StartDate = forms.DateField(label='Start Date', widget=forms.DateInput(attrs={'type': 'date'}))
+    EndDate = forms.DateField(label='End Date', widget=forms.DateInput(attrs={'type': 'date'}))
+
+class ReportRegionsForm(forms.Form):
+    RouteId = forms.ChoiceField(label='Route',choices=[], widget=forms.Select())
+    Date = forms.DateField(label='Date', widget=forms.DateInput(attrs={'type': 'date'}))
+
+    def __init__(self, *args, **kwargs):
+        self._allRoutes = kwargs.pop('allRoutes', None)
+        super().__init__(*args,**kwargs)
+        self.fields['RouteId'].choices = self._allRoutes

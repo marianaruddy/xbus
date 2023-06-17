@@ -2,6 +2,7 @@ from django.db import models
 from datetime import timedelta
 
 from .route import *
+from .stopModel import *
 
 from firebase_admin import firestore
 
@@ -14,9 +15,18 @@ class RouteModel(models.Model):
     
     #Create
     def createRoute(self, route):
+        lastRoutes = db.collection('Route').order_by('Number', direction=firestore.Query.DESCENDING).limit(1).get()
+        number = 1
+        if len(lastRoutes) > 0:
+            lastRoute = lastRoutes[0]
+            lastRouteDict = lastRoute.to_dict()
+            lastNumber = lastRouteDict['Number']
+            number = lastNumber + 1
+
         routeDict = {
                 'Destiny': route.Destiny,
-                'Origin': route.Origin
+                'Origin': route.Origin,
+                'Number': number
             }
         update_time, route_ref = db.collection('Route').add(routeDict)
         return route_ref.id
@@ -31,6 +41,14 @@ class RouteModel(models.Model):
             route.Id = r.id
             route.Destiny = rDict["Destiny"]
             route.Origin = rDict["Origin"]
+            route.Number = rDict["Number"]
+
+            stopModel = StopModel()
+            destiny = stopModel.getStopById(rDict["Destiny"])
+            origin = stopModel.getStopById(rDict["Origin"])
+            route.DestinyName = destiny.Name
+            route.OriginName = origin.Name
+
             routesList.append(route)
 
         return routesList

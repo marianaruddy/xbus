@@ -11,7 +11,6 @@ class VehicleModel(models.Model):
     #Create
     def createVehicle(self, vehicle):
         vehicleDict = {
-                'Name': vehicle.Name,
                 'Capacity': vehicle.Capacity,
                 'LicensePlate': vehicle.LicensePlate
             }
@@ -33,7 +32,6 @@ class VehicleModel(models.Model):
         vehicleDict = vehicle.to_dict()
         vehicleModel = Vehicle()
         vehicleModel.Id = id
-        vehicleModel.Name = vehicleDict["Name"]
         vehicleModel.LicensePlate = vehicleDict["LicensePlate"]
         vehicleModel.Capacity = vehicleDict["Capacity"]
         return vehicleModel
@@ -43,7 +41,6 @@ class VehicleModel(models.Model):
         vehicles = db.collection('Vehicle')
         vehicles.document(vehicle.Id).set(
             {
-                'Name': vehicle.Name,
                 'LicensePlate': vehicle.LicensePlate,
                 'Capacity': vehicle.Capacity,
             }

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 import json
-from ..models import StopModel, Stop
+from ..models import StopModel, Stop, RegionModel
 from ..forms import StopForm
 from decimal import Decimal
 
@@ -36,12 +36,13 @@ def managementStops(request):
 
 def managementStopsAdd(request):
     if request.method == "POST":
-        form = StopForm(request.POST)
+        allRegions = fillAllRegions()
+        form = StopForm(request.POST, allRegions=allRegions)
         if form.is_valid():
             stopModel = StopModel()
             stop = Stop()
             
-            stop.Address = request.POST["addressMap"]
+            stop.Address = request.POST["map"]
             stop.Name = form.cleaned_data.get('Name')
             stop.RegionId = form.cleaned_data.get('RegionId')
             stop.Latitude = Decimal(request.POST["latitude"])
@@ -50,12 +51,14 @@ def managementStopsAdd(request):
             stopModel.createStop(stop)
         return redirect('managementStops')
     else:
-        form = StopForm()
+        allRegions = fillAllRegions()
+        form = StopForm(allRegions=allRegions)
     return render(request, 'Management/stopsAdd.html', {'form': form})
 
 def managementStopsEdit(request, id):
     if request.method == "POST":
-        form = StopForm(request.POST)
+        allRegions = fillAllRegions()
+        form = StopForm(request.POST, allRegions=allRegions)
         if form.is_valid():
             stopModel = StopModel()
             post = form.save(commit=False)
@@ -65,7 +68,8 @@ def managementStopsEdit(request, id):
     else:
         stopModel = StopModel()
         stop = stopModel.getStopById(id)
-        form = StopForm(instance=stop)
+        allRegions = fillAllRegions()
+        form = StopForm(instance=stop, allRegions=allRegions)
     return render(request, 'Management/stopsAdd.html', {'form': form, 'address': stop.Address, 'latitude': stop.Latitude, 'longitude': stop.Longitude})
 
 def deleteStop(request, id):
@@ -74,4 +78,15 @@ def deleteStop(request, id):
         stopModel.deleteStopById(id)
 
         return redirect('managementStops')
+
+def fillAllRegions():
+    regionModel = RegionModel()
+    allRegionsDict = regionModel.getAllRegions()
+    allRegions = []
+    for region in allRegionsDict:
+        value = region['Name']
+        key = region['Id']
+        myTuple = (key, value)
+        allRegions.append(myTuple)
+    return allRegions
 #End Stops
