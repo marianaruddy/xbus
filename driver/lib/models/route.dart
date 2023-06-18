@@ -4,7 +4,14 @@ class RouteModel {
   final String destiny;
   final int number;
   final String origin;
+  final num? price;
 
-  RouteModel ({ required this.id, required this.destiny, required this.number, required this.origin });
+  RouteModel ({
+    required this.id,
+    required this.destiny,
+    required this.number,
+    required this.origin,
+    this.price,
+  });
   
 }

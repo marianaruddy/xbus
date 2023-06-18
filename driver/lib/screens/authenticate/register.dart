@@ -1,5 +1,4 @@
 import 'package:driver/services/auth.dart';
-import 'package:driver/services/database.dart';
 import 'package:driver/shared/constants.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ class Register extends StatefulWidget {
 
   final Function toggleView;
 
-  Register({ required this.toggleView });
+  const Register({super.key,  required this.toggleView });
 
   @override
   State<Register> createState() => _RegisterState();
@@ -35,12 +34,13 @@ class _RegisterState extends State<Register> {
     return loading ? Loading() : Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Text('xbus'),
+        title: const Text('xBus'),
+        centerTitle: true,
         actions: [
           TextButton.icon(
-            icon: Icon(Icons.person, color: Colors.white),
-            style: TextButton.styleFrom(primary: Colors.white),
-            label: Text('Entrar'),
+            icon: const Icon(Icons.person, color: Colors.white),
+            style: TextButton.styleFrom(foregroundColor: Colors.white),
+            label: const Text('Entrar'),
             onPressed: () {
               widget.toggleView();
             },
@@ -48,42 +48,12 @@ class _RegisterState extends State<Register> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              SizedBox(height: 20.0),
-              TextFormField(
-                decoration: textInputDecoration.copyWith(hintText: 'E-mail'),
-                validator: (value) => (
-                  value!.isEmpty ? 'Digite um e-mail' : null
-                ),
-                onChanged: (value) {
-                  setState(() => email = value);
-                },
-              ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                decoration: textInputDecoration.copyWith(hintText: 'Nome'),
-                validator: (value) => (
-                  value!.isEmpty ? 'Digite seu nome' : null
-                ),
-                onChanged: (value) {
-                  setState(() => name = value);
-                },
-              ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                decoration: textInputDecoration.copyWith(hintText: 'Empresa'),
-                validator: (value) => (
-                  value!.isEmpty ? 'Digite sua empresa' : null
-                ),
-                onChanged: (value) {
-                  setState(() => company = value);
-                },
-              ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'Documento'),
                 validator: (value) => (
@@ -93,7 +63,7 @@ class _RegisterState extends State<Register> {
                   setState(() => document = value);
                 },
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'Senha'),
                 obscureText: true,
@@ -104,38 +74,29 @@ class _RegisterState extends State<Register> {
                   setState(() => password = value);
                 },
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     setState(() => loading = true);
-                    dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                    dynamic result = await _auth.createPasswordForDriver(document, password);
                     if (result == null) {
                       setState(() {
-                        error = 'Digite um e-mail válido';
+                        error = 'Digite um documento válido';
                         loading = false;
                       });
-                    } else {
-                      DatabaseService().updateDriver(
-                        result.uid, 
-                        email,
-                        company,
-                        document,
-                        name,
-                        'photo',
-                      );
                     }
                   }
                 }, 
-                child: Text(
+                child: const Text(
                   'Cadastrar',
                   style: TextStyle(color: Colors.white),
                 )
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               Text(
                 error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0),
+                style: const TextStyle(color: Colors.red, fontSize: 14.0),
               ),
             ],
           ),

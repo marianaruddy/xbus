@@ -4,27 +4,27 @@ class Trip {
   final String id;
   final DateTime? actualArrivalTime;
   final DateTime? actualDepartureTime;
-  final String driverId;
-  final DocumentReference? driverRef;
+  final GeoPoint? currentLocation;
+  final int capacityInVehicle;
+  final int? passengersQty;
+  final String? driverId;
   final DateTime intendedArrivalTime;
   final DateTime intendedDepartureTime;
   final String routeId;
-  final DocumentReference? routeRef;
-  final String vehicleId;
-  final DocumentReference? vehicleRef;
+  final String? vehicleId;
 
   Trip ({
     required this.id,
     this.actualArrivalTime,
     this.actualDepartureTime,
-    required this.driverId,
-    this.driverRef,
+    this.currentLocation,
+    required this.capacityInVehicle,
+    this.passengersQty,
+    this.driverId,
     required this.intendedArrivalTime,
     required this.intendedDepartureTime,
     required this.routeId,
-    this.routeRef,
-    required this.vehicleId,
-    this.vehicleRef,
+    this.vehicleId,
   });
 
 }

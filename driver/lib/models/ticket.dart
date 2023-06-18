@@ -1,20 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Ticket {
   final String id;
-  final DateTime? boardingHour;
   final bool? checked;
-  final double? price;
+  final bool active;
+  final String currentTripId;
+  final String? passangerId;
   final String? stopId;
-  final DocumentReference? stopRef;
 
   Ticket ({ 
     required this.id, 
-    this.boardingHour,
     this.checked,
-    this.price,
+    required this.active,
+    required this.currentTripId,
+    this.passangerId,
     this.stopId,
-    this.stopRef,
   });
   
 }
