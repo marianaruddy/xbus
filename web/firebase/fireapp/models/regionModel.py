@@ -11,13 +11,24 @@ class RegionModel(models.Model):
     #Create
     def createRegion(self, region):
         regionDict = {
-                'Name': region.Name
-            }
+                'Name': region.Name,
+                'Active': True
+        }
         db.collection('Region').add(regionDict)
 
     #Read
     def getAllRegions(self):
         regions = db.collection('Region').get()
+        regionsList = []
+        for r in regions:
+            rDict = r.to_dict()
+            rDict["Id"] = r.id
+            regionsList.append(rDict)
+
+        return regionsList
+    
+    def getAllActiveRegions(self):
+        regions = db.collection('Region').where('Active','==',True).get()
         regionsList = []
         for r in regions:
             rDict = r.to_dict()
@@ -45,4 +56,4 @@ class RegionModel(models.Model):
 
     #Delete
     def deleteRegionById(self, id):
-        db.collection('Region').document(id).delete()
+        db.collection('Region').document(id).update({'Active': False})

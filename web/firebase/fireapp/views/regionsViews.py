@@ -7,7 +7,7 @@ def managementRegions(request):
         if not request.user.is_authenticated:
             return redirect('myLogin')
         regionModel = RegionModel()
-        regions = regionModel.getAllRegions()
+        regions = regionModel.getAllActiveRegions()
 
         context = {
                 'regions': regions,

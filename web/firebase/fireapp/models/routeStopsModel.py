@@ -39,6 +39,10 @@ class RouteStopsModel(models.Model):
             return routeStopsDict
 
         return routeStopsDict
+    
+    def getRouteStopsByStopId(self, stopId):
+        routeStops = db.collection('RouteStops').where('StopId','==',stopId).get()
+        return routeStops
 
     #Create
     def createRouteStops(self, routeId, stopId, order):
@@ -59,6 +63,13 @@ class RouteStopsModel(models.Model):
                 'Order': routeStops["Order"]
             }
         )
+
+    #Delete
+    def deleteRouteStopsByRouteId(self, routeId):
+        routesStops = db.collection('RouteStops')
+        routeStopsByRouteId = db.collection('RouteStops').where('RouteId','==',routeId).get()
+        for rs in routeStopsByRouteId:
+            routesStops.document(rs.id).delete()
 
     #Aux
     def orderByOrder(self,e):

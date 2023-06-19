@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from ..models import TripModel,RouteModel
+from ..models import TripModel,RouteModel, Ticket
 from ..forms import TripForm
 
 #Trips
@@ -7,10 +7,11 @@ def managementTrips(request):
         if not request.user.is_authenticated:
             return redirect('myLogin')
         tripModel = TripModel()
-        trips = tripModel.getAllTrips()
+        trips = tripModel.getAllActiveTrips()
 
         context = {
                 'trips': trips,
+                'canBeEdited': True,
         }
         return render(request, 'Management/trips.html', context)
 
@@ -45,9 +46,28 @@ def managementTripsEdit(request, id):
     else:
         tripModel = TripModel()
         trip = tripModel.getTripById(id)
+
+        ticketModel = Ticket()
+        tickets = ticketModel.getTicketsByTripId(id)
+
+        if trip.Status != 'Future' and len(tickets) > 0:
+            trips = tripModel.getAllActiveTrips()
+            context = {
+                'trips': trips,
+                'canBeEdited': False,
+            }
+            return render(request, 'Management/trips.html', context)
+
         allRoutes = fillAllRoutes()
-        form = TripForm(instance=trip,allRoutes=allRoutes)
+        form = TripForm(instance=trip,allRoutes=allRoutes,disableRoute=True)
     return render(request, 'Management/tripsAdd.html', {'form': form, 'id': id})
+
+def cancelTrip(request, id):
+    tripModel = TripModel()
+
+    #tripModel.cancelTrip(id)
+
+    return redirect('managementTrips')
 
 def deleteTrip(request, id):
         tripModel = TripModel()
@@ -58,7 +78,7 @@ def deleteTrip(request, id):
 
 def fillAllRoutes():
     routeModel = RouteModel()
-    allRoutesDict = routeModel.getAllRoutes()
+    allRoutesDict = routeModel.getAllActiveRoutes()
     allRoutes = []
     for route in allRoutesDict:
         value = route.OriginName + ' - ' + route.DestinyName

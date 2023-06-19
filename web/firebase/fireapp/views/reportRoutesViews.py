@@ -25,7 +25,7 @@ def reportRoutes(request):
 
 def fillAllRoutes():
     routeModel = RouteModel()
-    allRoutesDict = routeModel.getAllRoutes()
+    allRoutesDict = routeModel.getAllActiveRoutes()
     allRoutes = []
     for route in allRoutesDict:
         value = route.OriginName + ' - ' + route.DestinyName

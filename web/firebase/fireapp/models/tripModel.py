@@ -6,6 +6,7 @@ from .currentTrip import *
 from .currentTripModel import *
 from .trip import *
 from .routeModel import *
+from .ticket import *
 
 from .stop import *
 
@@ -36,7 +37,9 @@ class TripModel(models.Model):
                 'IntendedDepartureTime': trip.IntendedDepartureTime,
                 'IntendedArrivalTime': lastTime,
                 'CapacityInVehicle': trip.CapacityInVehicle,
-                'Status': 'Future'})
+                'Status': 'Future',
+                'Active': True,
+            })
 
 
     def createPlannedCurrentTrips(self, tripId, stopsByRouteId, intendedDepartureTime):
@@ -103,6 +106,27 @@ class TripModel(models.Model):
 
         return tripsList
     
+    def getAllActiveTrips(self):
+        trips = db.collection('Trip').where('Active','==',True).get()
+        tripsList = []
+        routeModel = RouteModel()
+        for t in trips:
+            tDict = t.to_dict()
+            tDict["Id"] = t.id
+            route = routeModel.getRouteById(tDict["RouteId"])
+            tDict["Origin"] = route["Origin"]
+            tDict["Destiny"] = route["Destiny"]
+
+            stopModel = StopModel()
+            origin = stopModel.getStopById(route["Origin"])
+            destiny = stopModel.getStopById(route["Destiny"])
+            tDict["OriginName"] = origin.Name
+            tDict["DestinyName"] = destiny.Name
+
+            tripsList.append(tDict)
+
+        return tripsList
+    
     def getTripById(self, id):
         trip = db.collection('Trip').document(id).get()
         tripDict = trip.to_dict()
@@ -112,7 +136,21 @@ class TripModel(models.Model):
         tripModel.IntendedDepartureTime = tripDict["IntendedDepartureTime"]
         tripModel.IntendedArrivalTime = tripDict["IntendedArrivalTime"]
         tripModel.CapacityInVehicle = tripDict["CapacityInVehicle"]
+        tripModel.Status = tripDict['Status']
         return tripModel
+    
+    def hasTripAssociatedToRoute(self, routeId):
+        tripsAssociatedToRoute = db.collection('Trip').where('RouteId','==',routeId).get()
+        if len(tripsAssociatedToRoute) > 0:
+            return True
+        return False
+    
+    def getFutureOrProgressTripsByRouteId(self, routeId):
+        tripsByRouteId = db.collection('Trip').where('RouteId','==',routeId)
+        tripsFutureByRouteId = tripsByRouteId.where('Status','==','Future').get()
+        tripsProgressByRouteId = tripsByRouteId.where('Status','==','Progress').get()
+        tripsFutureOrProgressByRouteId = tripsFutureByRouteId + tripsProgressByRouteId
+        return tripsFutureOrProgressByRouteId
 
     #Update
     def updateTrip(self, trip):
@@ -168,6 +206,12 @@ class TripModel(models.Model):
                 currentTripModel.updateCurrentTrip(existingCurrentTrip)
             oldStop = stop
         return currentTime
+    
+    def cancelTrip(self, id):
+        db.collection('Trip').document(id).update({'Status': 'Interrupted'})
+
+        ticketModel = Ticket()
+        tickets = ticketModel.getTicketsByTripId(id)
 
     #Delete
     def deleteTripById(self, id):

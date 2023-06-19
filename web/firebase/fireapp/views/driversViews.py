@@ -8,7 +8,7 @@ def managementDrivers(request):
         if not request.user.is_authenticated:
             return redirect('myLogin')
         driverModel = DriverModel()
-        drivers = driverModel.getAllDrivers()
+        drivers = driverModel.getAllActiveDrivers()
 
         context = {
                 'drivers': drivers,

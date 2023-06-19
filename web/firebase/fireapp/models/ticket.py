@@ -35,6 +35,20 @@ class Ticket(models.Model):
 
         return ticketsList
     
+    def getTicketsByTripId(self, tripId):
+        currentTripsByTripId = db.collection('CurrentTrip').where('TripId','==',tripId).get()
+
+        currentTripIds = []
+        for currentTrip in currentTripsByTripId:
+            currentTripIds.append(currentTrip.id)
+
+        tickets = []
+        if len(currentTripIds) > 0:
+            tickets = db.collection('Ticket').where('CurrentTripId','in',currentTripIds).get()
+
+        return tickets
+
+    
     def getTicketsGeneratedByPeriod(self, startDate, endDate):
         tickets = db.collection('Ticket').where("BoardingHour",">=",startDate).where("BoardingHour","<=",endDate).get()
         ticketsList = []

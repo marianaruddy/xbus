@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 import json
-from ..models import RouteModel, Route, RouteStopsModel
+from ..models import RouteModel, Route, RouteStopsModel, TripModel
 from datetime import datetime
 
 #Routes
@@ -18,18 +18,32 @@ def routes(request):
 def deleteRoute(request, id):
         routeModel = RouteModel()
 
+        tripModel = TripModel()
+        if len(tripModel.getFutureOrProgressTripsByRouteId(id)) > 0:
+                routeModel = RouteModel()
+                routes = routeModel.getAllActiveRoutes()
+
+                context = {
+                        'routes': routes,
+                        'hasTripAssociatedToRoute': False,
+                        'hasFutureOrProgressTripToDelete': True,
+                }
+                return render(request, 'Management/routes.html', context)
+
         routeModel.deleteRouteById(id)
 
-        return managementRoutes(request)
+        return redirect('managementRoutes')
 
 def managementRoutes(request):
         if not request.user.is_authenticated:
                 return redirect('myLogin')
         route = RouteModel()
-        routes = route.getAllRoutes()
+        routes = route.getAllActiveRoutes()
 
         context = {
                 'routes': routes,
+                'hasTripAssociatedToRoute': False,
+                'hasFutureOrProgressTripToDelete': False,
         }
         return render(request, 'Management/routes.html', context)
 
@@ -45,15 +59,26 @@ def managementRoutesEdit(request, id):
         stops = routeStopsModel.getStopsDictNoCoordsFromRouteId(id)
         routeModel = RouteModel()
         price = routeModel.getRouteById(id)['Price']
+        tripModel = TripModel()
+        hasTripAssociatedToRoute = tripModel.hasTripAssociatedToRoute(id)
 
-        context = {
-               'stops': json.dumps(stops),
-               'routeId': id,
-               'price': price,
-               'id': id
-        }
+        if hasTripAssociatedToRoute:
+                routes = routeModel.getAllActiveRoutes()
 
-        return render(request, 'Management/routesAdd.html', context)
+                context = {
+                        'routes': routes,
+                        'hasTripAssociatedToRoute': hasTripAssociatedToRoute,
+                        'hasFutureOrProgressTripToDelete': False,
+                }
+                return render(request, 'Management/routes.html', context)
+        else:
+                context = {
+                        'stops': json.dumps(stops),
+                        'routeId': id,
+                        'price': price,
+                        'id': id
+                }
+                return render(request, 'Management/routesAdd.html', context)
     
 def createRoute(request):
     if request.method == 'POST':
@@ -62,7 +87,7 @@ def createRoute(request):
         route = Route()
         route.Destiny = stopsList[-1]
         route.Origin = stopsList[0]
-        route.Price = request.POST.get('price')
+        route.Price = float(request.POST.get('price'))
         routeModel = RouteModel()
         routeId = request.POST.get('routeId')
         routeStopsModel = RouteStopsModel()

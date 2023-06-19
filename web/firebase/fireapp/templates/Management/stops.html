@@ -169,6 +169,29 @@
                               </div>
                         </div>
 
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2">
+                              <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                          <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel2">Can't delete stop with any associated route</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                      aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                                This stop is associated to a route, make sure there are no routes associated to this stop before
+                                                trying to delete.
+                                          </div>
+                                          <div class="modal-footer">
+                                                <a href="{% url 'managementStops' %}">
+                                                      <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                </a>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+
                   </div>
 
 
@@ -195,6 +218,11 @@
                   $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
               });
+            });
+
+            $(window).on('load', function() {
+                  if ('{{ hasRouteAssociatedToStop }}' == 'True')
+                        $('#exampleModal2').modal('show');
             });
       </script> 
 </body>

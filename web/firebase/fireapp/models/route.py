@@ -7,4 +7,4 @@ class Route(models.Model):
     DestinyName = models.CharField(max_length=100)
     OriginName = models.CharField(max_length=100)
     Number = models.IntegerField()
-    Price = models.DecimalField(max_digits=10, decimal_places=2)
+    Price = models.IntegerField()

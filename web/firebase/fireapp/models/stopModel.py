@@ -20,7 +20,8 @@ class StopModel(models.Model):
                 'Address': stop.Address,
                 'Name': stop.Name,
                 'RegionId': stop.RegionId,
-                'Coords': location
+                'Coords': location,
+                'Active': True
             }
         db.collection('Stop').add(stopDict)
     
@@ -84,7 +85,13 @@ class StopModel(models.Model):
     def getQuantityOfTicketsGeneratedToStopToTheNext30Minutes(self,stopId):
         now = datetime.now()
         next30Minutes = now + timedelta(minutes=30)
-        tickets = db.collection('Ticket').where('StopId','==',stopId).where('Checked','==',False).where('BoardingHour','>=',now).where('BoardingHour','<=',next30Minutes).get()
+        currentTripsByStopAndDate = db.collection('CurrentTrip').where("StopId","==",stopId).where("IntentedTime",">=",now).where("IntentedTime","<",next30Minutes).get()
+        currentTripIds = []
+        for ct in currentTripsByStopAndDate:
+            currentTripIds.append(ct.id)
+        tickets = []
+        if len(currentTripIds) > 0:
+            tickets = db.collection('Ticket').where("CurrentTripId","in",currentTripIds).where('Checked','==',False).get()
         ticketsList = []
         for t in tickets:
             tDict = t.to_dict()

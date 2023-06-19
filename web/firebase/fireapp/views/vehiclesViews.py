@@ -7,7 +7,7 @@ def managementVehicles(request):
         if not request.user.is_authenticated:
             return redirect('myLogin')
         vehicleModel = VehicleModel()
-        vehicles = vehicleModel.getAllVehicles()
+        vehicles = vehicleModel.getAllActiveVehicles()
 
         context = {
                 'vehicles': vehicles,

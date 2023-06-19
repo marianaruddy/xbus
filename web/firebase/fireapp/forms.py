@@ -28,8 +28,11 @@ class TripForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self._allRoutes = kwargs.pop('allRoutes', None)
+        self._disableRoute = kwargs.pop('disableRoute', False)
         super().__init__(*args,**kwargs)
         self.fields['RouteId'].choices = self._allRoutes
+        self.fields['RouteId'].widget.attrs['disabled'] = self._disableRoute
+        
 
     class Meta:
         model = Trip

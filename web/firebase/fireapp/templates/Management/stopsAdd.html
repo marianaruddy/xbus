@@ -211,14 +211,27 @@
                                                       <!-- Avoid the word "address" in id, name, or label text to avoid browser autofill from conflicting with Place Autocomplete. Star or comment bug https://crbug.com/587466 to request Chromium to honor autocomplete="off" attribute. -->
                                                       Map
                                                 </label>
+                                                {% if id %}
                                                 <input
-                                                            id="map"
-                                                            name="map"
-                                                            required
-                                                            autocomplete="on"
-                                                            class="form-control"
-                                                            style="width: 80%;"
-                                                      />
+                                                      id="map"
+                                                      name="map"
+                                                      required
+                                                      autocomplete="on"
+                                                      class="form-control"
+                                                      style="width: 80%;"
+                                                      disabled
+                                                />
+                                                {% else %}
+                                                <input
+                                                      id="map"
+                                                      name="map"
+                                                      required
+                                                      autocomplete="on"
+                                                      class="form-control"
+                                                      style="width: 80%;"
+                                                />
+                                                {% endif %}
+
                                           </div>
                                           <div class="mb-3">
                                                 {{ form|bootstrap }}

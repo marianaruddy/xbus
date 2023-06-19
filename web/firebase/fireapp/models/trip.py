@@ -11,3 +11,4 @@ class Trip(models.Model):
     RouteId = models.CharField(max_length=200)
     VehicleId = models.CharField(max_length=200)
     CapacityInVehicle = models.IntegerField()
+    Status = models.CharField(max_length=200)

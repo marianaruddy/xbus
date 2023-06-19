@@ -1,4 +1,4 @@
-function deleteVehicle(id) {  
+function deleteVehicle(vehicleId) {  
     var a = document.getElementById('deleteLink');
-    a.href = "vehicles/delete/" + id;
+    a.href = '{% url "deleteVehicle" id=vehicleId %}';
 }

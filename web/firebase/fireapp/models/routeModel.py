@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from .route import *
 from .stopModel import *
+from .routeStopsModel import*
 
 from firebase_admin import firestore
 
@@ -27,7 +28,8 @@ class RouteModel(models.Model):
                 'Destiny': route.Destiny,
                 'Origin': route.Origin,
                 'Number': number,
-                'Price': route.Price
+                'Price': route.Price,
+                'Active': True
             }
         update_time, route_ref = db.collection('Route').add(routeDict)
         return route_ref.id
@@ -35,6 +37,27 @@ class RouteModel(models.Model):
     #Read
     def getAllRoutes(self):
         routes = db.collection('Route').get()
+        routesList = []
+        for r in routes:
+            rDict = r.to_dict()
+            route = Route()
+            route.Id = r.id
+            route.Destiny = rDict["Destiny"]
+            route.Origin = rDict["Origin"]
+            route.Number = rDict["Number"]
+
+            stopModel = StopModel()
+            destiny = stopModel.getStopById(rDict["Destiny"])
+            origin = stopModel.getStopById(rDict["Origin"])
+            route.DestinyName = destiny.Name
+            route.OriginName = origin.Name
+
+            routesList.append(route)
+
+        return routesList
+    
+    def getAllActiveRoutes(self):
+        routes = db.collection('Route').where('Active','==',True).get()
         routesList = []
         for r in routes:
             rDict = r.to_dict()
@@ -97,4 +120,7 @@ class RouteModel(models.Model):
         
     #Delete
     def deleteRouteById(self, id):
-        db.collection('Route').document(id).delete()
+        db.collection('Route').document(id).update({'Active': False})
+
+        routeStopsModel = RouteStopsModel()
+        routeStopsModel.deleteRouteStopsByRouteId(id)

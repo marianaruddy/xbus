@@ -12,13 +12,24 @@ class VehicleModel(models.Model):
     def createVehicle(self, vehicle):
         vehicleDict = {
                 'Capacity': vehicle.Capacity,
-                'LicensePlate': vehicle.LicensePlate
+                'LicensePlate': vehicle.LicensePlate,
+                'Active': True
             }
         db.collection('Vehicle').add(vehicleDict)
 
     #Read
     def getAllVehicles(self):
         vehicles = db.collection('Vehicle').get()
+        vehiclesList = []
+        for v in vehicles:
+            vDict = v.to_dict()
+            vDict["Id"] = v.id
+            vehiclesList.append(vDict)
+
+        return vehiclesList
+    
+    def getAllActiveVehicles(self):
+        vehicles = db.collection('Vehicle').where('Active','==',True).get()
         vehiclesList = []
         for v in vehicles:
             vDict = v.to_dict()
@@ -48,4 +59,4 @@ class VehicleModel(models.Model):
 
     #Delete
     def deleteVehicleById(self, id):
-        db.collection('Vehicle').document(id).delete()
+        db.collection('Vehicle').document(id).update({'Active': False})

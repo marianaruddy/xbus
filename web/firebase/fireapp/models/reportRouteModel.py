@@ -49,7 +49,14 @@ class ReportRouteModel(models.Model):
         stopsByRoute = db.collection('RouteStops').where("RouteId","==",route).get()
         numberOfPassengersByStop = {}
         for stopRoute in stopsByRoute:
-            numberOfPassengers = len(db.collection('Tickets').where("StopId","==",stopRoute.id).where("BoardingHour",">=",date).where("BoardingHour","<",nextDay).where("Checked", "==", True).get())
+            currentTripsByStopAndDate = db.collection('CurrentTrip').where("StopId","==",stopRoute.id).where("ActualTime",">=",date).where("ActualTime","<",nextDay).get()
+            currentTripIds = []
+            for ct in currentTripsByStopAndDate:
+                currentTripIds.append(ct.id)
+
+            numberOfPassengers = 0
+            if len(currentTripIds) > 0:
+                numberOfPassengers = len(db.collection('Tickets').where("CurrentTripId","in",currentTripIds).where("Checked", "==", True).get())
             
             stopRouteDict = stopRoute.to_dict()
             stop = db.collection('Stop').document(stopRouteDict["StopId"]).get()
@@ -64,7 +71,14 @@ class ReportRouteModel(models.Model):
         stopsByRoute = db.collection('RouteStops').where("RouteId","==",route).get()
         numberOfPassengersByStop = {}
         for stopRoute in stopsByRoute:
-            numberOfPassengers = len(db.collection('Tickets').where("StopId","==",stopRoute.id).where("BoardingHour",">=",date).where("BoardingHour","<",nextDay).where("Checked", "==", True).get())
+            currentTripsByStopAndDate = db.collection('CurrentTrip').where("StopId","==",stopRoute.id).where("ActualTime",">=",date).where("ActualTime","<",nextDay).get()
+            currentTripIds = []
+            for ct in currentTripsByStopAndDate:
+                currentTripIds.append(ct.id)
+
+            numberOfPassengers = 0
+            if len(currentTripIds) > 0:
+                numberOfPassengers = len(db.collection('Tickets').where("CurrentTripId","in",currentTripIds).where("Checked", "==", True).get())
             
             stopRouteDict = stopRoute.to_dict()
             stop = db.collection('Stop').document(stopRouteDict["StopId"]).get()

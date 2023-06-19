@@ -56,4 +56,5 @@ urlpatterns = [
     path('Management/tripsAdd', views.managementTripsAdd, name='managementTripsAdd'),
     path('Management/tripsEdit/<str:id>', views.managementTripsEdit, name='managementTripsEdit'),
     path('Management/trips/delete/<str:id>/', views.deleteTrip, name='deleteTrip'),
+    path('Management/trips/cancel/<str:id>/', views.cancelTrip, name='cancelTrip'),
 ]

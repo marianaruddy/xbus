@@ -11,7 +11,8 @@ class CurrentTripModel(models.Model):
         currentTripDict = {
                 'IntendedTime': currentTrip.IntendedTime,
                 'StopId': currentTrip.StopId,
-                'TripId': currentTrip.TripId
+                'TripId': currentTrip.TripId,
+                'Active': True,
             }
         db.collection('CurrentTrip').add(currentTripDict)
 
@@ -63,4 +64,4 @@ class CurrentTripModel(models.Model):
     
     #Delete
     def deleteCurrentTripById(self, id):
-        db.collection('CurrentTrip').document(id).delete()
+        db.collection('CurrentTrip').document(id).update({'Active': False})

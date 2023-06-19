@@ -1,4 +1,4 @@
-function deleteDriver(id) {  
+function deleteDriver(driverId) {  
     var a = document.getElementById('deleteLink');
-    a.href = "drivers/delete/" + id;
+    a.href = '{% url "deleteDriver" id=driverId %}';
 }

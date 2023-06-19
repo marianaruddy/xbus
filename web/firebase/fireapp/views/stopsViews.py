@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 import json
-from ..models import StopModel, Stop, RegionModel
+from ..models import StopModel, Stop, RegionModel, RouteStopsModel
 from ..forms import StopForm
 from decimal import Decimal
 
@@ -32,6 +32,7 @@ def managementStops(request):
 
         context = {
                 'stops': stops,
+                'hasRouteAssociatedToStop': False,
         }
         return render(request, 'Management/stops.html', context)
 
@@ -80,13 +81,22 @@ def managementStopsEdit(request, id):
 def deleteStop(request, id):
         stopModel = StopModel()
 
+        routeStopsModel = RouteStopsModel()
+        if len(routeStopsModel.getRouteStopsByStopId(id)) > 0:
+                stops = stopModel.getAllStops()
+                context = {
+                        'stops': stops,
+                        'hasRouteAssociatedToStop': True,
+                }
+                return render(request, 'Management/stops.html', context)
+
         stopModel.deleteStopById(id)
 
         return redirect('managementStops')
 
 def fillAllRegions():
     regionModel = RegionModel()
-    allRegionsDict = regionModel.getAllRegions()
+    allRegionsDict = regionModel.getAllActiveRegions()
     allRegions = []
     for region in allRegionsDict:
         value = region['Name']
