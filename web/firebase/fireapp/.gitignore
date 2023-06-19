@@ -1,1 +1,5 @@
-web/firebase/.env
+.env
+.sqlite
+
+__pycache__/
+*.py[cod]
