@@ -8,15 +8,23 @@ import 'package:driver/services/trip.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:provider/provider.dart';
 import 'package:driver/shared/constants.dart';
-import 'package:collection/collection.dart';
 
 class RouteForm extends StatefulWidget {
-  const RouteForm({super.key});
+  final List<RouteModel?>? routes;
+  final List<Vehicle>? licensePlates;
+  final List<Trip>? trips;
+  final List<Stop>? stops;
+  const RouteForm(
+    this.routes,
+    this.licensePlates,
+    this.trips,
+    this.stops,
+    {super.key}
+  );
 
   @override
-  State<RouteForm> createState() => _RouteFormState();
+  State<RouteForm> createState() => _RouteFormState(routes, licensePlates, trips, stops);
 }
 
 String formatNumberTo2digits(int number) {
@@ -45,6 +53,21 @@ Future<List> getGeoCoderData(address) async {
 }
 
 class _RouteFormState extends State<RouteForm> {
+  final List<RouteModel?>? routes;
+
+  final List<Vehicle>? licensePlates;
+
+  final List<Trip>? trips;
+
+  final List<Stop>? stops;
+
+  _RouteFormState(
+    this.routes,
+    this.licensePlates,
+    this.trips,
+    this.stops,
+  );
+
   RouteModel? _currentRoute;
 
   Vehicle? _currentLicensePlate;
@@ -64,30 +87,22 @@ class _RouteFormState extends State<RouteForm> {
   @override
   Widget build(BuildContext context) {
 
-    final routes = Provider.of<List<RouteModel>?>(context) ?? [];
-
-    final licensePlates = Provider.of<List<Vehicle>?>(context) ?? [];
-
-    final trips = Provider.of<List<Trip>?>(context) ?? [];
-
-    final stops = Provider.of<List<Stop>?>(context) ?? [];
-
     final formKey = GlobalKey<FormState>();
 
     final uid = FirebaseAuth.instance.currentUser?.uid;
 
     List<Vehicle>? availablelicensePlates = _currentHour != null
-      ? licensePlates.where((lcnsPlate) => (
+      ? licensePlates?.where((lcnsPlate) => (
           lcnsPlate.capacity >= (_currentHour?.capacityInVehicle as num)
         )).toList()
       : [];
 
-    List<Trip> selectedRoutesTrips = _currentRoute != null ? trips.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
+    List<Trip>? selectedRoutesTrips = _currentRoute != null ? trips?.where((trip) => trip.routeId == _currentRoute?.id).toList() : [];
     startStop = _currentRoute != null
-      ? stops.firstWhereOrNull((stop) => stop.id == _currentRoute?.origin)
+      ? stops?.firstWhere((stop) => stop.id == _currentRoute?.origin)
       : null;
     destinyStop = _currentRoute != null
-      ? stops.firstWhereOrNull((stop) => stop.id == _currentRoute?.destiny)
+      ? stops?.firstWhere((stop) => stop.id == _currentRoute?.destiny)
       : null;
     if (startStop != null) {
       setState(() {
@@ -112,14 +127,14 @@ class _RouteFormState extends State<RouteForm> {
           children: [
             const SizedBox(height: 20.0),
 
-            routes.isNotEmpty ? DropdownButtonFormField<RouteModel>(
+            (routes?.isNotEmpty ?? false) ? DropdownButtonFormField<RouteModel>(
               isExpanded: true,
               decoration: textInputDecoration.copyWith(hintText: 'Selecione uma rota'),
               value: _currentRoute,
-              items: routes.map((route) {
-                Stop? currRouteStart = stops.firstWhereOrNull((stop) => stop.id == route.origin);
-                Stop? currRouteDestiny = stops.firstWhereOrNull((stop) => stop.id == route.destiny);
-                String optionLabel = 'Linha ${route.number.toString()}: ${currRouteStart?.name} - ${currRouteDestiny?.name}';
+              items: routes?.map((route) {
+                Stop? currRouteStart = stops?.firstWhere((stop) => stop.id == route?.origin);
+                Stop? currRouteDestiny = stops?.firstWhere((stop) => stop.id == route?.destiny);
+                String optionLabel = 'Linha ${route?.number.toString()}: ${currRouteStart?.name} - ${currRouteDestiny?.name}';
                 return DropdownMenuItem(
                   value: route,
                   child: Text(optionLabel,
@@ -155,11 +170,11 @@ class _RouteFormState extends State<RouteForm> {
 
             const SizedBox(height: 20.0),
 
-            selectedRoutesTrips.isNotEmpty ? DropdownButtonFormField<Trip>(
+            (selectedRoutesTrips?.isNotEmpty ?? false) ? DropdownButtonFormField<Trip>(
               isExpanded: true,
               decoration: textInputDecoration.copyWith(hintText: 'Selecione um horário'),
               value: _currentHour,
-              items: selectedRoutesTrips.map((hour) {
+              items: selectedRoutesTrips?.map((hour) {
                 return DropdownMenuItem(
                   value: hour,
                   child: Text(formatDateTime2DateAndTimeString(hour.intendedDepartureTime),
@@ -178,11 +193,11 @@ class _RouteFormState extends State<RouteForm> {
 
             const SizedBox(height: 20.0),
 
-            availablelicensePlates.isNotEmpty ? DropdownButtonFormField<Vehicle>(
+            (availablelicensePlates?.isNotEmpty ?? false) ? DropdownButtonFormField<Vehicle>(
               isExpanded: true,
               decoration: textInputDecoration.copyWith(hintText: 'Selecione um veículo'),
               value: _currentLicensePlate,
-              items: availablelicensePlates.map((license) {
+              items: availablelicensePlates?.map((license) {
                 return DropdownMenuItem(
                   value: license,
                   child: Text(license.licensePlate.toString(),

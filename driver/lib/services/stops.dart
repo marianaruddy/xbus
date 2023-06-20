@@ -10,6 +10,12 @@ class StopService {
     return stopCollection.snapshots().map(_stopsFromSnapshot);
   }
 
+  Future<List<Stop>> geAllStops() {
+    return stopCollection.get().then(
+      _stopsFromSnapshot
+    );
+  }
+
   Stop createStopInstance(doc) {
     String address;
     String name;

@@ -139,6 +139,15 @@ class TripService {
     return tripCollection.snapshots().map(_tripsListFromSnapshot);
   }
 
+  Future<List<Trip>> geAllActiveTrips() {
+    return tripCollection.where(
+      'Active',
+      isEqualTo: true
+    ).get().then(
+      _tripsListFromSnapshot
+    );
+  }
+
   Future<Trip>? getTripInstaceFromId(String? id) {
     if (id != null) {
       return tripCollection.doc(id).get().then((doc) {

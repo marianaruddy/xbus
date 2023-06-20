@@ -52,6 +52,15 @@ class RouteService {
     return routeCollection.snapshots().map(_routeListFromSnapshot);
   }
 
+  Future<List<RouteModel>> geAllActiveRoutes() {
+    return routeCollection.where(
+      'Active',
+      isEqualTo: true
+    ).get().then(
+      _routeListFromSnapshot
+    );
+  }
+
   DocumentReference? getRouteRefById(String? id) {
     if (id != null) {
       return routeCollection.doc(id);

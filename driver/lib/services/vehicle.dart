@@ -45,6 +45,15 @@ class VehicleService {
     return vehicleCollection.snapshots().map(_vehicleListFromSnapshot);
   }
 
+  Future<List<Vehicle>> geAllActiveVehicles() {
+    return vehicleCollection.where(
+      'Active',
+      isEqualTo: true
+    ).get().then(
+      _vehicleListFromSnapshot
+    );
+  }
+
   DocumentReference? getVehicleRefById(String? id) {
     if (id != null) {
       return vehicleCollection.doc(id);
