@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<script src="{% static 'managementRegions.js' %}"></script>
+
+<head>
+      <title>XBus</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+      <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+      <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+
+
+<body class="row" style="min-height: 100vh;">
+      <div class="col-2" style="height: 100%;">
+            <!-- Sidebar -->
+            <div class="flex-shrink p-3 bg-white">
+                  <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                        <svg class="bi me-2" width="30" height="24">
+                              <use xlink:href="#bootstrap"></use>
+                        </svg>
+                        <span class="fs-5 fw-semibold">XBus</span>
+                  </a>
+                  <ul class="list-unstyled ps-0">
+                        <li class="mb-1">
+                              <a class="btn btn-toggle align-items-center rounded collapsed"
+                                    href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="mb-1">
+                              <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#dashboard-collapse"
+                                    aria-expanded="false">
+                                    Reports
+                              </button>
+                              <div class="collapse" id="dashboard-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                          <li><a href="{% url 'reportTicket' %}" class="link-dark rounded">Tickets</a>
+                                          </li>
+                                          <li><a href="#" class="link-dark rounded">Stops</a></li>
+                                          <li><a href="#" class="link-dark rounded">Passengers</a></li>
+                                          <li><a href="{% url 'reportRoutes' %}" class="link-dark rounded">Routes</a>
+                                          </li>
+                                          <li><a href="#" class="link-dark rounded">Trips</a></li>
+                                          <li><a href="{% url 'reportRegions' %}" class="link-dark rounded">Region</a></li>
+                                    </ul>
+                              </div>
+                        </li>
+                        <li class="mb-1">
+                              <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+                                    Management
+                              </button>
+                              <div class="collapse" id="orders-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                          <li><a href="{% url 'managementRegions' %}"
+                                                      class="link-dark rounded">Region</a></li>
+                                          <li><a href="{% url 'managementRoutes' %}" class="link-dark rounded">Route</a>
+                                          </li>
+                                          <li><a href="{% url 'managementVehicles' %}"
+                                                      class="link-dark rounded">Vehicle</a></li>
+                                          <li><a href="{% url 'managementStops' %}" class="link-dark rounded">Stop</a>
+                                          </li>
+                                          <li><a href="{% url 'managementDrivers' %}"
+                                                      class="link-dark rounded">Driver</a></li>
+                                          <li><a href="{% url 'managementTrips' %}" class="link-dark rounded">Trip</a>
+                                          </li>
+                                    </ul>
+                              </div>
+                        </li>
+                        <li class="border-top my-3"></li>
+                        <li class="mb-1">
+                              <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+                                    Account
+                              </button>
+                              <div class="collapse" id="account-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                          <li><a href="{% url 'myLogout' %}" class="link-dark rounded">Logout</a></li>
+                                    </ul>
+                              </div>
+                        </li>
+                  </ul>
+            </div>
+            <!-- Sidebar -->
+
+      </div>
+
+      <div class="col-10" style="margin: 0px;padding: 0px;">
+            <!--Main content-->
+            <div class="row grow w-100"
+                  style="height: 80%; background-color: rgba(251,252,253,255);">
+                  <div class="container">
+                        <div style="max-height: 10%; margin: 1%;">
+                              <p class="fs-3 fw-bold">Regions</p>
+                        </div>
+                        <div class="row">
+                              <div class="input-group"
+                                    style="margin: 0px; max-height: 10%; max-width: 80%;">
+                                    <div class="form-floating">
+                                          <input type="search" id="mySearch" class="form-control" placeholder="Search"
+                                                style="background-color: rgba(242,242,243,255);" />
+                                          <label for="mySearch">Search</label>
+                                    </div>
+                              </div>
+                              <div style="max-width: 20%;">
+                                    <a class="btn btn-secondary" href="{% url 'managementRegionsAdd' %}">
+                                          <i class="fas fa-plus"></i> Add Region
+                                    </a>
+                              </div>
+                        </div>
+
+                        <div style="margin: 2%;overflow-y:auto; height:70%;">
+                              <table class="table table-striped" style="width: 95%;" >
+                                    <thead>
+                                          <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col"></th>
+                                            <th scope="col"></th>
+                                          </tr>
+                                    </thead>
+                                    <tbody id="myTable">
+                                          {% for region in regions %}
+                                          <tr>
+                                                <td>
+                                                      {{ region.Name }}
+                                                </td>
+                                                <td style="width: 5%;">
+                                                      <a href="{% url 'managementRegionsEdit' id=region.Id %}">
+                                                            <i class="fa-regular fa-pen-to-square"></i>
+                                                      </a>
+                                                </td>
+                                                <td style="width: 5%;">
+                                                      <button type="button" class="btn" data-bs-toggle="modal"
+                                                            data-bs-target="#exampleModal"
+                                                            onclick="deleteRegion('{{region.Id}}')">
+                                                            <i class="fa-regular fa-trash-can"></i>
+                                                      </button>
+                                                </td>
+                                          </tr>
+                                          {% endfor %}
+                                    </tbody>
+                              </table>
+                        </div>
+                        
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                              aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                          <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Delete Region</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                      aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                                Are you sure you want to delete this region? This action cannot be
+                                                undone.
+                                          </div>
+                                          <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                      data-bs-dismiss="modal">Close</button>
+                                                <a id="deleteLink" class="btn btn-danger">Delete</a>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+
+
+            </div>
+            <!--Main content-->
+            <!-- Footer -->
+            <div class="row grow w-100" style="height: 20%; width: 100%;">
+                  <div class="text-center p-4"
+                        style="background-color: rgba(0, 0, 0, 0.05);left: 0;bottom: 0; width: 100%; height: 100%">
+                        <div style="width: 2%; height: 30%; right: 1%; bottom: 2%;">
+                              <img src="{% static 'assets/pucLogo.png' %}" width="100%" height="100%">
+                        </div>
+
+                  </div>
+            </div>
+            <!-- Footer -->
+      </div>
+
+      <script>
+            $(document).ready(function(){
+              $("#mySearch").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function() {
+                  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+              });
+            });
+      </script> 
+</body>

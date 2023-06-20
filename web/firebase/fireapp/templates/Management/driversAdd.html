@@ -1,0 +1,135 @@
+{% load static %}
+{% load bootstrap %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <title>XBus</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+      <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
+      <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+
+<body class="row" style="min-height: 100vh;">
+      <div class="col-2" style="height: 100%;">
+            <!-- Sidebar -->
+            <div class="flex-shrink p-3 bg-white">
+                  <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                        <svg class="bi me-2" width="30" height="24">
+                              <use xlink:href="#bootstrap"></use>
+                        </svg>
+                        <span class="fs-5 fw-semibold">XBus</span>
+                  </a>
+                  <ul class="list-unstyled ps-0">
+                        <li class="mb-1">
+                              <a class="btn btn-toggle align-items-center rounded collapsed"
+                                    href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="mb-1">
+                              <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#dashboard-collapse"
+                                    aria-expanded="false">
+                                    Reports
+                              </button>
+                              <div class="collapse" id="dashboard-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                          <li><a href="{% url 'reportTicket' %}" class="link-dark rounded">Tickets</a>
+                                          </li>
+                                          <li><a href="#" class="link-dark rounded">Stops</a></li>
+                                          <li><a href="#" class="link-dark rounded">Passengers</a></li>
+                                          <li><a href="{% url 'reportRoutes' %}" class="link-dark rounded">Routes</a>
+                                          </li>
+                                          <li><a href="#" class="link-dark rounded">Trips</a></li>
+                                          <li><a href="{% url 'reportRegions' %}" class="link-dark rounded">Region</a></li>
+                                    </ul>
+                              </div>
+                        </li>
+                        <li class="mb-1">
+                              <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+                                    Management
+                              </button>
+                              <div class="collapse" id="orders-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                          <li><a href="{% url 'managementRegions' %}"
+                                                      class="link-dark rounded">Region</a></li>
+                                          <li><a href="{% url 'managementRoutes' %}" class="link-dark rounded">Route</a>
+                                          </li>
+                                          <li><a href="{% url 'managementVehicles' %}"
+                                                      class="link-dark rounded">Vehicle</a></li>
+                                          <li><a href="{% url 'managementStops' %}" class="link-dark rounded">Stop</a>
+                                          </li>
+                                          <li><a href="{% url 'managementDrivers' %}"
+                                                      class="link-dark rounded">Driver</a></li>
+                                          <li><a href="{% url 'managementTrips' %}" class="link-dark rounded">Trip</a>
+                                          </li>
+                                    </ul>
+                              </div>
+                        </li>
+                        <li class="border-top my-3"></li>
+                        <li class="mb-1">
+                              <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+                                    Account
+                              </button>
+                              <div class="collapse" id="account-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                          <li><a href="{% url 'myLogout' %}" class="link-dark rounded">Logout</a></li>
+                                    </ul>
+                              </div>
+                        </li>
+                  </ul>
+            </div>
+            <!-- Sidebar -->
+
+      </div>
+
+      <div class="col-10" style="margin: 0px;padding: 0px;">
+            <!--Main content-->
+            <div class="row grow w-100"
+                  style="height: 80%; background-color: rgba(251,252,253,255);">
+                  <div class="container">
+                        <div style="max-height: 10%; margin: 1%;">
+                              {% if id %}
+                                    <p class="fs-3 fw-bold">Edit Driver</p>
+                              {% else %}
+                                    <p class="fs-3 fw-bold">Add Driver</p>
+                              {% endif %}
+                        </div>
+                        <div class="row" style="height: 80%; margin: 1%;">
+                              <div class="container">
+                                    <form method="POST">
+                                          {% csrf_token %}
+                                          <div class="mb-3">
+                                                {{ form|bootstrap }}
+                                          </div>
+                                          <a href="{% url 'managementDrivers' %}"><input type="button" value="Back" class="btn btn-secondary" /></a>
+                                          {% if id %}
+                                                <input type="submit" class="btn btn-primary" value="Save">
+                                          {% else %}
+                                                <input type="submit" class="btn btn-primary" value="Add">
+                                          {% endif %}
+                                    </form>
+                              </div>
+
+                        </div>
+                  </div>
+            </div>
+            <!--Main content-->
+            <!-- Footer -->
+            <div class="row grow w-100" style="height: 20%; width: 100%;">
+                  <div class="text-center p-4"
+                        style="background-color: rgba(0, 0, 0, 0.05);left: 0;bottom: 0; width: 100%; height: 100%">
+                        <div style="width: 2%; height: 30%; right: 1%; bottom: 2%;">
+                              <img src="{% static 'assets/pucLogo.png' %}" width="100%" height="100%">
+                        </div>
+
+                  </div>
+            </div>
+            <!-- Footer -->
+      </div>
+
+</body>
