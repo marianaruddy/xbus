@@ -49,8 +49,10 @@ class _ScanQRCodeState extends State<ScanQRCode> {
           actions: [
             TextButton(
               onPressed: () => {
-                _screenOpened = false,
-                Navigator.of(context).pop(isSuccess)
+                setState(() {
+                  _screenOpened = false;
+                }),
+                Navigator.of(context).pop()
               },
               child: const Text('Fechar')
             ),
@@ -115,12 +117,12 @@ class _ScanQRCodeState extends State<ScanQRCode> {
                   final String code = barcodes[0].rawValue ?? "---";
                   Ticket? scannedTicket;
                   scannedTicket = tickets?.firstWhere((t) => t?.id == code);
-                  if (scannedTicket?.checked == false || scannedTicket?.active == true) {
+                  if (scannedTicket?.used == false && scannedTicket?.active == true && scannedTicket?.checked == true) {
                     await updateDB(code, currentTrip).then((value) => {
                       openConfirmModal(context, true).then(_goBack),
                     });
                   } else {
-                    openConfirmModal(context, false);
+                    openConfirmModal(context, false).then(_goBack);
                   }
                 }
               },
@@ -136,15 +138,12 @@ class _ScanQRCodeState extends State<ScanQRCode> {
   }
 
   void _goBack(value) {
-    if (value != null && value == true) {
-      Navigator.pop(context);
-    }
+    Navigator.pop(context);
   }
 
   updateDB(String code, CurrentTrip? currentTrip) {
     return TicketService().updateTicket(code, {
-      'Checked': true,
-      'Active': true,
+      'Used': true,
     }).then((value) {
       if (currentTrip != null) {
         CurrentTripService().updateCurrentTrip(currentTrip.id, {
