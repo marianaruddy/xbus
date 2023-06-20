@@ -6,12 +6,21 @@ class VehicleService {
 
   Vehicle createVehicleInstance(doc) {
     String licensePlate;
+    bool active;
     int capacity;
+
     if ((doc.data() as Map<String, dynamic>).containsKey('LicensePlate')) {
       licensePlate = doc['LicensePlate'];
     } else {
       licensePlate = '';
     }
+
+    if ((doc.data() as Map<String, dynamic>).containsKey('Active')) {
+      active = doc['Active'];
+    } else {
+      active = false;
+    }
+
     if ((doc.data() as Map<String, dynamic>).containsKey('Capacity')) {
       capacity = doc['Capacity'];
     } else {
@@ -19,13 +28,17 @@ class VehicleService {
     }
     return Vehicle(
       id: doc.id,
+      active: active,
       licensePlate: licensePlate,
       capacity: capacity,
     );
   }
 
   List<Vehicle> _vehicleListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) => (createVehicleInstance(doc))).toList();
+    List<Vehicle> allVehicles = snapshot.docs.map((doc) => (
+      createVehicleInstance(doc)
+    )).toList();
+    return allVehicles.where(((vehicle) => vehicle.active == true)).toList();
   }
 
   Stream<List<Vehicle>> get vehicles {
