@@ -34,6 +34,9 @@ class AuthService {
       List<Driver?> driverList = await driverCollection.where(
           'Document',
           isEqualTo: document,
+        ).where(
+          'Active',
+          isEqualTo: true,
         ).get().then((snapshot) {
           return snapshot.docs.map((doc) {
             if (doc.exists) {
