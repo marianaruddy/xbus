@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Trip {
   final String id;
+  final bool active;
   final DateTime? actualArrivalTime;
   final DateTime? actualDepartureTime;
   final GeoPoint? currentLocation;
@@ -15,6 +16,7 @@ class Trip {
 
   Trip ({
     required this.id,
+    required this.active,
     this.actualArrivalTime,
     this.actualDepartureTime,
     this.currentLocation,

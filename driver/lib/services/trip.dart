@@ -29,6 +29,7 @@ class TripService {
   }
 
   Trip createTripInstance(doc) {
+    bool active;
     DateTime? actualArrivalTime;
     DateTime? actualDepartureTime;
     GeoPoint? currentLocation;
@@ -60,6 +61,12 @@ class TripService {
       currentLocation = doc['CurrentLocation'];
     } else {
       currentLocation = null;
+    }
+
+    if ((doc.data() as Map<String, dynamic>).containsKey('Active')) {
+      active = doc['Active'];
+    } else {
+      active = false;
     }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('CapacityInVehicle')) {
@@ -107,6 +114,7 @@ class TripService {
 
     return Trip(
       id: doc.id,
+      active: active,
       actualArrivalTime: actualArrivalTime,
       actualDepartureTime: actualDepartureTime,
       currentLocation: currentLocation,
@@ -121,9 +129,10 @@ class TripService {
   }
 
   List<Trip> _tripsListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) => (
+    List<Trip> allTrips = snapshot.docs.map((doc) => (
       createTripInstance(doc)
     )).toList();
+    return allTrips.where(((trip) => trip.active == true)).toList();
   }
 
   Stream<List<Trip>> get trips {
