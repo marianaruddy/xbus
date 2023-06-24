@@ -9,15 +9,17 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 class ScanQRCode extends StatefulWidget {
   String? selectedTripId;
-  ScanQRCode(this.selectedTripId, {Key? key}) : super(key: key);
+  String? routeId;
+  ScanQRCode(this.selectedTripId, this.routeId, {Key? key}) : super(key: key);
 
   @override
-  State<ScanQRCode> createState() => _ScanQRCodeState(selectedTripId);
+  State<ScanQRCode> createState() => _ScanQRCodeState(selectedTripId, routeId);
 }
 
 class _ScanQRCodeState extends State<ScanQRCode> {
   String? selectedTripId;
-  _ScanQRCodeState(this.selectedTripId);
+  String? routeId;
+  _ScanQRCodeState(this.selectedTripId, this.routeId);
 
   MobileScannerController cameraController = MobileScannerController();
   bool _screenOpened = false;
@@ -26,7 +28,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
   @override
   Widget build(BuildContext context) {
     Future<Map<String, dynamic>> getData() async {
-      List<CurrentTrip?> currentTrips = await CurrentTripService().getCurrTripsFromTrip(selectedTripId);
+      List<CurrentTrip?>? currentTrips = await CurrentTripService().getOrderedCurrTripsFromTrip(selectedTripId, routeId);
       List<Ticket?> tickets = await TicketService().getTicketsInstances();
 
       Map<String, dynamic> data = {
@@ -65,9 +67,9 @@ class _ScanQRCodeState extends State<ScanQRCode> {
       future: getData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          List<CurrentTrip?> currentTrips = snapshot.data!['currentTrips'];
-          List<Ticket?>? tickets = snapshot.data!['tickets'];
-          currentTrip = currentTrips.firstWhere((curr) => (
+          List<CurrentTrip?>? currentTrips = snapshot.data?['currentTrips'];
+          List<Ticket?>? tickets = snapshot.data?['tickets'];
+          currentTrip = currentTrips?.firstWhere((curr) => (
             curr?.tripId == selectedTripId
           ));
 
