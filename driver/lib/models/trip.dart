@@ -13,6 +13,7 @@ class Trip {
   final DateTime intendedDepartureTime;
   final String routeId;
   final String? vehicleId;
+  final String status;
 
   Trip ({
     required this.id,
@@ -27,6 +28,7 @@ class Trip {
     required this.intendedDepartureTime,
     required this.routeId,
     this.vehicleId,
+    required this.status,
   });
 
 }

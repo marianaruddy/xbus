@@ -38,21 +38,21 @@ class CurrentTripService {
     if ((doc.data() as Map<String, dynamic>).containsKey('CapacityInVehicle')) {
       capacityInVehicle = doc['CapacityInVehicle'];
     } else {
-      capacityInVehicle = -1;
+      capacityInVehicle = 0;
     }
 
     if ((doc.data() as Map<String, dynamic>)
         .containsKey('PassengersQtyAfter')) {
       passengersQtyAfter = doc['PassengersQtyAfter'];
     } else {
-      passengersQtyAfter = -1;
+      passengersQtyAfter = 0;
     }
 
     if ((doc.data() as Map<String, dynamic>)
         .containsKey('PassengersQtyBefore')) {
       passengersQtyBefore = doc['PassengersQtyBefore'];
     } else {
-      passengersQtyBefore = -1;
+      passengersQtyBefore = 0;
     }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('PassengersQtyNew')) {
@@ -113,6 +113,22 @@ class CurrentTripService {
             return null;
           }
         }).toList();
+      },
+    );
+  }
+
+  Future<CurrentTrip?> getCurrTripFromTripIdAndStopId(String? tripId, String? stopId) async {
+    return currentTripsCollection.where(
+      'TripId', isEqualTo: tripId
+    ).where(
+      'StopId', isEqualTo: stopId
+    ).get().then((snapshot) {
+      QueryDocumentSnapshot<Object?> doc = snapshot.docs.first;
+      if (doc.exists) {
+        return createCurrentTripInstance(doc);
+      } else {
+        return null;
+      }
       },
     );
   }

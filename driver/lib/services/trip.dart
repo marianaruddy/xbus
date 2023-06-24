@@ -40,6 +40,7 @@ class TripService {
     DateTime intendedDepartureTime;
     String routeId;
     String? vehicleId;
+    String status;
 
     if ((doc.data() as Map<String, dynamic>).containsKey('ActualArrivalTime')) {
       actualArrivalTime = doc['ActualArrivalTime'] != null
@@ -72,13 +73,13 @@ class TripService {
     if ((doc.data() as Map<String, dynamic>).containsKey('CapacityInVehicle')) {
       capacityInVehicle = doc['CapacityInVehicle'];
     } else {
-      capacityInVehicle = -1; //TODO: ver oq fazer aqui (throw error?)
+      capacityInVehicle = 0;
     }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('PassengersQty')) {
       passengersQty = doc['PassengersQty'];
     } else {
-      passengersQty = null;
+      passengersQty = 0;
     }
 
     if ((doc.data() as Map<String, dynamic>).containsKey('DriverId')) {
@@ -112,6 +113,12 @@ class TripService {
       vehicleId = '';
     }
 
+    if ((doc.data() as Map<String, dynamic>).containsKey('Status')) {
+      status = doc['Status'];
+    } else {
+      status = 'Future';
+    }
+
     return Trip(
       id: doc.id,
       active: active,
@@ -125,6 +132,7 @@ class TripService {
       intendedDepartureTime: intendedDepartureTime,
       routeId: routeId,
       vehicleId: vehicleId,
+      status: status,
     );
   }
 

@@ -227,6 +227,11 @@ class _RouteFormState extends State<RouteForm> {
                 ? null
                 : () {
                 _selectedHour = _currentHour;
+                int newPassagersQty = (
+                  _selectedHour?.status != 'Interrupted'
+                    ? _selectedHour?.passengersQty
+                    : 0
+                ) ?? 0;
                 _currentHour = null;
                 TripService().updateTrip(
                   _selectedHour?.id,
@@ -234,8 +239,10 @@ class _RouteFormState extends State<RouteForm> {
                     'ActualDepartureTime': DateTime.now(),
                     'ActualArrivalTime': null,
                     'DriverId': uid,
+                    'PassengersQty': newPassagersQty,
                     'RouteId': _currentRoute?.id,
                     'VehicleId': _currentLicensePlate?.id,
+                    'Status': 'Progress',
                   }
                 );
                 Navigator.of(context)

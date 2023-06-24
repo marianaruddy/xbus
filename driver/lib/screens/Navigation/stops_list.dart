@@ -1,11 +1,13 @@
 import 'package:driver/models/current_trip.dart';
 import 'package:driver/models/route_stop.dart';
+import 'package:driver/models/trip.dart';
 import 'package:driver/screens/home/route_form.dart';
 import 'package:driver/screens/navigation/location_updater.dart';
 import 'package:driver/screens/navigation/stop_list_item.dart';
 import 'package:driver/screens/navigation/trip_info.dart';
 import 'package:driver/services/current_trip.dart';
 import 'package:driver/services/route_stops.dart';
+import 'package:driver/services/trip.dart';
 import 'package:driver/shared/loading.dart';
 import 'package:flutter/material.dart';
 
@@ -32,16 +34,18 @@ class _StopsListState extends State<StopsList> {
     Future<Map<String, dynamic>> getData() async {
       List<CurrentTrip?> currentTripsThisTrip = await CurrentTripService().getCurrTripsFromTrip(tripId);
       List<RouteStop>? thisRouteStops = await RouteStopsService().getRouteStopsFromRoute(routeId);
+      Trip? trip = await TripService().getTripInstaceFromId(tripId);
 
       Map<String, dynamic> data = {
         "currentTripsThisTrip": currentTripsThisTrip,
         "thisRouteStops": thisRouteStops,
+        "trip": trip,
       };
 
       return data;
     }
 
-    Future openConfirmModal(context, currentTripsThisTrip) => showDialog(
+    Future openConfirmModal(context, currentTripsThisTrip, trip) => showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Deseja realmente marcar o ponto como visitado?"),
@@ -58,7 +62,7 @@ class _StopsListState extends State<StopsList> {
                 stopsRemaining = currentTripIndex + 1 < ((currentTripsThisTrip?.length ?? -2));
                 if (stopsRemaining) {
                   currentTrip = currentTripsThisTrip?[currentTripIndex];
-                  peopleInBus = currentTrip?.passengersQtyAfter;
+                  peopleInBus = trip?.passengersQty;
                   currentTripIndex += 1;
                 }
               }),
@@ -79,6 +83,7 @@ class _StopsListState extends State<StopsList> {
         if (snapshot.connectionState == ConnectionState.done) {
           List<CurrentTrip?>? currentTripsThisTrip = snapshot.data!['currentTripsThisTrip'];
           List<RouteStop>? thisRouteStops = snapshot.data!['thisRouteStops'];
+          Trip? trip = snapshot.data!['trip'];
 
           for (var i = 0; i < thisRouteStops!.length; i++) {
             bool element = currentTripsThisTrip!.firstWhere((currTtip) => (
@@ -87,6 +92,7 @@ class _StopsListState extends State<StopsList> {
             val.insert(i, element);
           }
           currentTrip = currentTripsThisTrip?[currentTripIndex];
+          peopleInBus = trip?.passengersQty ?? 0;
 
           return Column(
             children: [
@@ -150,7 +156,7 @@ class _StopsListState extends State<StopsList> {
 
               ElevatedButton(
                 onPressed: stopsRemaining ?  () async {
-                  await openConfirmModal(context, currentTripsThisTrip);
+                  await openConfirmModal(context, currentTripsThisTrip, trip);
                   
                 }:null ,
                 child: const SizedBox(
@@ -162,7 +168,7 @@ class _StopsListState extends State<StopsList> {
             ],
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return Loading();
+          return const Loading();
         } else {
           return const Text('[ERRO]');
         }

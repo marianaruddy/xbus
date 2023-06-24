@@ -1,7 +1,11 @@
+import 'package:driver/models/current_trip.dart';
+import 'package:driver/models/route.dart';
 import 'package:driver/models/trip.dart';
 import 'package:driver/screens/navigation/stops_list.dart';
 import 'package:driver/screens/home/home.dart';
 import 'package:driver/screens/qrcode/scan.dart';
+import 'package:driver/services/current_trip.dart';
+import 'package:driver/services/route.dart';
 import 'package:driver/services/trip.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +22,9 @@ class Navigation extends StatefulWidget {
 
 class _NavigationState extends State<Navigation> {
   Trip? selectedTrip;
+  RouteModel? route;
+  CurrentTrip? lastCurrTrip;
+  bool isFinished = false;
   _NavigationState(
     this.selectedTrip
   );
@@ -43,15 +50,19 @@ class _NavigationState extends State<Navigation> {
           ),
           TextButton(
             onPressed: () async => {
+              route = await RouteService().getRouteInstanceById(selectedTrip?.routeId),
+              lastCurrTrip = await CurrentTripService().getCurrTripFromTripIdAndStopId(selectedTrip?.id, route?.destiny),
+              isFinished = lastCurrTrip?.actualTime == null ? false : true,
               await TripService().updateTrip(
                 selectedTrip?.id,
                 {
                   'ActualArrivalTime': DateTime.now(),
+                  'Status': isFinished ? 'Finished' : 'Interrupted',
                 }
               ),
-              Navigator.of(context).push(MaterialPageRoute(
+              await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const Home()
-              ))
+              )),
             },
             child: const Text('Finalizar')
           ),
@@ -104,10 +115,11 @@ class _NavigationState extends State<Navigation> {
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(15.0),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
+                  onPressed: () async {
+                    await Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ScanQRCode(selectedTrip?.id),
                     ));
+                    setState(() { }); // this gets updated data from firebase, like trip.passengersQty
                   },
                   child: const Icon(
                     Icons.qr_code_scanner,
