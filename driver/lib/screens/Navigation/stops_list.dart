@@ -125,7 +125,7 @@ class _StopsListState extends State<StopsList> {
                         status = 'passed';
                       }
                       String intendedTime = formatDateTime2DateAndTimeString(
-                        currentTrip?.intendedTime ?? DateTime.now()
+                        currentTripsThisTrip?[routeStop.order - 1]?.intendedTime ?? DateTime.now()
                       ).split(' ')[0];
                       return Container(
                         height: 50.0,
