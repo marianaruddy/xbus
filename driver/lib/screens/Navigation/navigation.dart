@@ -60,6 +60,8 @@ class _NavigationState extends State<Navigation> {
                   'Status': isFinished ? 'Finished' : 'Interrupted',
                 }
               ),
+              Navigator.of(context).pop(),
+              Navigator.of(context).pop(),
               await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const Home()
               )),
