@@ -117,7 +117,7 @@ class _NavigationState extends State<Navigation> {
                   ),
                   onPressed: () async {
                     await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ScanQRCode(selectedTrip?.id),
+                      builder: (context) => ScanQRCode(selectedTrip?.id, selectedTrip?.routeId),
                     ));
                     setState(() { }); // this gets updated data from firebase, like trip.passengersQty
                   },

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/models/current_trip.dart';
+import 'package:driver/models/route_stop.dart';
+import 'package:driver/services/route_stops.dart';
 import 'package:flutter/material.dart';
 
 class CurrentTripService {
@@ -115,6 +117,18 @@ class CurrentTripService {
         }).toList();
       },
     );
+  }
+
+  Future<List<CurrentTrip?>?> getOrderedCurrTripsFromTrip(String? tripId, String? routeId) async {
+    List<CurrentTrip?> currTripsFromTrip = await getCurrTripsFromTrip(tripId);
+    List<RouteStop>? routeStops = await RouteStopsService().getRouteStopsFromRoute(routeId);
+    routeStops?.sort((a, b) => a.order < b.order ? -1 : 1);
+    List<CurrentTrip?>? orderedCurrTripsFromTrip = routeStops?.map((routeStop) {
+      return currTripsFromTrip.firstWhere((element) => (
+        routeStop.stopId == element?.stopId
+      ));
+    }).toList();
+    return Future.value(orderedCurrTripsFromTrip);
   }
 
   Future<CurrentTrip?> getCurrTripFromTripIdAndStopId(String? tripId, String? stopId) async {
