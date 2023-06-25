@@ -29,7 +29,6 @@
       function loadChart() {
             let report;
             if ('{{ report|safe }}') {
-                  console.log("Entrou");
                   report = JSON.parse('{{ report|safe }}');
             }
 

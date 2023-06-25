@@ -184,16 +184,21 @@
                                     <div class="modal-content">
                                           <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel2">Can't edit route with any associated trip</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                      aria-label="Close"></button>
+                                                <a href="{% url 'managementRoutes' %}">
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                </a>
                                           </div>
                                           <div class="modal-body">
                                                 This route is associated to a trip, make sure there are no trips associated to this route before
                                                 trying to edit.
                                           </div>
                                           <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                      data-bs-dismiss="modal">Close</button>
+                                                <a href="{% url 'managementRoutes' %}">
+                                                      <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                </a>
+                                                
                                           </div>
                                     </div>
                               </div>

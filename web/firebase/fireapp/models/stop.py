@@ -7,6 +7,7 @@ class Stop(models.Model):
     RegionId = models.CharField(max_length=100)
     Longitude = models.DecimalField(max_digits=9, decimal_places=6)
     Latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    Order = models.IntegerField()
 
 
     def info(self):

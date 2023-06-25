@@ -33,6 +33,8 @@ class TripModel(models.Model):
             lastTime = self.createPlannedCurrentTrips(tripId, stopsByRouteId, trip.IntendedDepartureTime)
             
             db.collection('Trip').document(tripId).set({
+                'PassengersQty': 0,
+                'TicketsQty': 0,
                 'RouteId': trip.RouteId,
                 'IntendedDepartureTime': trip.IntendedDepartureTime,
                 'IntendedArrivalTime': lastTime,
@@ -46,6 +48,7 @@ class TripModel(models.Model):
         #we are creating all the current trips related to that trip beforehand
         currentTripModel = CurrentTripModel()
         oldStop = stopsByRouteId[0]
+
         currentTime = intendedDepartureTime
 
         for stop in stopsByRouteId:
@@ -58,7 +61,7 @@ class TripModel(models.Model):
                 currentTrip.IntendedTime = currentTime
             else:
                 currentTrip.IntendedTime = intendedDepartureTime
-            currentTripModel.createCurrentTrip(currentTrip)
+            currentTripModel.createCurrentTrip(currentTrip, stop)
             oldStop = stop
         return currentTime
 
@@ -159,16 +162,16 @@ class TripModel(models.Model):
 
         currentTripModel = CurrentTripModel()
         existingCurrentTrips = currentTripModel.getCurrentTripsByTripId(trip.Id)
+        existingTrip = self.getTripById(trip.Id)
         
 
         routeStopsModel = RouteStopsModel()
-        stopsByRouteId = routeStopsModel.getStopsFromRouteId(trip.RouteId)
+        stopsByRouteId = routeStopsModel.getStopsFromRouteId(existingTrip.RouteId)
 
         if len(stopsByRouteId) > 0:
             lastTime = self.updatePlannedCurrentTrips(trip.Id, stopsByRouteId, trip.IntendedDepartureTime)
             trips.document(trip.Id).update(
             {
-                'RouteId': trip.RouteId,
                 'IntendedDepartureTime': trip.IntendedDepartureTime,
                 'CapacityInVehicle': trip.CapacityInVehicle,
                 'IntendedArrivalTime': lastTime
@@ -210,9 +213,34 @@ class TripModel(models.Model):
     def cancelTrip(self, id):
         db.collection('Trip').document(id).update({'Status': 'Interrupted'})
 
-        ticketModel = Ticket()
-        tickets = ticketModel.getTicketsByTripId(id)
+        self.chargeback(id)
+
+
 
     #Delete
     def deleteTripById(self, id):
-        db.collection('Trip').document(id).delete()
+        db.collection('Trip').document(id).update({'Active': False})
+        self.chargeback(id)
+        currentTripModel = CurrentTripModel()
+        currentTrips = currentTripModel.getCurrentTripsByTripId(id)
+        for currentTrip in currentTrips:
+            currentTripModel.deleteCurrentTripById(currentTrip['Id'])
+
+    #Aux
+    def chargeback(self, id):
+        ticketModel = Ticket()
+        tickets = ticketModel.getNotUsedTicketsByTripId(id)
+        for ticket in tickets:
+            ticketDict = ticket.to_dict()
+            currentTripModel = CurrentTripModel()
+            ticketModel.deactivateTicket(ticket.id)
+            intendedTime = currentTripModel.getCurrentTripsById(ticketDict['CurrentTripId']).to_dict()['IntendedTime']
+            passenger = ticketModel.getPassengerByPassengerId(ticketDict['PassengerId'])
+            date = datetime.now()
+            description = "Estorno da viagem planejada para " + intendedTime
+            transaction = {
+                'Date': date,
+                'Description': description,
+                'Value': ticketDict['Price'],
+            }
+            passenger.collection('Transaction').add(transaction)

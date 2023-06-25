@@ -35,7 +35,7 @@ def fillAllRoutes():
     allRoutesDict = routeModel.getAllActiveRoutes()
     allRoutes = []
     for route in allRoutesDict:
-        value = str(route.Number) + ': ' + route.OriginName + ' - ' + route.DestinyName
+        value = 'Route ' + str(route.Number) + ': ' + route.OriginName + ' - ' + route.DestinyName
         key = route.Id
         myTuple = (key, value)
         allRoutes.append(myTuple)

@@ -101,7 +101,7 @@
                         </div>
                         <div class="row" style="height: 80%; margin: 1%;">
                               <div class="container">
-                                    <form method="POST">
+                                    <form id="myForm" method="POST">
                                           {% csrf_token %}
                                           <div class="mb-3">
                                                 {{ form|bootstrap }}
@@ -134,4 +134,6 @@
             <!-- Footer -->
       </div>
 
+      <script>
+      </script>
 </body>

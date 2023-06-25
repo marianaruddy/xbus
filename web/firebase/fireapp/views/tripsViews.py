@@ -12,6 +12,8 @@ def managementTrips(request):
         context = {
                 'trips': trips,
                 'canBeEdited': True,
+                'canBeCancelled': True,
+                'canBeDeleted': True,
         }
         return render(request, 'Management/trips.html', context)
 
@@ -37,11 +39,14 @@ def managementTripsEdit(request, id):
         return redirect('myLogin')
     if request.method == "POST":
         allRoutes = fillAllRoutes()
-        form = TripForm(request.POST, allRoutes=allRoutes)
+        form = TripForm(request.POST, allRoutes=allRoutes,disableRoute=True)
         if form.is_valid():
             tripModel = TripModel()
             post = form.save(commit=False)
+            print(post.Id)
             tripModel.updateTrip(post)
+        else:
+            print(form.errors)
         return redirect('managementTrips')
     else:
         tripModel = TripModel()
@@ -50,11 +55,13 @@ def managementTripsEdit(request, id):
         ticketModel = Ticket()
         tickets = ticketModel.getTicketsByTripId(id)
 
-        if trip.Status != 'Future' and len(tickets) > 0:
+        if trip.Status != 'Future' or len(tickets) > 0:
             trips = tripModel.getAllActiveTrips()
             context = {
                 'trips': trips,
                 'canBeEdited': False,
+                'canBeCancelled': True,
+                'canBeDeleted': True,
             }
             return render(request, 'Management/trips.html', context)
 
@@ -64,24 +71,46 @@ def managementTripsEdit(request, id):
 
 def cancelTrip(request, id):
     tripModel = TripModel()
+    trip = tripModel.getTripById(id)
+    print(trip.Status)
+    if trip.Status == 'Future' or trip.Status == 'Progress':
+        tripModel.cancelTrip(id)
+        return redirect('managementTrips')
+    else:
+        trips = tripModel.getAllActiveTrips()
+        context = {
+            'trips': trips,
+            'canBeEdited': True,
+            'canBeCancelled': False,
+            'canBeDeleted': True,
+        }
+        return render(request, 'Management/trips.html', context)
 
-    #tripModel.cancelTrip(id)
-
-    return redirect('managementTrips')
+    
 
 def deleteTrip(request, id):
-        tripModel = TripModel()
+    tripModel = TripModel()
+    trip = tripModel.getTripById(id)
 
+    if trip.Status == 'Future':
         tripModel.deleteTripById(id)
-
         return redirect('managementTrips')
+    else:
+        trips = tripModel.getAllActiveTrips()
+        context = {
+            'trips': trips,
+            'canBeEdited': True,
+            'canBeCancelled': True,
+            'canBeDeleted': False,
+        }
+        return render(request, 'Management/trips.html', context)
 
 def fillAllRoutes():
     routeModel = RouteModel()
     allRoutesDict = routeModel.getAllActiveRoutes()
     allRoutes = []
     for route in allRoutesDict:
-        value = route.OriginName + ' - ' + route.DestinyName
+        value = 'Route ' + str(route.Number) + ': ' + route.OriginName + ' - ' + route.DestinyName
         key = route.Id
         myTuple = (key, value)
         allRoutes.append(myTuple)

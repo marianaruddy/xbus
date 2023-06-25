@@ -35,6 +35,11 @@ class Ticket(models.Model):
 
         return ticketsList
     
+    def getPassengerByPassengerId(self, passengerId):
+        passenger = db.collection('Passenger').document(passengerId)
+
+        return passenger
+    
     def getTicketsByTripId(self, tripId):
         currentTripsByTripId = db.collection('CurrentTrip').where('TripId','==',tripId).get()
 
@@ -48,6 +53,18 @@ class Ticket(models.Model):
 
         return tickets
 
+    def getNotUsedTicketsByTripId(self, tripId):
+        currentTripsByTripId = db.collection('CurrentTrip').where('TripId','==',tripId).get()
+
+        currentTripIds = []
+        for currentTrip in currentTripsByTripId:
+            currentTripIds.append(currentTrip.id)
+
+        tickets = []
+        if len(currentTripIds) > 0:
+            tickets = db.collection('Ticket').where('CurrentTripId','in',currentTripIds).where('Active','==',True).where('Used','==',False).get()
+
+        return tickets
     
     def getTicketsGeneratedByPeriod(self, startDate, endDate):
         tickets = db.collection('Ticket').where("BoardingHour",">=",startDate).where("BoardingHour","<=",endDate).get()
@@ -78,3 +95,6 @@ class Ticket(models.Model):
     #Delete
     def deleteTicketById(self, id):
         db.collection('Ticket').document(id).delete()
+
+    def deactivateTicket(self, id):
+        db.collection('Ticket').document(id).update({'Active': False})

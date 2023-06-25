@@ -7,8 +7,13 @@ db = firestore.client()
 class CurrentTripModel(models.Model):
 
     #Create
-    def createCurrentTrip(self, currentTrip):
+    def createCurrentTrip(self, currentTrip, stop):
         currentTripDict = {
+                'Order': stop.Order,
+                'ActualTime': None,
+                'PassengersQtyAfter': 0,
+                'PassengersQtyBefore': 0,
+                'PassengersQtyNew': 0,
                 'IntendedTime': currentTrip.IntendedTime,
                 'StopId': currentTrip.StopId,
                 'TripId': currentTrip.TripId,
@@ -26,6 +31,10 @@ class CurrentTripModel(models.Model):
             currentTripsList.append(tDict)
 
         return currentTripsList
+    
+    def getCurrentTripsById(self, id):
+        currentTrip = db.collection('CurrentTrip').document(id).get()
+        return currentTrip
     
     def getCurrentTripByTripIdAndStopId(self, tripId, stopId):
         currentTrips = db.collection('CurrentTrip').where('TripId','==',tripId).where('StopId','==',stopId).limit(1).get()

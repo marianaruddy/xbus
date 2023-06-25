@@ -4,7 +4,8 @@ from .stop import *
 
 from firebase_admin import firestore
 from google.cloud.firestore import GeoPoint
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+import pytz
 
 db = firestore.client()
 
@@ -83,15 +84,17 @@ class StopModel(models.Model):
         return stopDict
     
     def getQuantityOfTicketsGeneratedToStopToTheNext30Minutes(self,stopId):
-        now = datetime.now()
+        timezone = pytz.timezone("America/Sao_Paulo")
+        now = timezone.localize(datetime.now())
         next30Minutes = now + timedelta(minutes=30)
-        currentTripsByStopAndDate = db.collection('CurrentTrip').where("StopId","==",stopId).where("IntentedTime",">=",now).where("IntentedTime","<",next30Minutes).get()
+
+        currentTripsByStopAndDate = db.collection('CurrentTrip').where("StopId","==",stopId).where("IntendedTime",">=",now).where("IntendedTime","<",next30Minutes).get()
         currentTripIds = []
         for ct in currentTripsByStopAndDate:
             currentTripIds.append(ct.id)
         tickets = []
         if len(currentTripIds) > 0:
-            tickets = db.collection('Ticket').where("CurrentTripId","in",currentTripIds).where('Checked','==',False).get()
+            tickets = db.collection('Ticket').where("CurrentTripId","in",currentTripIds).where('Active','==',True).where('Checked','==',True).where('Used','==',False).get()
         ticketsList = []
         for t in tickets:
             tDict = t.to_dict()

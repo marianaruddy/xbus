@@ -1,6 +1,6 @@
 function deleteRoute(routeId) {  
     var a = document.getElementById('deleteLink');
-    a.href = '{% url "deleteRoute" id=routeId %}';
+    a.href = "routes/delete/" + routeId;
 }
 
 function searchStops() {

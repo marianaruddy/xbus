@@ -32,6 +32,8 @@ class TripForm(forms.ModelForm):
         super().__init__(*args,**kwargs)
         self.fields['RouteId'].choices = self._allRoutes
         self.fields['RouteId'].widget.attrs['disabled'] = self._disableRoute
+        self.fields['RouteId'].required = False if self._disableRoute else True
+
         
 
     class Meta:

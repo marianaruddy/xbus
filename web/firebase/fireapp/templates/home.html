@@ -119,9 +119,9 @@
                         oldTableInfos.remove();
                   let stopAddress = stop['Address'];
                   let stopTickets = stop['Tickets'];
-                  let stopAddressRow = "<tr><td>Address:</td><td>" + stopAddress + "</td></tr>";
-                  let stopTicketsRow = "<tr><td>People Waiting:</td><td>" + stopTickets + "</td></tr>";
-                  let tableInfos = "<div id='tableInfos' background-color: rgba(0, 0, 0, 0.05);'><table>" + stopAddressRow + stopTicketsRow + "</table></div>";
+                  let stopAddressRow = "<tr><td style='width: 10%;'>Address:</td><td>" + stopAddress + "</td></tr>";
+                  let stopTicketsRow = "<tr><td style='width: 10%;'>People Waiting:</td><td>" + stopTickets + "</td></tr>";
+                  let tableInfos = "<div id='tableInfos' background-color: rgba(0, 0, 0, 0.05);'><table class='table table-striped'>" + stopAddressRow + stopTicketsRow + "</table></div>";
                   document.getElementById("footer").innerHTML += tableInfos;
             }
 

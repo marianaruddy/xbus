@@ -67,5 +67,8 @@ class DriverModel(models.Model):
     def deleteDriverById(self, id):
         db.collection('Driver').document(id).update({'Active': False})
         driverEmail = db.collection('Driver').document(id).get().to_dict()['Email']
-        user = auth.get_user_by_email(driverEmail)
-        auth.update_user(user.uid,disabled=True)
+        try:
+            user = auth.get_user_by_email(driverEmail)
+            auth.update_user(user.uid,disabled=True)
+        except:
+            print("Couldn't find driver through email")

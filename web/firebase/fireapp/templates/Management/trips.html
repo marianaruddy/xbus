@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<script type="text/javascript" src="{% static 'managementTrips.js' %}"></script>
-<script type="text/javascript" src="{% static 'cancelTrips.js' %}"></script>
+<script src="{% static 'managementTrips.js' %}"></script>
+<script src="{% static 'cancelTrips.js' %}"></script>
 
 
 <head>
@@ -155,7 +155,7 @@
                                                       <button type="button" class="btn" data-bs-toggle="modal"
                                                             data-bs-target="#exampleModal3"
                                                             onclick="cancelTrip('{{trip.Id}}')">
-                                                            <i class="fa-regular fa-trash-can"></i>
+                                                            <i class="fa-solid fa-ban"></i>
                                                       </button>
                                                 </td>
                                                 <td style="width: 5%;">
@@ -221,17 +221,58 @@
                               <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                           <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel3">Can't edit this trip</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel3">Cancel Trip</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                       aria-label="Close"></button>
                                           </div>
                                           <div class="modal-body">
-                                                This trip is not a "Future" trip or has at least one ticket associated to it.
-                                                Please try to cancel this trip or remove it. 
+                                                Are you sure you want to cancel this trip?
                                           </div>
                                           <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary">Close</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 <a id="cancelLink" class="btn btn-danger">Cancel Trip</a>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel4">
+                              <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                          <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel4">Can't cancel this trip</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                      aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                                The trip must be Future or Progress to be cancelled.
+                                          </div>
+                                          <div class="modal-footer">
+                                                <a href="{% url 'managementTrips' %}">
+                                                      <button type="button" class="btn btn-secondary">Close</button>
+                                                </a>
+                                          </div>
+                                    </div>
+                              </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal5" tabindex="-1" aria-labelledby="exampleModalLabel5">
+                              <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                          <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel5">Can't delete this trip</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                      aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                                The trip must be Future to be deleted.
+                                          </div>
+                                          <div class="modal-footer">
+                                                <a href="{% url 'managementTrips' %}">
+                                                      <button type="button" class="btn btn-secondary">Close</button>
+                                                </a>
                                           </div>
                                     </div>
                               </div>
@@ -268,6 +309,10 @@
             $(window).on('load', function() {
                   if ('{{ canBeEdited }}' == 'False')
                         $('#exampleModal2').modal('show');
+                  if ('{{ canBeCancelled }}' == 'False')
+                        $('#exampleModal4').modal('show');
+                  if ('{{ canBeDeleted }}' == 'False')
+                        $('#exampleModal5').modal('show');
             });
       </script> 
 </body>
