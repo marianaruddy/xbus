@@ -39,15 +39,22 @@ class _ScanQRCodeState extends State<ScanQRCode> {
       return data;
     }
 
-    Future openConfirmModal(context, isSuccess) {
+    Future openConfirmModal(context, bool? isSuccess) {
       _screenOpened = true;
-      String modalText = isSuccess
-        ? 'Ticket escaneado com sucesso!'
-        : 'Ticket já utilizado. Tente um ticket válido';
+      String? modalText;
+      if (isSuccess == null) {
+        modalText = 'Ops... Ticket inválido. Tente um ticket válido!';
+
+      } else if (isSuccess) {
+        modalText = 'Ticket escaneado com sucesso!';
+      }
+      else {
+        modalText = 'Ops... Ticket já utilizado. Tente um ticket válido';
+      }
       return showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(modalText),
+          title: Text(modalText ?? ''),
           actions: [
             TextButton(
               onPressed: () => {
@@ -118,8 +125,10 @@ class _ScanQRCodeState extends State<ScanQRCode> {
                 if (!_screenOpened) {
                   final String code = barcodes[0].rawValue ?? "---";
                   Ticket? scannedTicket;
-                  scannedTicket = tickets?.firstWhere((t) => t?.id == code);
-                  if (scannedTicket?.used == false && scannedTicket?.active == true && scannedTicket?.checked == true) {
+                  scannedTicket = tickets?.firstWhere((t) => t?.id == code, orElse: () => null);
+                  if (scannedTicket == null) {
+                    openConfirmModal(context, null).then(_goBack);
+                  } else if (scannedTicket.used == false && scannedTicket.active == true && scannedTicket.checked == true) {
                     await updateDB(code, currentTrip).then((value) => {
                       openConfirmModal(context, true).then(_goBack),
                     });
