@@ -32,7 +32,7 @@ class _StopsListState extends State<StopsList> {
     CurrentTrip? currentTrip;
 
     Future<Map<String, dynamic>> getData() async {
-      List<CurrentTrip?> currentTripsThisTrip = await CurrentTripService().getCurrTripsFromTrip(tripId);
+      List<CurrentTrip?>? currentTripsThisTrip = await CurrentTripService().getOrderedCurrTripsFromTrip(tripId, routeId);
       List<RouteStop>? thisRouteStops = await RouteStopsService().getRouteStopsFromRoute(routeId);
       Trip? trip = await TripService().getTripInstaceFromId(tripId);
 
