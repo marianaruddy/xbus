@@ -140,7 +140,7 @@ class _ScanQRCodeState extends State<ScanQRCode> {
             ),
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return Loading();
+          return const Loading();
         } else {
           return const Text('[ERRO]');
         }
