@@ -37,7 +37,7 @@ class ReportRegionsModel(models.Model):
         if not currentTripIds:
             return 0
             
-        tickets = db.collection('Ticket').where("CurrentTripId","in",currentTripIds).get()
+        tickets = db.collection('Ticket').where("CurrentTripId","in",currentTripIds).where("Checked", "==", True).where("Active", "==", True).where("Used", "==", True).get()
         ticketsList = []
         for t in tickets:
             ticketsList.append(t.to_dict())

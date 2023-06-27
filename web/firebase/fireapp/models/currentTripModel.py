@@ -9,7 +9,6 @@ class CurrentTripModel(models.Model):
     #Create
     def createCurrentTrip(self, currentTrip, stop):
         currentTripDict = {
-                'Order': stop.Order,
                 'ActualTime': None,
                 'PassengersQtyAfter': 0,
                 'PassengersQtyBefore': 0,

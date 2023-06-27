@@ -49,7 +49,7 @@ class Ticket(models.Model):
 
         tickets = []
         if len(currentTripIds) > 0:
-            tickets = db.collection('Ticket').where('CurrentTripId','in',currentTripIds).get()
+            tickets = db.collection('Ticket').where('CurrentTripId','in',currentTripIds).where('Active','==',True).get()
 
         return tickets
 
@@ -83,7 +83,7 @@ class Ticket(models.Model):
         for currentTrip in currentTrips:
             currentTripIds.append(currentTrip.id)
             
-        tickets = db.collection('Ticket').where("CurrentTripId","in",currentTripIds).get()
+        tickets = db.collection('Ticket').where("CurrentTripId","in",currentTripIds).where('Active','==',True).where('Checked','==',True).where('Used','==',True).get()
         ticketsList = []
         for t in tickets:
             ticketsList.append(t.to_dict())

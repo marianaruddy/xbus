@@ -108,74 +108,77 @@
                               </form>
                         </div>
 
-                        <table class="table table-striped" style="margin: 2%;margin-right: 20%;">
-                              <tbody>
-                                    <tr>
-                                          <td>
-                                                Number of Passengers:
-                                          </td>
-                                          <td>
-                                                {{ report.NumberOfPassengers }}
-                                          </td>
-                                    </tr>
-                                    <tr>
-                                          <td>
-                                                Stop with most passengers:
-                                          </td>
-                                          <td>
-                                                {{ report.StopWithMostPassengers }}
-                                          </td>
-                                    </tr>
-                                    <tr>
-                                          <td>
-                                                NumberOfPassengersInStopWithMostPassengers:
-                                          </td>
-                                          <td>
-                                                {{ report.NumberOfPassengersInStopWithMostPassengers }}
-                                          </td>
-                                    </tr>
-                                    <tr>
-                                          <td>
-                                                StopWithBiggestWaitingTime:
-                                          </td>
-                                          <td>
-                                                {{ report.StopWithBiggestWaitingTime }}
-                                          </td>
-                                    </tr>
-                                    <tr>
-                                          <td>
-                                                BiggestWaitingTimeInAStop:
-                                          </td>
-                                          <td>
-                                                {{ report.BiggestWaitingTimeInAStop }}
-                                          </td>
-                                    </tr>
-                                    <tr>
-                                          <td>
-                                                StopWithShortestWaitingTime:
-                                          </td>
-                                          <td>
-                                                {{ report.StopWithShortestWaitingTime }}
-                                          </td>
-                                    </tr>
-                                    <tr>
-                                          <td>
-                                                ShortestWaitingTimeInAStop:
-                                          </td>
-                                          <td>
-                                                {{ report.ShortestWaitingTimeInAStop }}
-                                          </td>
-                                    </tr>
-                                    <tr>
-                                          <td>
-                                                AverageWaitingTime:
-                                          </td>
-                                          <td>
-                                                {{ report.AverageWaitingTime }}
-                                          </td>
-                                    </tr>
-                              </tbody>
-                        </table>
+                        <div style="margin: 2%;overflow-y:auto; height:70%;">
+                              <table class="table table-striped" style="width: 95%;">
+                                    <tbody>
+                                          <tr>
+                                                <td>
+                                                      Number of Passengers:
+                                                </td>
+                                                <td>
+                                                      {{ report.NumberOfPassengers }}
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Stop with most passengers:
+                                                </td>
+                                                <td>
+                                                      {{ report.StopWithMostPassengers }}
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Number Of Passengers In Stop With Most Passengers:
+                                                </td>
+                                                <td>
+                                                      {{ report.NumberOfPassengersInStopWithMostPassengers }}
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Stop With Biggest Waiting Time:
+                                                </td>
+                                                <td>
+                                                      {{ report.StopWithBiggestWaitingTime }}
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Biggest Waiting Time In A Stop:
+                                                </td>
+                                                <td>
+                                                      {{ report.BiggestWaitingTimeInAStop }}
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Stop With Shortest Waiting Time:
+                                                </td>
+                                                <td>
+                                                      {{ report.StopWithShortestWaitingTime }}
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Shortest Waiting Time In A Stop:
+                                                </td>
+                                                <td>
+                                                      {{ report.ShortestWaitingTimeInAStop }}
+                                                </td>
+                                          </tr>
+                                          <tr>
+                                                <td>
+                                                      Average Waiting Time:
+                                                </td>
+                                                <td>
+                                                      {{ report.AverageWaitingTime }}
+                                                </td>
+                                          </tr>
+                                    </tbody>
+                              </table>
+                        </div>
+                        
 
                   </div>
 

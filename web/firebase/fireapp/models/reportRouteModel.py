@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from datetime import timedelta
 
@@ -56,7 +57,7 @@ class ReportRouteModel(models.Model):
 
             numberOfPassengers = 0
             if len(currentTripIds) > 0:
-                numberOfPassengers = len(db.collection('Tickets').where("CurrentTripId","in",currentTripIds).where("Checked", "==", True).get())
+                numberOfPassengers = len(db.collection('Tickets').where("CurrentTripId","in",currentTripIds).where("Checked", "==", True).where("Active", "==", True).where("Used", "==", True).get())
             
             stopRouteDict = stopRoute.to_dict()
             stop = db.collection('Stop').document(stopRouteDict["StopId"]).get()
@@ -71,14 +72,15 @@ class ReportRouteModel(models.Model):
         stopsByRoute = db.collection('RouteStops').where("RouteId","==",route).get()
         numberOfPassengersByStop = {}
         for stopRoute in stopsByRoute:
-            currentTripsByStopAndDate = db.collection('CurrentTrip').where("StopId","==",stopRoute.id).where("ActualTime",">=",date).where("ActualTime","<",nextDay).get()
+            stopRouteDict = stopRoute.to_dict()
+            currentTripsByStopAndDate = db.collection('CurrentTrip').where("StopId","==",stopRouteDict["StopId"]).where("ActualTime",">=",date).where("ActualTime","<",nextDay).get()
             currentTripIds = []
             for ct in currentTripsByStopAndDate:
                 currentTripIds.append(ct.id)
 
             numberOfPassengers = 0
             if len(currentTripIds) > 0:
-                numberOfPassengers = len(db.collection('Tickets').where("CurrentTripId","in",currentTripIds).where("Checked", "==", True).get())
+                numberOfPassengers = len(db.collection('Tickets').where("CurrentTripId","in",currentTripIds).where("Checked", "==", True).where("Active", "==", True).where("Used", "==", True).get())
             
             stopRouteDict = stopRoute.to_dict()
             stop = db.collection('Stop').document(stopRouteDict["StopId"]).get()
@@ -86,7 +88,7 @@ class ReportRouteModel(models.Model):
 
             numberOfPassengersByStop[stopDict["Name"]] = numberOfPassengers
         
-        return max(numberOfPassengersByStop, key=numberOfPassengersByStop.get, default=0)
+        return max(numberOfPassengersByStop.values(), default=0)
 
     def getStopWithBiggestWaitingTimeByRouteAndDate(self, route, date):
         nextDay = date + timedelta(days=1)
@@ -99,14 +101,15 @@ class ReportRouteModel(models.Model):
 
             for currentTrip in currentTrips:
                 currentTripDict = currentTrip.to_dict()
-                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"] #Check if thats the right way or it even works
+                if 'ActualTime' not in currentTripDict or currentTripDict["ActualTime"] == None:
+                    continue
+                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"]
 
                 stop = db.collection('Stop').document(stopRouteDict["StopId"]).get()
                 stopDict = stop.to_dict()
                 
                 if stopDict["Name"] not in timesByStop.keys() or timesByStop[stopDict["Name"]] < timeSpan:
                     timesByStop[stopDict["Name"]] = timeSpan
-
 
         return max(timesByStop, key=timesByStop.get, default="None")
 
@@ -117,11 +120,13 @@ class ReportRouteModel(models.Model):
         timesByStop = {}
         for stopRoute in stopsByRoute:
             stopRouteDict = stopRoute.to_dict()
-            currentTrips = db.collection('CurrentTrip').where("StopId","==",stopRoute.id).where("IntendedTime",">=",date).where("IntendedTime","<",nextDay).get()
+            currentTrips = db.collection('CurrentTrip').where("StopId","==",stopRouteDict["StopId"]).where("IntendedTime",">=",date).where("IntendedTime","<",nextDay).get()
             
             for currentTrip in currentTrips:
                 currentTripDict = currentTrip.to_dict()
-                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"] #Check if thats the right way or it even works
+                if 'ActualTime' not in currentTripDict or currentTripDict["ActualTime"] == None:
+                    continue
+                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"]
 
                 stop = db.collection('Stop').document(stopRouteDict["StopId"]).get()
                 stopDict = stop.to_dict()
@@ -129,7 +134,7 @@ class ReportRouteModel(models.Model):
                 if stopDict["Name"] not in timesByStop.keys() or timesByStop[stopDict["Name"]] < timeSpan:
                     timesByStop[stopDict["Name"]] = timeSpan
 
-        return max(timesByStop, key=timesByStop.get, default="None")
+        return max(timesByStop.values(), default="None")
 
     def getStopWithShortestWaitingTimeByRouteAndDate(self, route, date):
         nextDay = date + timedelta(days=1)
@@ -137,10 +142,12 @@ class ReportRouteModel(models.Model):
         timesByStop = {}
         for stopRoute in stopsByRoute:
             stopRouteDict = stopRoute.to_dict()
-            currentTrips = db.collection('CurrentTrip').where("StopId","==",stopRoute.id).where("IntendedTime",">=",date).where("IntendedTime","<",nextDay).get()
+            currentTrips = db.collection('CurrentTrip').where("StopId","==",stopRouteDict["StopId"]).where("IntendedTime",">=",date).where("IntendedTime","<",nextDay).get()
             for currentTrip in currentTrips:
                 currentTripDict = currentTrip.to_dict()
-                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"] #Check if thats the right way or it even works
+                if 'ActualTime' not in currentTripDict or currentTripDict["ActualTime"] == None:
+                    continue
+                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"]
 
                 stop = db.collection('Stop').document(stopRouteDict["StopId"]).get()
                 stopDict = stop.to_dict()
@@ -156,10 +163,12 @@ class ReportRouteModel(models.Model):
         timesByStop = {}
         for stopRoute in stopsByRoute:
             stopRouteDict = stopRoute.to_dict()
-            currentTrips = db.collection('CurrentTrip').where("StopId","==",stopRoute.id).where("IntendedTime",">=",date).where("IntendedTime","<",nextDay).get()
+            currentTrips = db.collection('CurrentTrip').where("StopId","==",stopRouteDict["StopId"]).where("IntendedTime",">=",date).where("IntendedTime","<",nextDay).get()
             for currentTrip in currentTrips:
                 currentTripDict = currentTrip.to_dict()
-                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"] #Check if thats the right way or it even works
+                if 'ActualTime' not in currentTripDict or currentTripDict["ActualTime"] == None:
+                    continue
+                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"]
 
                 stop = db.collection('Stop').document(stopRouteDict["StopId"]).get()
                 stopDict = stop.to_dict()
@@ -167,30 +176,43 @@ class ReportRouteModel(models.Model):
                 if stopDict["Name"] not in timesByStop.keys() or timesByStop[stopDict["Name"]] > timeSpan:
                     timesByStop[stopDict["Name"]] = timeSpan
 
-        return max(timesByStop, key=timesByStop.get, default="None")
+        return max(timesByStop.values(), default="None")
 
     def getAverageWaitingTimeByRouteAndDate(self, route, date):
         nextDay = date + timedelta(days=1)
-        tripsByRoute = db.collection('Trip').where("RouteId","==",route).where("IntendedDepartureTime",">=",date).where("IntendedDepartureTime","<",nextDay).get()
+        tripsThatHappened = db.collection('Trip').where("RouteId","==",route).order_by("ActualDepartureTime")
+        tripsThatHappened = tripsThatHappened.where("ActualDepartureTime",">=",date).where("ActualDepartureTime","<",nextDay).get()
 
         timesByTrip = 0
         countTrip = 0
 
-        for trip in tripsByRoute:
-            currentTrips = db.collection('CurrentTrip').where("TripId","==",trip.id).get()
+        for trip in tripsThatHappened:
+            currentTrips = db.collection('CurrentTrip').where("TripId","==",trip.id).where('Active','==',True).get()
 
-            countTrip = countTrip + 1
             count = 0
-            sumTimeSpan = 0
 
             for currentTrip in currentTrips:
-                count = count + 1
                 currentTripDict = currentTrip.to_dict()
-                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"] #Check if thats the right way or it even works
-                sumTimeSpan = sumTimeSpan + timeSpan
+                if 'ActualTime' not in currentTripDict or currentTripDict["ActualTime"] == None:
+                    continue
+                timeSpan = currentTripDict["ActualTime"] - currentTripDict["IntendedTime"]
 
+                if count == 0:
+                    sumTimeSpan = timeSpan
+                else:
+                    sumTimeSpan = sumTimeSpan + timeSpan
+                count = count + 1
+
+            if count == 0:
+                continue
             meanByTrip = (sumTimeSpan/count)
-            timesByTrip = timesByTrip + meanByTrip
+            
+            if countTrip == 0:
+                timesByTrip = meanByTrip
+            else:
+                timesByTrip = timesByTrip + meanByTrip
+            countTrip = countTrip + 1
+
         if countTrip > 0:
             return timesByTrip/countTrip
         else:
