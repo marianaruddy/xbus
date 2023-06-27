@@ -1,0 +1,14 @@
+{
+    "builds": [
+      {
+        "src": "firebase/wsgi.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "firebase/wsgi.py"
+      }
+    ]
+}
